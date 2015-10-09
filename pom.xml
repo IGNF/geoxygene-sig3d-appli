@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>geoxygene-sig3d-appli</artifactId>
+	<groupId>fr.ign.cogit</groupId>
+	<version>1.7-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>GeOxygene SIG 3D application</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<dir.executable>/exec-geox-3d</dir.executable>
+	</properties>
+
+	<licenses>
+		<license>
+			<name>CeCILL License</name>
+			<url>http://www.cecill.info/</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+		</testResources>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<compilerVersion>1.7</compilerVersion>
+					<source>1.7</source>
+					<complianceLevel>1.7</complianceLevel>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>fr.ign.cogit.geoxygene.sig3d.gui.MainWindow</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+	
+	 
+
+	<dependencies>
+		<dependency>
+			<groupId>fr.ign.cogit</groupId>
+			<artifactId>geoxygene-sig3d</artifactId>
+			<version>1.7-SNAPSHOT</version>
+		</dependency>
+				<dependency>
+			<groupId>fr.ign.cogit</groupId>
+			<artifactId>geoxygene-geopensim</artifactId>
+			<version>1.7-SNAPSHOT</version>
+		</dependency>
+		    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.10</version>
+      <scope>test</scope>
+    </dependency>
+	</dependencies>
+
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<name>Nexus Releases Repository</name>
+			<url>https://forge-cogit.ign.fr/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Nexus Snapshots Repository</name>
+			<url>https://forge-cogit.ign.fr/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	<!--	<repository>
+			<id>iscpif-ign-releases</id>
+			<name>ISCPIF Release repository for IGN</name>
+			<url>http://maven.iscpif.fr/ign-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>iscpif-ign-snapshots</id>
+			<name>ISCPIF Snapshot repository for IGN</name>
+			<url>http://maven.iscpif.fr/ign-snapshots/</url>
+		</snapshotRepository> -->
+	</distributionManagement>
+
+
+
+
+</project>
