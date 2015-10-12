@@ -71,6 +71,19 @@
 					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<aggregate>true</aggregate>
+					<formats>
+						<format>html</format>
+						<format>xml</format>
+					</formats>
+				</configuration>
+			</plugin>
 
 		</plugins>
 	</build>
@@ -119,7 +132,16 @@
 		</snapshotRepository> -->
 	</distributionManagement>
 
-
+	<pluginRepositories>
+		<pluginRepository>
+			<id>Central</id>
+			<name>Central Repository</name>
+			<url>http://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 
 </project>
