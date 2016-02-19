@@ -83,7 +83,7 @@ public class ContrainteCOSRepresentation extends Default3DRep {
       // Elle n'a qu'un constructeur avec une géométrie.
       featCollec.add(new DefaultFeature(new GM_Point(dp)));
     }
-    URL url = Symbology.class.getResource("/demo3D/reglesurba/cos.png");
+    URL url = Symbology.class.getClassLoader().getResource("fr/ign/cogit/gtru/images/cos.png");
 
     // On récupère le chemin du fichier
     // String path = url.getPath().toString();
@@ -118,9 +118,9 @@ public class ContrainteCOSRepresentation extends Default3DRep {
 
     GM_Point p = (GM_Point) feat.getGeom();
 
-  //  this.bGRep.addChild(ContrainteCOSRepresentation.generateBG(p, hauteur,
-  //      coul, width, "" + cosMin, "" + cosActu, "" + cosMax, lineWidth,
-  //      tailleText, imgPath));
+    this.bGRep.addChild(ContrainteCOSRepresentation.generateBG(p, hauteur,
+        coul, width, "" + cosMin, "" + cosActu, "" + cosMax, lineWidth,
+        tailleText, imgPath));
 
   }
 

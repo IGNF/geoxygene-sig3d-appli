@@ -80,7 +80,7 @@ public class ContrainteHauteurRepresentation extends Default3DRep {
       // Elle n'a qu'un constructeur avec une géométrie.
       featCollec.add(new DefaultFeature(new GM_Point(dp)));
     }
-    URL url = Symbology.class.getResource("/demo3D/reglesurba/hauteur.png");
+    URL url = Symbology.class.getClassLoader().getResource("fr/ign/cogit/gtru/images/hauteur.png");
 
     // On récupère le chemin du fichier
     // String path = url.getPath().toString();
@@ -89,7 +89,7 @@ public class ContrainteHauteurRepresentation extends Default3DRep {
     for (int i = 0; i < 5; i++) {
       IFeature feat = featCollec.get(i);
 
-      feat.setRepresentation(new ContrainteHauteurRepresentation(feat, 70, 50,
+      feat.setRepresentation(new ContrainteHauteurRepresentation(feat, 70, 50 + "",
           Color.pink, 30, url.getPath(), 3.0, 10));
       /*
        * feat.setRepresentation(new RepresentationModel(feat, // L'entité qui //
@@ -108,7 +108,7 @@ public class ContrainteHauteurRepresentation extends Default3DRep {
   }
 
   public ContrainteHauteurRepresentation(IFeature feat, double hauteur,
-      double hMax, Color coul, double width, String imgPath, double lineWidth,
+      String hMax, Color coul, double width, String imgPath, double lineWidth,
       double tailleText) {
     super();
     this.feat = feat;

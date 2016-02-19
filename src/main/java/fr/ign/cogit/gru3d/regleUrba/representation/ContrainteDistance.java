@@ -33,6 +33,8 @@ import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
 import fr.ign.cogit.geoxygene.sig3d.representation.Default3DRep;
+import fr.ign.cogit.geoxygene.sig3d.representation.basic.Object1d;
+import fr.ign.cogit.geoxygene.sig3d.representation.basic.Object2d;
 import fr.ign.cogit.geoxygene.sig3d.representation.texture.TextureManager;
 import fr.ign.cogit.geoxygene.sig3d.sample.Symbology;
 import fr.ign.cogit.geoxygene.sig3d.semantic.Map3D;
@@ -67,7 +69,7 @@ public class ContrainteDistance extends Default3DRep {
     // On créé la collection d'objets à afficher (100 éléments ici)
     FT_FeatureCollection<IFeature> featCollec = new FT_FeatureCollection<IFeature>();
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 50; i++) {
 
       // On prend un point au hasard dont les coordonnées varient
       // entre 0 et 100
@@ -85,16 +87,16 @@ public class ContrainteDistance extends Default3DRep {
       // Elle n'a qu'un constructeur avec une géométrie.
       featCollec.add(new DefaultFeature(new GM_LineString(dpl)));
     }
-    URL url = Symbology.class.getResource("/demo3D/reglesurba/direction.png");
+    URL url = Symbology.class.getClassLoader().getResource("fr/ign/cogit/gtru/images/direction.png");
 
     // On récupère le chemin du fichier
     // String path = url.getPath().toString();
     // On génère pour chaque élément la représentation que l'on souhaite
 
-    for (int i = 0; i < 5; i++) {
-      IFeature feat = featCollec.get(i);
+    for (   IFeature feat : featCollec) {
+   
 
-      feat.setRepresentation(new ContrainteDistance(feat, 70, Color.pink, 30,
+      feat.setRepresentation(new ContrainteDistance(feat, 70, Color.black, 300,
           url.getPath(), 3.0, 10));
       /*
        * feat.setRepresentation(new RepresentationModel(feat, // L'entité qui //
@@ -120,8 +122,8 @@ public class ContrainteDistance extends Default3DRep {
     GM_Point ptIni = new GM_Point(feat.getGeom().coord().get(0));
     GM_Point ptFin = new GM_Point(feat.getGeom().coord().get(1));
 
-    ContrainteDistance.generateBG(ptIni, ptFin, hauteur, coul, width,
-        lineWidth, tailleText, imgPath);
+    this.bGRep.addChild(ContrainteDistance.generateBG(ptIni, ptFin, hauteur, coul, width,
+        lineWidth, tailleText, imgPath));
 
   }
 
@@ -140,7 +142,7 @@ public class ContrainteDistance extends Default3DRep {
     BranchGroup bg = new BranchGroup();
     bg.addChild(new Shape3D(lsa, ContrainteDistance.lineAppearence(col3f,
         (float) lineWidth)));
-    bg.addChild(bh);
+   bg.addChild(bh);
 
     return bg;
 
@@ -217,7 +219,7 @@ public class ContrainteDistance extends Default3DRep {
     LineAttributes lp = new LineAttributes();
 
     lp.setLineAntialiasingEnable(true);
-    lp.setLineWidth(lineWidth);
+    lp.setLineWidth(Object1d.width);
 
     lp.setLinePattern(LineAttributes.PATTERN_SOLID);
 
