@@ -122,16 +122,28 @@
 			<name>Nexus Snapshots Repository</name>
 			<url>https://forge-cogit.ign.fr/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
-	<!--	<repository>
+		<repository>
 			<id>iscpif-ign-releases</id>
 			<name>ISCPIF Release repository for IGN</name>
-			<url>http://maven.iscpif.fr/ign-releases/</url>
+			<url>http://maven.iscpif.fr/ign-releases</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
-		<snapshotRepository>
+		<repository>
 			<id>iscpif-ign-snapshots</id>
 			<name>ISCPIF Snapshot repository for IGN</name>
-			<url>http://maven.iscpif.fr/ign-snapshots/</url>
-		</snapshotRepository> -->
+			<url>http://maven.iscpif.fr/ign-snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
 	</distributionManagement>
 
 	<pluginRepositories>
