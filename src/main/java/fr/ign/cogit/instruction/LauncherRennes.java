@@ -23,6 +23,7 @@ import fr.ign.cogit.geoxygene.sig3d.util.ColorLocalRandom;
 import fr.ign.cogit.instruction.checker.Checker;
 import fr.ign.cogit.instruction.checker.UnrespectedRule;
 import fr.ign.cogit.simplu3d.io.load.instruction.Load;
+import fr.ign.cogit.simplu3d.io.load.instruction.LoaderBPU;
 import fr.ign.cogit.simplu3d.io.load.instruction.LoaderPostGISTest;
 import fr.ign.cogit.simplu3d.io.load.instruction.LoaderVersion;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
@@ -35,11 +36,8 @@ import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 
 public class LauncherRennes {
 
-
-
   public static int idUtilisateur = -1;
-  
-
+  public static int searchIdBPU = 24;
 
   public static Map3D carte;
 
@@ -79,16 +77,15 @@ public class LauncherRennes {
   public static void afficheMap(int idVersion) throws Exception {
 
     // On supprime les couches
-//  carte.removeLayer("Parcelles");
-  carte.removeLayer("Toit");
-//    carte.removeLayer("Route");
+    carte.removeLayer("Toit");
     carte.removeLayer("Murs");
     carte.removeLayer("Pignon");
     carte.removeLayer("Faitage");
     carte.removeLayer("Gouttière");
 
     // On charge l'environnement depuis la base de données
-    Environnement env = LoaderPostGISTest.load(null, idVersion);
+    // Environnement env = LoaderPostGISTest.load(null, idVersion);
+    Environnement env = LoaderBPU.load(idVersion, searchIdBPU);
 
     // On récupère les données qui nous intéressent dans l'environnement
     IFeatureCollection<AbstractBuilding> buildingColl = env.getBuildings();
@@ -102,18 +99,18 @@ public class LauncherRennes {
     // On complète les IFC murs et toits en faisant une boucle sur les BP
     for (AbstractBuilding currentBP : buildingColl) {
       wallColl.add(currentBP.getWall());
-      
+
       RoofSurface featRoof = currentBP.getRoof();
-     // System.out.println(currentBP.getIdVersion() );
-      if(currentBP.getIdVersion() == -1){
-    	  
-    	  
-    	   featRoof.setRepresentation(new Object2d(featRoof, Color.red));
-      }else{
-    	  
-    	  featRoof.setRepresentation(new Object2d(featRoof, new Color( 	237,145,33)));
+      // System.out.println(currentBP.getIdVersion() );
+      if (currentBP.getIdVersion() == -1) {
+
+        featRoof.setRepresentation(new Object2d(featRoof, Color.red));
+      } else {
+
+        featRoof.setRepresentation(new Object2d(featRoof, new Color(237, 145,
+            33)));
       }
-      
+
       roofColl.add(featRoof);
     }
 
@@ -124,7 +121,6 @@ public class LauncherRennes {
     // On défini les représentations et on récupère les données sur les
     // goutières, les faitages et les pignons
     for (RoofSurface featRoof : roofColl) {
-   
 
       if (featRoof.getGutter() != null && !featRoof.getGutter().isEmpty()) {
         featGutter.add(new DefaultFeature(featRoof.getGutter()));
@@ -214,25 +210,23 @@ public class LauncherRennes {
         }
 
         try {
-         List<UnrespectedRule> lUNR =  Checker.checkSelection(bpuColl);
-         
-         List<UnrespectedRule> lUNRRep = new ArrayList<>();
-         
-         for(UnrespectedRule uR : lUNR){
-        	 
-        	 if(uR.getRepresentation() != null)
-        	 {
-        		 lUNRRep.add(uR);
-        	 }
-         }
-         
-         IFeatureCollection<IFeature> featCM = new FT_FeatureCollection<>();
-         featCM.addAll(lUNRRep);
-         
-         carte.removeLayer("Non-resp");
-         carte.addLayer(new VectorLayer(featCM, "Non-resp"));
-         
-         
+          List<UnrespectedRule> lUNR = Checker.checkSelection(bpuColl);
+
+          List<UnrespectedRule> lUNRRep = new ArrayList<>();
+
+          for (UnrespectedRule uR : lUNR) {
+
+            if (uR.getRepresentation() != null) {
+              lUNRRep.add(uR);
+            }
+          }
+
+          IFeatureCollection<IFeature> featCM = new FT_FeatureCollection<>();
+          featCM.addAll(lUNRRep);
+
+          carte.removeLayer("Non-resp");
+          carte.addLayer(new VectorLayer(featCM, "Non-resp"));
+
         } catch (Exception e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();
