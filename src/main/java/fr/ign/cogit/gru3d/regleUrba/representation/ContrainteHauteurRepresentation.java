@@ -309,6 +309,8 @@ public class ContrainteHauteurRepresentation extends Default3DRep {
 
     Font3D f3d = new Font3D(new Font("ARIAL", Font.PLAIN, 1),
         new FontExtrusion());
+    
+    System.out.println(text);
 
     Text3D text3D = new Text3D(f3d, text, new Point3f(0, 0, 0),
         Text3D.ALIGN_CENTER, Text3D.PATH_RIGHT);

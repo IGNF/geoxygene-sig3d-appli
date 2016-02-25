@@ -21,6 +21,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Operateurs;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToLineString;
+import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.sig3d.representation.sample.ObjectCartoon;
 import fr.ign.cogit.geoxygene.sig3d.sample.Symbology;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
@@ -174,11 +175,8 @@ public class Checker {
 						// System.out.println("Distance : " +
 						// bP.getFootprint().distance(ims));
 
-						UnrespectedRule unr = new UnrespectedRule(
-								"Bande de constructibilité de fond de parcelle non respectée ", bP, feat);
+					
 
-						URL url = Symbology.class.getClassLoader()
-								.getResource("fr/ign/cogit/gtru/images/directionParcelle.png");
 
 						IDirectPositionList dpl = new DirectPositionList();
 
@@ -198,12 +196,11 @@ public class Checker {
 						dpl.get(0).setZ(zMin);
 						dpl.get(1).setZ(zMin);
 
-						unr.setGeom(new GM_MultiPoint(dpl));
-						ContrainteDistance rep = new ContrainteDistance(unr, 30, Color.black, 10, url.getPath(), 2.0,
-								10);
-
-						unr.setRepresentation(rep);
-
+						
+						
+						UnrespectedRule unr = new UnrespectedRule(
+								"Bande de constructibilité de fond de parcelle non respectée", 0, bP, feat, dpl.get(0), dpl.get(1));
+						unr.setGeom(new GM_Point(dpl.get(0)));
 						lUNR.add(unr);
 					}
 
@@ -306,20 +303,20 @@ public class Checker {
 		if (bPU.getGeom().area() * ces < aireBati) {
 			// LE CES n'est pas respectée on ajoute une incohérence
 
-			UnrespectedRule unr = new UnrespectedRule("Le CES n'est pas respecté - CES mesuré : "
-					+ (aireBati / bPU.getGeom().area()) + "  CES attendu " + ces, bPU, null);
 
-			URL url = Symbology.class.getClassLoader().getResource("fr/ign/cogit/gtru/images/ces.png");
+
+			
 
 			IDirectPositionList dpl = new DirectPositionList();
 			dpl.add(bPU.getGeom().centroid());
 			dpl.get(0).setZ(zMin);
+		
+			
+			double mult100 = Math.round(100 * (aireBati/area));
+		
+			UnrespectedRule unr = new UnrespectedRule("CES mes " + (mult100/100) + " CES max " + ces+"", 1 , bPU, null, dpl.get(0) , null);
+			
 			unr.setGeom(new GM_Point(dpl.get(0)));
-			ContrainteHauteurRepresentation cHRP = new ContrainteHauteurRepresentation(unr, 30,
-					Math.floor(aireBati * 100) / 100 + " > " + Math.floor(bPU.getGeom().area() * ces * 100) / 100,
-					Color.black, 10, url.getPath(), 2.0, 1);
-
-			unr.setRepresentation(cHRP);
 
 			lUNR.add(unr);
 
@@ -377,13 +374,13 @@ public class Checker {
 								r.getWidth() * rules.getProspectVoirie2Slope() + rules.getProspectVoirie2Hini())) {
 
 							UnrespectedRule unr = new UnrespectedRule("Prospect non respecté (route de plus de "
-									+ rules.getLargMaxProspect1() + " m de large", ab, sc);
+									+ rules.getLargMaxProspect1() + " m de large", 2 , ab, sc, null, null);
 
 							ISolid sol = Prospect.calculeEmpriseSolid(bPU.getGeom(), sc.getGeom(),
 									rules.getProspectVoirie2Slope(), rules.getProspectVoirie2Hini(), zMin);
-							unr.setGeom(sol);
-							unr.setRepresentation(new ObjectCartoon(unr, Color.red));
-
+							unr.setGeom(FromGeomToSurface.convertMSGeom(sol));
+							
+						
 							lUNR.add(unr);
 
 						}
@@ -394,12 +391,12 @@ public class Checker {
 								r.getWidth() * rules.getProspectVoirie1Slope() + rules.getProspectVoirie1Hini())) {
 
 							UnrespectedRule unr = new UnrespectedRule("Prospect non respecté (route de moins de "
-									+ rules.getLargMaxProspect1() + " m de large", ab, sc);
+									+ rules.getLargMaxProspect1() + " m de large", 3 ,  ab, sc, null, null);
 
 							ISolid sol = Prospect.calculeEmpriseSolid(bPU.getGeom(), sc.getGeom(),
 									rules.getProspectVoirie2Slope(), rules.getProspectVoirie2Hini(), zMin);
 							unr.setGeom(sol);
-							unr.setRepresentation(new ObjectCartoon(unr, Color.red));
+				
 
 							lUNR.add(unr);
 						}
@@ -435,10 +432,9 @@ public class Checker {
 		for (AbstractBuilding aB : list) {
 			if (aB.getFootprint().distance(iMSFront) > rules.getAlignement() + 0.5) {
 
-				UnrespectedRule unr = new UnrespectedRule("Non respect de la distance à l'alignement ", aB,
-						new DefaultFeature(iMSFront));
 
-				URL url = Symbology.class.getClassLoader().getResource("fr/ign/cogit/gtru/images/alignement.png");
+
+	
 
 				IDirectPositionList dpl = new DirectPositionList();
 
@@ -457,11 +453,12 @@ public class Checker {
 
 				dpl.get(0).setZ(zMin);
 				dpl.get(1).setZ(zMin);
+				
+				UnrespectedRule unr = new UnrespectedRule("Non respect de la distance à l'alignement ", 4, aB,
+						new DefaultFeature(iMSFront), dpl.get(0), dpl.get(1));
 
 				unr.setGeom(new GM_MultiPoint(dpl));
-				ContrainteDistance rep = new ContrainteDistance(unr, 30, Color.black, 10, url.getPath(), 2.0, 10);
-
-				unr.setRepresentation(rep);
+				
 
 				lUNR.add(unr);
 			}
@@ -473,11 +470,9 @@ public class Checker {
 			if (aB.getFootprint().distance(iMSLat) > rules.getReculLatMin()
 					&& aB.getFootprint().distance(iMSLat) < rules.getReculLatMax()) {
 
-				UnrespectedRule unr = new UnrespectedRule("Non respect de la distance aux limites latérales ", aB,
-						new DefaultFeature(iMSLat));
+		
 
-				URL url = Symbology.class.getClassLoader()
-						.getResource("fr/ign/cogit/gtru/images/directionParcelle.png");
+
 
 				IDirectPositionList dpl = new DirectPositionList();
 
@@ -497,10 +492,10 @@ public class Checker {
 				dpl.get(0).setZ(zMin);
 				dpl.get(1).setZ(zMin);
 
+				UnrespectedRule unr = new UnrespectedRule("Non respect de la distance aux limites latérales ", 5,  aB,
+						new DefaultFeature(iMSLat), dpl.get(0), dpl.get(1));
 				unr.setGeom(new GM_MultiPoint(dpl));
-				ContrainteDistance rep = new ContrainteDistance(unr, 30, Color.black, 10, url.getPath(), 2.0, 10);
 
-				unr.setRepresentation(rep);
 
 				lUNR.add(unr);
 			}
@@ -535,14 +530,15 @@ public class Checker {
 
 				// Est-ce qu'il respecte l'autre prospect ?
 				if (!ab.prospect(os, rules.getSlopeProspectLat(), rules.gethIniProspectLat())) {
-
-					UnrespectedRule unr = new UnrespectedRule("Prospect latéral non respecté en seconde bande ", ab,
-							new DefaultFeature(os));
+					UnrespectedRule unr = new UnrespectedRule("Prospect latéral non respecté en seconde bande ", 6, ab,
+							new DefaultFeature(os), null, null);
+					
+					
 
 					ISolid sol = Prospect.calculeEmpriseSolid(bPU.getGeom(), os, rules.getProspectVoirie2Slope(),
 							rules.getProspectVoirie2Hini(), zMin);
-					unr.setGeom(sol);
-					unr.setRepresentation(new ObjectCartoon(unr, Color.red));
+					unr.setGeom(FromGeomToSurface.convertMSGeom(sol));
+			
 
 					lUNR.add(unr);
 
@@ -578,20 +574,19 @@ public class Checker {
 
 			if (hauteur > rules.getHauteurMax2()) {
 
-				UnrespectedRule unr = new UnrespectedRule("Non respect de la hauteur maximale en seconde bande ", ab,
-						null);
+		
 
-				URL url = Symbology.class.getClassLoader().getResource("fr/ign/cogit/gtru/images/hauteur.png");
 
 				IDirectPositionList dpl = new DirectPositionList();
 				dpl.add(bPU.getGeom().centroid());
 				dpl.get(0).setZ(zMin);
+				
+				UnrespectedRule unr = new UnrespectedRule("Non respect de la hauteur maximale en seconde bande ",7, ab,
+						null, dpl.get(0), null
+						);
+				
 				unr.setGeom(new GM_Point(dpl.get(0)));
-				ContrainteHauteurRepresentation cHRP = new ContrainteHauteurRepresentation(unr, 30,
-						Math.floor(hauteur * 100) / 100 + " > " + Math.floor(rules.getHauteurMax2() * 100) / 100,
-						Color.black, 10, url.getPath(), 2.0, 1);
-
-				unr.setRepresentation(cHRP);
+	
 
 				lUNR.add(unr);
 

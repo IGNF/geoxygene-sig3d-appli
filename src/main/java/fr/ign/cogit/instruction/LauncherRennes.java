@@ -24,7 +24,6 @@ import fr.ign.cogit.instruction.checker.Checker;
 import fr.ign.cogit.instruction.checker.UnrespectedRule;
 import fr.ign.cogit.simplu3d.io.load.instruction.Load;
 import fr.ign.cogit.simplu3d.io.load.instruction.LoaderBPU;
-import fr.ign.cogit.simplu3d.io.load.instruction.LoaderPostGISTest;
 import fr.ign.cogit.simplu3d.io.load.instruction.LoaderVersion;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
@@ -36,291 +35,290 @@ import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 
 public class LauncherRennes {
 
-  public static int idUtilisateur = -1;
-  public static int searchIdBPU = 24;
+	public static int idUtilisateur = -1;
+	public static int searchIdBPU = 24;
 
-  public static Map3D carte;
+	public static Map3D carte;
 
-  public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 
-    // On corrige le nom de la base de données et du MNT pour la zone de Rennes
-    Load.database = "test_simplu3d";
-    Load.host = "172.16.0.87";
-    Checker.zMin = 40;
+		// On corrige le nom de la base de données et du MNT pour la zone de
+		// Rennes
+		Load.database = "test_simplu3d";
+		Load.host = "172.16.0.87";
+		Checker.zMin = 40;
 
-    // On construit la fenêtre principale
-    MainWindow fenPrincipale = new MainWindow();
-    carte = fenPrincipale.getInterfaceMap3D().getCurrent3DMap();
+		// On construit la fenêtre principale
+		MainWindow fenPrincipale = new MainWindow();
+		carte = fenPrincipale.getInterfaceMap3D().getCurrent3DMap();
 
-    // On affiche les données par défaut
-    afficheMap(-1);
+		// On affiche les données par défaut
+		afficheMap(-1);
 
-    // On ajoute le menu de sélection des versions
-    fenPrincipale.getMainMenuBar().add(
-        (new LauncherRennes()).generateCombobox());
+		// On ajoute le menu de sélection des versions
+		fenPrincipale.getMainMenuBar().add((new LauncherRennes()).generateCombobox());
 
-    // On ajoute le button de vérification des règles
-    fenPrincipale.getMainMenuBar().add((new LauncherRennes()).generateButton());
+		// On ajoute le button de vérification des règles
+		fenPrincipale.getMainMenuBar().add((new LauncherRennes()).generateButton());
 
-    // On actualise la fenêtre
-    fenPrincipale.setVisible(true);
+		// On actualise la fenêtre
+		fenPrincipale.setVisible(true);
 
-  }
+	}
 
-  /**
-   * Affiche au sein du viewer 3D les données en fonction d'un numéro de version
-   * 
-   * @param idVersion l'identifiant de la version à charger
-   * @throws Exception
-   */
+	/**
+	 * Affiche au sein du viewer 3D les données en fonction d'un numéro de
+	 * version
+	 * 
+	 * @param idVersion
+	 *            l'identifiant de la version à charger
+	 * @throws Exception
+	 */
 
-  public static void afficheMap(int idVersion) throws Exception {
+	public static void afficheMap(int idVersion) throws Exception {
 
-    // On supprime les couches
-    carte.removeLayer("Toit");
-    carte.removeLayer("Murs");
-    carte.removeLayer("Pignon");
-    carte.removeLayer("Faitage");
-    carte.removeLayer("Gouttière");
+		// On supprime les couches
+		carte.removeLayer("Toit");
+		carte.removeLayer("Murs");
+		carte.removeLayer("Pignon");
+		carte.removeLayer("Faitage");
+		carte.removeLayer("Gouttière");
 
-    // On charge l'environnement depuis la base de données
-    // Environnement env = LoaderPostGISTest.load(null, idVersion);
-    Environnement env = LoaderBPU.load(idVersion, searchIdBPU);
+		// On charge l'environnement depuis la base de données
+		// Environnement env = LoaderPostGISTest.load(null, idVersion);
+		Environnement env = LoaderBPU.load(idVersion, searchIdBPU);
 
-    // On récupère les données qui nous intéressent dans l'environnement
-    IFeatureCollection<AbstractBuilding> buildingColl = env.getBuildings();
-    IFeatureCollection<Road> roadColl = env.getRoads();
-    IFeatureCollection<CadastralParcel> parcelColl = env.getCadastralParcels();
+		// On récupère les données qui nous intéressent dans l'environnement
+		IFeatureCollection<AbstractBuilding> buildingColl = env.getBuildings();
+		IFeatureCollection<Road> roadColl = env.getRoads();
+		IFeatureCollection<CadastralParcel> parcelColl = env.getCadastralParcels();
 
-    // On initialise des IFC pour les murs et les toits
-    IFeatureCollection<SpecificWallSurface> wallColl = new FT_FeatureCollection<SpecificWallSurface>();
-    IFeatureCollection<RoofSurface> roofColl = new FT_FeatureCollection<RoofSurface>();
+		// On initialise des IFC pour les murs et les toits
+		IFeatureCollection<SpecificWallSurface> wallColl = new FT_FeatureCollection<SpecificWallSurface>();
+		IFeatureCollection<RoofSurface> roofColl = new FT_FeatureCollection<RoofSurface>();
 
-    // On complète les IFC murs et toits en faisant une boucle sur les BP
-    for (AbstractBuilding currentBP : buildingColl) {
-      wallColl.add(currentBP.getWall());
+		// On complète les IFC murs et toits en faisant une boucle sur les BP
+		for (AbstractBuilding currentBP : buildingColl) {
+			wallColl.add(currentBP.getWall());
 
-      RoofSurface featRoof = currentBP.getRoof();
-      // System.out.println(currentBP.getIdVersion() );
-      if (currentBP.getIdVersion() == -1) {
+			RoofSurface featRoof = currentBP.getRoof();
+			// System.out.println(currentBP.getIdVersion() );
+			if (currentBP.getIdVersion() == -1) {
 
-        featRoof.setRepresentation(new Object2d(featRoof, Color.red));
-      } else {
+				featRoof.setRepresentation(new Object2d(featRoof, Color.red));
+			} else {
 
-        featRoof.setRepresentation(new Object2d(featRoof, new Color(237, 145,
-            33)));
-      }
+				featRoof.setRepresentation(new Object2d(featRoof, new Color(237, 145, 33)));
+			}
 
-      roofColl.add(featRoof);
-    }
+			roofColl.add(featRoof);
+		}
 
-    IFeatureCollection<IFeature> featGutter = new FT_FeatureCollection<IFeature>();
-    IFeatureCollection<IFeature> featGable = new FT_FeatureCollection<IFeature>();
-    IFeatureCollection<IFeature> featRoofing = new FT_FeatureCollection<IFeature>();
+		IFeatureCollection<IFeature> featGutter = new FT_FeatureCollection<IFeature>();
+		IFeatureCollection<IFeature> featGable = new FT_FeatureCollection<IFeature>();
+		IFeatureCollection<IFeature> featRoofing = new FT_FeatureCollection<IFeature>();
 
-    // On défini les représentations et on récupère les données sur les
-    // goutières, les faitages et les pignons
-    for (RoofSurface featRoof : roofColl) {
+		// On défini les représentations et on récupère les données sur les
+		// goutières, les faitages et les pignons
+		for (RoofSurface featRoof : roofColl) {
 
-      if (featRoof.getGutter() != null && !featRoof.getGutter().isEmpty()) {
-        featGutter.add(new DefaultFeature(featRoof.getGutter()));
-      }
+			if (featRoof.getGutter() != null && !featRoof.getGutter().isEmpty()) {
+				featGutter.add(new DefaultFeature(featRoof.getGutter()));
+			}
 
-      if (featRoof.getRoofing() != null && !featRoof.getRoofing().isEmpty()) {
-        featRoofing.add(new DefaultFeature(featRoof.getRoofing()));
-      }
+			if (featRoof.getRoofing() != null && !featRoof.getRoofing().isEmpty()) {
+				featRoofing.add(new DefaultFeature(featRoof.getRoofing()));
+			}
 
-      if (featRoof.getGable() != null && !featRoof.getGable().isEmpty()) {
-        featGable.add(new DefaultFeature(featRoof.getGable()));
-      }
+			if (featRoof.getGable() != null && !featRoof.getGable().isEmpty()) {
+				featGable.add(new DefaultFeature(featRoof.getGable()));
+			}
 
-    }
+		}
 
-    for (IFeature featWall : wallColl) {
-      featWall.setRepresentation(new Object2d(featWall, Color.lightGray));
-    }
+		for (IFeature featWall : wallColl) {
+			featWall.setRepresentation(new Object2d(featWall, Color.lightGray));
+		}
 
-    for (IFeature featParcel : parcelColl) {
-      Color c = ColorLocalRandom.getRandomColor(new Color(10, 150, 10), 0, 50,
-          0);
-      featParcel.setRepresentation(new Object2d(featParcel, c));
-    }
+		for (IFeature featParcel : parcelColl) {
+			Color c = ColorLocalRandom.getRandomColor(new Color(10, 150, 10), 0, 50, 0);
+			featParcel.setRepresentation(new Object2d(featParcel, c));
+		}
 
-    VectorLayer roof = new VectorLayer(roofColl, "Toit");
+		VectorLayer roof = new VectorLayer(roofColl, "Toit");
 
-    VectorLayer road = new VectorLayer(roadColl, "Route", true, Color.gray, 1,
-        true);
+		VectorLayer road = new VectorLayer(roadColl, "Route", true, Color.gray, 1, true);
 
-    VectorLayer wall = new VectorLayer(wallColl, "Murs");
+		VectorLayer wall = new VectorLayer(wallColl, "Murs");
 
-    VectorLayer parcel = new VectorLayer(parcelColl, "Parcelles");
+		VectorLayer parcel = new VectorLayer(parcelColl, "Parcelles");
 
-    // On ajoute les couches à la carte
-    carte.addLayer(roof);
-    carte.addLayer(road);
-    carte.addLayer(wall);
-    carte.addLayer(parcel);
+		// On ajoute les couches à la carte
+		carte.addLayer(roof);
+		carte.addLayer(road);
+		carte.addLayer(wall);
+		carte.addLayer(parcel);
 
-    Object1d.width = 4;
-
-    if (!featGable.isEmpty()) {
-      VectorLayer vectGutter = new VectorLayer(featGable, "Pignon", Color.blue);
-      carte.addLayer(vectGutter);
-    }
+		Object1d.width = 4;
+
+		if (!featGable.isEmpty()) {
+			VectorLayer vectGutter = new VectorLayer(featGable, "Pignon", Color.blue);
+			carte.addLayer(vectGutter);
+		}
 
-    if (!featRoofing.isEmpty()) {
-      VectorLayer vectGutter = new VectorLayer(featRoofing, "Faitage",
-          Color.white);
-      carte.addLayer(vectGutter);
-    }
-
-    if (!featGutter.isEmpty()) {
-      VectorLayer vectGutter = new VectorLayer(featGutter, "Gouttière",
-          Color.yellow);
-      carte.addLayer(vectGutter);
-    }
-
-  }
-
-  /**
-   * Génère un bouton pour la vérification des règles d'urbanisme sur la BPU
-   * sélectionnée
-   * 
-   * @return
-   */
-  private JButton generateButton() {
-
-    JButton jB = new JButton(
-        "Vérifier les règles pour la/les parcelle(s) sélectionnée(s)");
-
-    jB.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-
-        IFeatureCollection<IFeature> featC = carte.getIMap3D().getSelection();
-        IFeatureCollection<BasicPropertyUnit> bpuColl = new FT_FeatureCollection<BasicPropertyUnit>();
+		if (!featRoofing.isEmpty()) {
+			VectorLayer vectGutter = new VectorLayer(featRoofing, "Faitage", Color.white);
+			carte.addLayer(vectGutter);
+		}
+
+		if (!featGutter.isEmpty()) {
+			VectorLayer vectGutter = new VectorLayer(featGutter, "Gouttière", Color.yellow);
+			carte.addLayer(vectGutter);
+		}
+
+	}
+
+	/**
+	 * Génère un bouton pour la vérification des règles d'urbanisme sur la BPU
+	 * sélectionnée
+	 * 
+	 * @return
+	 */
+	private JButton generateButton() {
 
-        for (IFeature feat : featC) {
-          if (feat instanceof CadastralParcel) {
-            CadastralParcel cad = (CadastralParcel) feat;
-            BasicPropertyUnit bpu = cad.getbPU();
-            bpuColl.add(bpu);
-          }
-        }
+		JButton jB = new JButton("Vérifier les règles pour la/les parcelle(s) sélectionnée(s)");
 
-        try {
-          List<UnrespectedRule> lUNR = Checker.checkSelection(bpuColl);
+		jB.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				IFeatureCollection<IFeature> featC = carte.getIMap3D().getSelection();
+				IFeatureCollection<BasicPropertyUnit> bpuColl = new FT_FeatureCollection<BasicPropertyUnit>();
 
-          List<UnrespectedRule> lUNRRep = new ArrayList<>();
+				for (IFeature feat : featC) {
+					if (feat instanceof CadastralParcel) {
+						CadastralParcel cad = (CadastralParcel) feat;
+						BasicPropertyUnit bpu = cad.getbPU();
+						bpuColl.add(bpu);
+					}
+				}
 
-          for (UnrespectedRule uR : lUNR) {
+				try {
+					List<UnrespectedRule> lUNR = Checker.checkSelection(bpuColl);
 
-            if (uR.getRepresentation() != null) {
-              lUNRRep.add(uR);
-            }
-          }
+					List<UnrespectedRule> lUNRRep = new ArrayList<>();
 
-          IFeatureCollection<IFeature> featCM = new FT_FeatureCollection<>();
-          featCM.addAll(lUNRRep);
+					for (UnrespectedRule uR : lUNR) {
+						
+						if(uR == null) continue;
+						
+						uR.generateRepresentation();
+						
+						if (uR.getRepresentation() != null) {
+							lUNRRep.add(uR);
+						}
+					}
 
-          carte.removeLayer("Non-resp");
-          carte.addLayer(new VectorLayer(featCM, "Non-resp"));
+					IFeatureCollection<IFeature> featCM = new FT_FeatureCollection<>();
+					featCM.addAll(lUNRRep);
 
-        } catch (Exception e1) {
-          // TODO Auto-generated catch block
-          e1.printStackTrace();
-        }
+					carte.removeLayer("Non-resp");
+					carte.addLayer(new VectorLayer(featCM, "Non-resp"));
 
-      }
-    });
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 
-    return jB;
+			}
+		});
 
-  }
+		return jB;
 
-  /**
-   * Génère une liste déroulante permettant de sélectionner la version à charger
-   * dans l'interface
-   * 
-   * @return
-   * @throws Exception
-   */
-  private JComboBox<Version> generateCombobox() throws Exception {
+	}
 
-    // On génére les éléments à partir de la requête
-    Vector<Version> lVersion = new Vector<>();
-    lVersion.add(new Version(-1, "Données par défaut"));
+	/**
+	 * Génère une liste déroulante permettant de sélectionner la version à
+	 * charger dans l'interface
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	private JComboBox<Version> generateCombobox() throws Exception {
 
-    // On récupère les numéros de version pour l'utilisateur donné
-    List<Integer> listIdVersion = LoaderVersion
-        .retrieveListIdVersionWithTableVersion(Load.host, Load.port,
-            Load.database, Load.user, Load.pw, idUtilisateur);
+		// On génére les éléments à partir de la requête
+		Vector<Version> lVersion = new Vector<>();
+		lVersion.add(new Version(-1, "Données par défaut"));
 
-    // On ajoute les versions trouvées à la liste
-    for (int j = 0; j < listIdVersion.size(); j++) {
-      int id = listIdVersion.get(j);
-      String nom = "Version " + Integer.toString(id);
-      lVersion.add(new Version(id, nom));
-    }
+		// On récupère les numéros de version pour l'utilisateur donné
+		List<Integer> listIdVersion = LoaderVersion.retrieveListIdVersionWithTableVersion(Load.host, Load.port,
+				Load.database, Load.user, Load.pw, idUtilisateur);
 
-    // On construit le menu déroulant
-    JComboBox<Version> comb = new JComboBox<>(lVersion);
+		// On ajoute les versions trouvées à la liste
+		for (int j = 0; j < listIdVersion.size(); j++) {
+			int id = listIdVersion.get(j);
+			String nom = "Version " + Integer.toString(id);
+			lVersion.add(new Version(id, nom));
+		}
 
-    comb.setName("Menu_Version");
-    comb.setSize(50, 20);
-    comb.setSelectedIndex(0);
-    comb.setVisible(true);
-    comb.addActionListener(new ActionListener() {
+		// On construit le menu déroulant
+		JComboBox<Version> comb = new JComboBox<>(lVersion);
 
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        JComboBox<Version> cb = (JComboBox<Version>) e.getSource();
-        Version selectedLine = (Version) cb.getSelectedItem();
+		comb.setName("Menu_Version");
+		comb.setSize(50, 20);
+		comb.setSelectedIndex(0);
+		comb.setVisible(true);
+		comb.addActionListener(new ActionListener() {
 
-        System.out.println("Version n° " + selectedLine.getID());
-        System.out.println("Version nom " + selectedLine.getNom());
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JComboBox<Version> cb = (JComboBox<Version>) e.getSource();
+				Version selectedLine = (Version) cb.getSelectedItem();
 
-        int index = cb.getSelectedIndex();
+				System.out.println("Version n° " + selectedLine.getID());
+				System.out.println("Version nom " + selectedLine.getNom());
 
-        System.out.println("Selected index " + index);
+				int index = cb.getSelectedIndex();
 
-        // On lance le chargement
-        try {
-          afficheMap(selectedLine.getID());
-        } catch (Exception e1) {
-          // TODO Auto-generated catch block
-          e1.printStackTrace();
-        }
+				System.out.println("Selected index " + index);
 
-      }
-    });
-    return comb;
+				// On lance le chargement
+				try {
+					afficheMap(selectedLine.getID());
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 
-  }
+			}
+		});
+		return comb;
 
-  public class Version {
+	}
 
-    private int id;
-    private String nom;
+	public class Version {
 
-    public Version(int id, String nom) {
-      this.id = id;
-      this.nom = nom;
-    }
+		private int id;
+		private String nom;
 
-    public int getID() {
-      return id;
-    }
+		public Version(int id, String nom) {
+			this.id = id;
+			this.nom = nom;
+		}
 
-    public String getNom() {
-      return nom;
-    }
+		public int getID() {
+			return id;
+		}
 
-    public String toString() {
-      return this.getNom();
-    }
+		public String getNom() {
+			return nom;
+		}
 
-  }
+		public String toString() {
+			return this.getNom();
+		}
+
+	}
 
 }
