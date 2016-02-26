@@ -32,10 +32,13 @@ import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.Road;
 import fr.ign.cogit.simplu3d.model.application.RoofSurface;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
 
 public class LauncherRennes {
 
+  // Identifiants pour l'environnement par défaut
   public static int idUtilisateur = -1;
   public static int idBPUBase = -1;
   public static int idVersionBase = -1;
@@ -44,7 +47,7 @@ public class LauncherRennes {
 
   public static void main(String[] args) throws Exception {
 
-    // On corrige le nom de la base de données et du MNT pour la zone de Rennes
+    // On corrige le nom de la BDD et du MNT pour la zone de Rennes
     Load.database = "test_simplu3d";
     Load.host = "172.16.0.87";
     Checker.zMin = 40;
@@ -56,18 +59,18 @@ public class LauncherRennes {
     // On affiche les données par défaut
     afficheMap(-1, -1);
 
-    // On ajoute le menu de sélection des versions
+    // Menu de sélection des versions
     fenPrincipale.getMainMenuBar().add(
         (new LauncherRennes()).generateCombobox());
 
-    // On ajoute le button de vérification des règles
+    // Bouton de vérification des règles
     fenPrincipale.getMainMenuBar().add((new LauncherRennes()).generateButton());
 
-    // On ajoute le button pour charger l'environnement autour d'une BPU
+    // Bouton pour charger l'environnement autour d'une BPU
     fenPrincipale.getMainMenuBar().add(
         (new LauncherRennes()).generateButtonBPU());
 
-    // On ajoute le button pour recharger l'environnement par défaut
+    // Bouton pour recharger l'environnement par défaut
     fenPrincipale.getMainMenuBar().add(
         (new LauncherRennes()).generateButtonDefaultView());
 
@@ -82,7 +85,6 @@ public class LauncherRennes {
    * @param idVersion l'identifiant de la version à charger
    * @throws Exception
    */
-
   public static void afficheMap(int idVersion, int idBPU) throws Exception {
 
     // On supprime les couches
@@ -93,14 +95,14 @@ public class LauncherRennes {
     carte.removeLayer("Gouttière");
 
     // On charge l'environnement depuis la base de données
-
     Environnement env;
-    
+
+    // Cas : environnement complet de base ou environnement complet avec version
     if (idBPU == -1) {
       carte.removeLayer("Route");
       carte.removeLayer("Parcelles");
       env = LoaderPostGISTest.load(null, idVersion);
-    } else {
+    } else { // Cas : environnement centré sur BPU avec ou sans version
       carte.removeLayer("Route");
       carte.removeLayer("Parcelles");
       env = LoaderBPU.load(idVersion, idBPU);
@@ -110,6 +112,39 @@ public class LauncherRennes {
     IFeatureCollection<AbstractBuilding> buildingColl = env.getBuildings();
     IFeatureCollection<Road> roadColl = env.getRoads();
     IFeatureCollection<CadastralParcel> parcelColl = env.getCadastralParcels();
+    IFeatureCollection<SubParcel> subParColl = env.getSubParcels();
+
+    // On initialise l'IFC pour les SCB
+    IFeatureCollection<SpecificCadastralBoundary> scbCollType0 = new FT_FeatureCollection<SpecificCadastralBoundary>();
+    IFeatureCollection<SpecificCadastralBoundary> scbCollType1 = new FT_FeatureCollection<SpecificCadastralBoundary>();
+    IFeatureCollection<SpecificCadastralBoundary> scbCollType2 = new FT_FeatureCollection<SpecificCadastralBoundary>();
+    IFeatureCollection<SpecificCadastralBoundary> scbCollType3 = new FT_FeatureCollection<SpecificCadastralBoundary>();
+    IFeatureCollection<SpecificCadastralBoundary> scbCollType4 = new FT_FeatureCollection<SpecificCadastralBoundary>();
+    IFeatureCollection<SpecificCadastralBoundary> scbCollType5 = new FT_FeatureCollection<SpecificCadastralBoundary>();
+
+    // On complète l'IFC des SCB en faisant une boucle sur les sous-parcelles
+    for (SubParcel currentSp : subParColl) {
+
+      IFeatureCollection<SpecificCadastralBoundary> scbCollTemp = currentSp
+          .getSpecificCadastralBoundaryColl();
+
+      for (SpecificCadastralBoundary currentSCB : scbCollTemp) {
+        if (currentSCB.getType() == 0) {
+          scbCollType0.add(currentSCB);
+        } else if (currentSCB.getType() == 1) {
+          scbCollType1.add(currentSCB);
+        } else if (currentSCB.getType() == 2) {
+          scbCollType2.add(currentSCB);
+        } else if (currentSCB.getType() == 3) {
+          scbCollType3.add(currentSCB);
+        } else if (currentSCB.getType() == 4) {
+          scbCollType4.add(currentSCB);
+        } else if (currentSCB.getType() == 5) {
+          scbCollType5.add(currentSCB);
+        }
+      }
+
+    }
 
     // On initialise des IFC pour les murs et les toits
     IFeatureCollection<SpecificWallSurface> wallColl = new FT_FeatureCollection<SpecificWallSurface>();
@@ -117,22 +152,22 @@ public class LauncherRennes {
 
     // On complète les IFC murs et toits en faisant une boucle sur les BP
     for (AbstractBuilding currentBP : buildingColl) {
+
       wallColl.add(currentBP.getWall());
-
       RoofSurface featRoof = currentBP.getRoof();
-      
-      if (currentBP.getIdVersion() == -1) {
 
+      if (currentBP.getIdVersion() == -1) {
         featRoof.setRepresentation(new Object2d(featRoof, Color.red));
       } else {
-
         featRoof.setRepresentation(new Object2d(featRoof, new Color(237, 145,
             33)));
       }
 
       roofColl.add(featRoof);
+
     }
 
+    // On initialise les IFC destinées à contenir les Gutter, Gable et Roofing
     IFeatureCollection<IFeature> featGutter = new FT_FeatureCollection<IFeature>();
     IFeatureCollection<IFeature> featGable = new FT_FeatureCollection<IFeature>();
     IFeatureCollection<IFeature> featRoofing = new FT_FeatureCollection<IFeature>();
@@ -165,21 +200,14 @@ public class LauncherRennes {
       featParcel.setRepresentation(new Object2d(featParcel, c));
     }
 
+    // On construit les couches
     VectorLayer roof = new VectorLayer(roofColl, "Toit");
-
     VectorLayer road = new VectorLayer(roadColl, "Route", true, Color.gray, 1,
         true);
-
     VectorLayer wall = new VectorLayer(wallColl, "Murs");
-
     VectorLayer parcel = new VectorLayer(parcelColl, "Parcelles");
 
-    // On ajoute les couches à la carte
-    carte.addLayer(roof);
-    carte.addLayer(road);
-    carte.addLayer(wall);
-    carte.addLayer(parcel);
-
+    // On ajoute les couches à la carte (dans l'ordre que l'on souhaite)
     Object1d.width = 4;
 
     if (!featGable.isEmpty()) {
@@ -199,6 +227,43 @@ public class LauncherRennes {
       carte.addLayer(vectGutter);
     }
 
+    carte.addLayer(roof);
+    carte.addLayer(wall);
+
+    if (!scbCollType0.isEmpty()) {
+      VectorLayer vectSCBType0 = new VectorLayer(scbCollType0, "SCB type 0",
+          Color.blue);
+      carte.addLayer(vectSCBType0);
+    }
+    if (!scbCollType1.isEmpty()) {
+      VectorLayer vectSCBType1 = new VectorLayer(scbCollType1, "SCB type 1",
+          Color.orange);
+      carte.addLayer(vectSCBType1);
+    }
+    if (!scbCollType2.isEmpty()) {
+      VectorLayer vectSCBType2 = new VectorLayer(scbCollType2, "SCB type 2",
+          Color.pink);
+      carte.addLayer(vectSCBType2);
+    }
+    if (!scbCollType3.isEmpty()) {
+      VectorLayer vectSCBType3 = new VectorLayer(scbCollType3, "SCB type 3",
+          Color.black);
+      carte.addLayer(vectSCBType3);
+    }
+    if (!scbCollType4.isEmpty()) {
+      VectorLayer vectSCBType4 = new VectorLayer(scbCollType4, "SCB type 4",
+          Color.cyan);
+      carte.addLayer(vectSCBType4);
+    }
+    if (!scbCollType5.isEmpty()) {
+      VectorLayer vectSCBType5 = new VectorLayer(scbCollType5, "SCB type 5",
+          Color.magenta);
+      carte.addLayer(vectSCBType5);
+    }
+
+    carte.addLayer(parcel);
+    carte.addLayer(road);
+
   }
 
   /**
@@ -209,44 +274,44 @@ public class LauncherRennes {
    * @throws Exception
    */
   private JComboBox<Version> generateCombobox() throws Exception {
-  
+
     // On génére les éléments à partir de la requête
     Vector<Version> lVersion = new Vector<>();
     lVersion.add(new Version(-1, "Données par défaut"));
-  
+
     // On récupère les numéros de version pour l'utilisateur donné
     List<Integer> listIdVersion = LoaderVersion
         .retrieveListIdVersionWithTableVersion(Load.host, Load.port,
             Load.database, Load.user, Load.pw, idUtilisateur);
-  
+
     // On ajoute les versions trouvées à la liste
     for (int j = 0; j < listIdVersion.size(); j++) {
       int id = listIdVersion.get(j);
       String nom = "Version " + Integer.toString(id);
       lVersion.add(new Version(id, nom));
     }
-  
+
     // On construit le menu déroulant
     JComboBox<Version> comb = new JComboBox<>(lVersion);
-  
+
     comb.setName("Menu_Version");
     comb.setSize(50, 20);
     comb.setSelectedIndex(0);
     comb.setVisible(true);
     comb.addActionListener(new ActionListener() {
-  
+
       @Override
       public void actionPerformed(ActionEvent e) {
         JComboBox<Version> cb = (JComboBox<Version>) e.getSource();
         Version selectedLine = (Version) cb.getSelectedItem();
-  
+
         System.out.println("Version n° " + selectedLine.getID());
         System.out.println("Version nom " + selectedLine.getNom());
-  
+
         int index = cb.getSelectedIndex();
-  
+
         System.out.println("Selected index " + index);
-  
+
         // On lance le chargement
         try {
           idVersionBase = selectedLine.getID();
@@ -255,11 +320,11 @@ public class LauncherRennes {
           // TODO Auto-generated catch block
           e1.printStackTrace();
         }
-  
+
       }
     });
     return comb;
-  
+
   }
 
   /**
@@ -270,8 +335,7 @@ public class LauncherRennes {
    */
   private JButton generateButton() {
 
-    JButton jB = new JButton(
-        "Vérifier les règles pour la/les parcelle(s) sélectionnée(s)");
+    JButton jB = new JButton("Vérifier les règles sur la sélection");
 
     jB.addActionListener(new ActionListener() {
 
@@ -295,6 +359,11 @@ public class LauncherRennes {
           List<UnrespectedRule> lUNRRep = new ArrayList<>();
 
           for (UnrespectedRule uR : lUNR) {
+
+            if (uR == null)
+              continue;
+
+            uR.generateRepresentation();
 
             if (uR.getRepresentation() != null) {
               lUNRRep.add(uR);
@@ -347,9 +416,7 @@ public class LauncherRennes {
         idBPUBase = idBPUextract;
 
         try {
-
           afficheMap(idVersionBase, idBPUextract);
-
         } catch (Exception e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();
@@ -378,7 +445,6 @@ public class LauncherRennes {
           idBPUBase = -1;
           idVersionBase = -1;
           afficheMap(idBPUBase, idVersionBase);
-
         } catch (Exception e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();
@@ -389,7 +455,6 @@ public class LauncherRennes {
     });
 
     return jButtonDef;
-
   }
 
   public class Version {

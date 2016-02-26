@@ -98,7 +98,7 @@ public class UnrespectedRule extends DefaultFeature {
 			
 			
 			ContrainteHauteurRepresentation cHRP = new ContrainteHauteurRepresentation(this, 30,
-					this.getMessage(),
+					"",
 					Color.black, 10, url.getPath(), 2.0, 1);
 
 			this.setRepresentation(cHRP);
@@ -140,7 +140,7 @@ public class UnrespectedRule extends DefaultFeature {
 			URL url = Symbology.class.getClassLoader().getResource("fr/ign/cogit/gtru/images/hauteur.png");
 
 			ContrainteHauteurRepresentation cHRP = new ContrainteHauteurRepresentation(this, 30,
-					this.message,
+					"",
 					Color.black, 10, url.getPath(), 2.0, 1);
 
 			this.setRepresentation(cHRP);
