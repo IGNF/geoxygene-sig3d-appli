@@ -88,6 +88,12 @@ public class LauncherRennes {
   public static void afficheMap(int idVersion, int idBPU) throws Exception {
 
     // On supprime les couches
+    carte.removeLayer("SCB type 0");
+    carte.removeLayer("SCB type 1");
+    carte.removeLayer("SCB type 2");
+    carte.removeLayer("SCB type 3");
+    carte.removeLayer("SCB type 4");
+    carte.removeLayer("SCB type 5");
     carte.removeLayer("Toit");
     carte.removeLayer("Murs");
     carte.removeLayer("Pignon");
