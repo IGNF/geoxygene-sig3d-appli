@@ -113,7 +113,7 @@ public class ContrainteHauteurRepresentation extends Default3DRep {
     super();
     this.feat = feat;
 
-    GM_Point p = (GM_Point) feat.getGeom();
+    GM_Point p = new GM_Point(feat.getGeom().coord().get(0));
     this.bGRep.addChild(ContrainteHauteurRepresentation.generateBG(p, hauteur,
         coul, width, "" + hMax, lineWidth, tailleText, imgPath));
 
