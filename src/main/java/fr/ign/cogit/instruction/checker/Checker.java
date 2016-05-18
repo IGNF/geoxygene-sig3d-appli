@@ -15,24 +15,22 @@ import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IAggregate;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiPoint;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.ISolid;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Operateurs;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToLineString;
-import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_Aggregate;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiPoint;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
-import fr.ign.cogit.gru3d.regleUrba.util.Prospect;
 import fr.ign.cogit.simplu3d.io.load.instruction.Load;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Road;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
 
@@ -191,8 +189,8 @@ public class Checker {
 						UnrespectedRule unr = new UnrespectedRule(
 								"Bande de constructibilité de fond de parcelle non respectée", 0, bP, feat, dpl.get(0),
 								dpl.get(1));
-						
-						IMultiPoint mp =new GM_MultiPoint();
+
+						IMultiPoint mp = new GM_MultiPoint();
 						mp.add(new GM_Point(dpl.get(0)));
 						unr.setGeom(mp);
 						lUNR.add(unr);
@@ -245,7 +243,7 @@ public class Checker {
 
 				for (AbstractBuilding bP : sP.getBuildingsParts()) {
 
-					List<SpecificWallSurface> lSWS = bP.getFacade();
+					List<SpecificWallSurface> lSWS = bP.getWallSurfaces();
 
 					// System.out.println("facades : " + lSWS);
 
@@ -305,7 +303,7 @@ public class Checker {
 
 			UnrespectedRule unr = new UnrespectedRule("CES mes " + (mult100 / 100) + " CES max " + ces + "", 1, bPU,
 					null, dpl.get(0), null);
-			
+
 			IMultiPoint mp = new GM_MultiPoint();
 			mp.add(new GM_Point(dpl.get(0)));
 
@@ -368,14 +366,11 @@ public class Checker {
 
 							UnrespectedRule unr = new UnrespectedRule("Prospect non respecté (route de plus de "
 									+ rules.getLargMaxProspect1() + " m de large", 2, ab, sc, null, null);
-							
-							
+
 							IMultiPoint mp = new GM_MultiPoint();
 							mp.add(new GM_Point(ab.getFootprint().centroid()));
 							mp.add(new GM_Point(sc.getGeom().coord().get(0)));
-							
-							
-							
+
 							unr.setGeom(mp);
 
 							lUNR.add(unr);
@@ -390,13 +385,10 @@ public class Checker {
 							UnrespectedRule unr = new UnrespectedRule("Prospect non respecté (route de moins de "
 									+ rules.getLargMaxProspect1() + " m de large", 3, ab, sc, null, null);
 
-						
 							IMultiPoint mp = new GM_MultiPoint();
 							mp.add(new GM_Point(ab.getFootprint().centroid()));
 							mp.add(new GM_Point(sc.getGeom().coord().get(0)));
-							
-							
-							
+
 							unr.setGeom(mp);
 
 							lUNR.add(unr);
@@ -524,15 +516,11 @@ public class Checker {
 					UnrespectedRule unr = new UnrespectedRule("Prospect latéral non respecté en seconde bande ", 6, ab,
 							new DefaultFeature(os), null, null);
 
-					
 					IMultiPoint mp = new GM_MultiPoint();
 					mp.add(new GM_Point(ab.getFootprint().centroid()));
 					mp.add(new GM_Point(os.coord().get(0)));
-					
-					
-					
-					unr.setGeom(mp);
 
+					unr.setGeom(mp);
 
 					lUNR.add(unr);
 
@@ -574,7 +562,7 @@ public class Checker {
 
 				UnrespectedRule unr = new UnrespectedRule("Non respect de la hauteur maximale en seconde bande ", 7, ab,
 						null, dpl.get(0), null);
-				
+
 				IMultiPoint mp = new GM_MultiPoint();
 				mp.add(new GM_Point(dpl.get(0)));
 
@@ -650,7 +638,7 @@ public class Checker {
 					// System.out.println("SCB : " + sc);
 					// System.out.println("SCB type : " + sc.getType());
 
-					if (sc.getType() == SpecificCadastralBoundary.ROAD) {
+					if (sc.getType() == SpecificCadastralBoundaryType.ROAD) {
 						lSC.add(sc);
 					}
 
@@ -673,7 +661,7 @@ public class Checker {
 
 				for (SpecificCadastralBoundary sc : sP.getSpecificCadastralBoundary()) {
 
-					if (sc.getType() == SpecificCadastralBoundary.ROAD) {
+					if (sc.getType() == SpecificCadastralBoundaryType.ROAD) {
 						img.addAll(FromGeomToLineString.convert(sc.getGeom()));
 					}
 
@@ -696,7 +684,7 @@ public class Checker {
 
 				for (SpecificCadastralBoundary sc : sP.getSpecificCadastralBoundary()) {
 
-					if (sc.getType() == SpecificCadastralBoundary.LAT) {
+					if (sc.getType() == SpecificCadastralBoundaryType.LAT) {
 						img.addAll(FromGeomToLineString.convert(sc.getGeom()));
 					}
 
@@ -725,7 +713,7 @@ public class Checker {
 
 				for (SpecificCadastralBoundary sc : sP.getSpecificCadastralBoundary()) {
 
-					if (sc.getType() == SpecificCadastralBoundary.BOT) {
+					if (sc.getType() == SpecificCadastralBoundaryType.BOT) {
 						img.addAll(FromGeomToLineString.convert(sc.getGeom()));
 					}
 

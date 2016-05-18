@@ -35,6 +35,7 @@ import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
 
 public class LauncherRennes {
 
@@ -135,17 +136,17 @@ public class LauncherRennes {
           .getSpecificCadastralBoundaryColl();
 
       for (SpecificCadastralBoundary currentSCB : scbCollTemp) {
-        if (currentSCB.getType() == 0) {
+        if (currentSCB.getType() == SpecificCadastralBoundaryType.ROAD) {
           scbCollType0.add(currentSCB);
-        } else if (currentSCB.getType() == 1) {
+        } else if (currentSCB.getType() == SpecificCadastralBoundaryType.LAT) {
           scbCollType1.add(currentSCB);
-        } else if (currentSCB.getType() == 2) {
+        } else if (currentSCB.getType() ==  SpecificCadastralBoundaryType.BOT) {
           scbCollType2.add(currentSCB);
-        } else if (currentSCB.getType() == 3) {
+        } else if (currentSCB.getType() ==  SpecificCadastralBoundaryType.INTRA) {
           scbCollType3.add(currentSCB);
-        } else if (currentSCB.getType() == 4) {
+        } else if (currentSCB.getType() ==  SpecificCadastralBoundaryType.UNKNOWN) {
           scbCollType4.add(currentSCB);
-        } else if (currentSCB.getType() == 5) {
+        } else if (currentSCB.getType() ==  SpecificCadastralBoundaryType.PUB) {
           scbCollType5.add(currentSCB);
         }
       }
@@ -159,7 +160,7 @@ public class LauncherRennes {
     // On complète les IFC murs et toits en faisant une boucle sur les BP
     for (AbstractBuilding currentBP : buildingColl) {
 
-      wallColl.add(currentBP.getWall());
+      wallColl.addAll(currentBP.getWallSurfaces());
       RoofSurface featRoof = currentBP.getRoof();
 
       if (currentBP.getIdVersion() == -1) {
