@@ -1,8 +1,9 @@
-package fr.ign.cogit.simplu3d.generation.facade;
+package fr.ign.cogit.generation;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.ign.cogit.generation.FacadeProcedural;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ITriangle;
@@ -13,7 +14,6 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Triangle;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
-import fr.ign.cogit.simplu3d.generation.FacadeProcedural;
 import fr.ign.cogit.simplu3d.model.Materiau;
 import fr.ign.cogit.simplu3d.model.RoofSurface;
 /**

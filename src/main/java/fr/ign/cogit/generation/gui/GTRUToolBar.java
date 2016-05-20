@@ -17,7 +17,6 @@ import fr.ign.cogit.geoxygene.sig3d.analysis.ProspectCalculation;
 import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion3DObject;
 import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
 import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
-import fr.ign.cogit.simplu3d.gui.actionPanel.ButtonActionPanel;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;

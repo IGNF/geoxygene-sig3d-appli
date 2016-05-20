@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.generation.toit;
+package fr.ign.cogit.generation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import fr.ign.cogit.generation.TopologieBatiment;
+import fr.ign.cogit.generation.TopologieBatiment.FormeEmpriseEnum;
 import fr.ign.cogit.geoxygene.api.feature.IPopulation;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
@@ -27,8 +29,6 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
-import fr.ign.cogit.simplu3d.generation.TopologieBatiment;
-import fr.ign.cogit.simplu3d.generation.TopologieBatiment.FormeEmpriseEnum;
 import fr.ign.cogit.simplu3d.model.RoofSurface;
 /**
  * 

@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.generation;
+package fr.ign.cogit.generation;
 
 import java.util.HashSet;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.Set;
 
 import com.vividsolutions.jts.geom.Polygon;
 
+import fr.ign.cogit.generation.emprise.GenerateEmprise;
+import fr.ign.cogit.generation.facade.GenerationFacade;
+import fr.ign.cogit.generation.toit.GenerationToit;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
@@ -17,9 +20,6 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.geoxygene.util.algo.JtsUtil;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
-import fr.ign.cogit.simplu3d.generation.emprise.GenerateEmprise;
-import fr.ign.cogit.simplu3d.generation.facade.GenerationFacade;
-import fr.ign.cogit.simplu3d.generation.toit.GenerationToit;
 import fr.ign.cogit.simplu3d.indicator.StoreyCalculation;
 import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.model.Materiau;

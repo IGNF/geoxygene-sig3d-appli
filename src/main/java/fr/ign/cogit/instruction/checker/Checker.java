@@ -24,15 +24,15 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_Aggregate;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiPoint;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
-import fr.ign.cogit.simplu3d.io.structDatabase.postgis.storer.BasicStorer;
+import fr.ign.cogit.simplu3d.io.structDatabase.postgis.ParametersInstructionPG;
 import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.Road;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.model.SpecificWallSurface;
 import fr.ign.cogit.simplu3d.model.SubParcel;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
 
 public class Checker {
 
@@ -49,7 +49,7 @@ public class Checker {
 	public static List<UnrespectedRule> checkSelection(IFeatureCollection<BasicPropertyUnit> bpuColl) throws Exception {
 
 		// On charge les règles depuis la base de données
-		Map<String, Rules> map = Rules.loadRulesFromDataBase(BasicStorer.host, BasicStorer.port, BasicStorer.user, BasicStorer.pw, BasicStorer.database);
+		Map<String, Rules> map = Rules.loadRulesFromDataBase(ParametersInstructionPG.host, ParametersInstructionPG.port, ParametersInstructionPG.user, ParametersInstructionPG.pw, ParametersInstructionPG.database);
 
 		// On vérifie le contenu de l'import des règles
 		System.out.println("\n" + "Résultat Import Règles : " + map.get("UB2").toString());

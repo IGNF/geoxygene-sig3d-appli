@@ -1,7 +1,9 @@
-package fr.ign.cogit.simplu3d.generation.toit;
-
+package fr.ign.cogit.generation;
 import java.util.List;
 
+import fr.ign.cogit.generation.ToitProcedural;
+import fr.ign.cogit.generation.TopologieBatiment;
+import fr.ign.cogit.generation.TopologieBatiment.FormeToitEnum;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
@@ -17,9 +19,6 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.geoxygene.util.algo.geomstructure.Segment;
-import fr.ign.cogit.simplu3d.generation.ToitProcedural;
-import fr.ign.cogit.simplu3d.generation.TopologieBatiment;
-import fr.ign.cogit.simplu3d.generation.TopologieBatiment.FormeToitEnum;
 import fr.ign.cogit.simplu3d.model.Materiau;
 import fr.ign.cogit.simplu3d.model.RoofSurface;
 /**

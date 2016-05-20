@@ -1,9 +1,9 @@
-package fr.ign.cogit.simplu3d.generation.toit;
+package fr.ign.cogit.generation;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.ign.cogit.simplu3d.generation.TopologieBatiment.FormeEmpriseEnum;
+import fr.ign.cogit.generation.TopologieBatiment.FormeEmpriseEnum;
 /**
  * 
  *        This software is released under the licence CeCILL

@@ -1,10 +1,9 @@
-package fr.ign.cogit.simplu3d.generation.emprise;
-
+package fr.ign.cogit.generation.emprise;
 
 import fr.ign.cogit.appli.geopensim.geom.ShapeFactory;
+import fr.ign.cogit.generation.TopologieBatiment.FormeEmpriseEnum;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
-import fr.ign.cogit.simplu3d.generation.TopologieBatiment.FormeEmpriseEnum;
 /**
  * 
  *        This software is released under the licence CeCILL

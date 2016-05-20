@@ -23,9 +23,9 @@ import fr.ign.cogit.geoxygene.sig3d.util.ColorLocalRandom;
 import fr.ign.cogit.instruction.checker.Checker;
 import fr.ign.cogit.instruction.checker.UnrespectedRule;
 import fr.ign.cogit.simplu3d.demo.structDatabase.LoaderPostGISTest;
+import fr.ign.cogit.simplu3d.io.structDatabase.postgis.ParametersInstructionPG;
 import fr.ign.cogit.simplu3d.io.structDatabase.postgis.loader.LoaderBPU;
 import fr.ign.cogit.simplu3d.io.structDatabase.postgis.loader.LoaderVersion;
-import fr.ign.cogit.simplu3d.io.structDatabase.postgis.storer.BasicStorer;
 import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
@@ -33,9 +33,9 @@ import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.model.Road;
 import fr.ign.cogit.simplu3d.model.RoofSurface;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.model.SpecificWallSurface;
 import fr.ign.cogit.simplu3d.model.SubParcel;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
 
 public class LauncherRennes {
 
@@ -49,8 +49,8 @@ public class LauncherRennes {
   public static void main(String[] args) throws Exception {
 
     // On corrige le nom de la BDD et du MNT pour la zone de Rennes
-    BasicStorer.database = "test_simplu3d";
-    BasicStorer.host = "172.16.0.87";
+	  ParametersInstructionPG.database = "test_simplu3d";
+	  ParametersInstructionPG.host = "172.16.0.87";
     Checker.zMin = 40;
 
     // On construit la fenêtre principale
@@ -288,8 +288,8 @@ public class LauncherRennes {
 
     // On récupère les numéros de version pour l'utilisateur donné
     List<Integer> listIdVersion = LoaderVersion
-        .retrieveListIdVersionWithTableVersion(BasicStorer.host, BasicStorer.port,
-            BasicStorer.database, BasicStorer.user, BasicStorer.pw, idUtilisateur);
+        .retrieveListIdVersionWithTableVersion(ParametersInstructionPG.host, ParametersInstructionPG.port,
+        		ParametersInstructionPG.database, ParametersInstructionPG.user, ParametersInstructionPG.pw, idUtilisateur);
 
     // On ajoute les versions trouvées à la liste
     for (int j = 0; j < listIdVersion.size(); j++) {

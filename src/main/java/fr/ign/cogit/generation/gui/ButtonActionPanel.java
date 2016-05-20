@@ -10,14 +10,14 @@ import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+import fr.ign.cogit.generation.ParametricBuilding;
+import fr.ign.cogit.generation.TopologieBatiment;
+import fr.ign.cogit.generation.TopologieBatiment.FormeEmpriseEnum;
+import fr.ign.cogit.generation.TopologieBatiment.FormeToitEnum;
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.Messages;
 import fr.ign.cogit.geoxygene.sig3d.gui.InterfaceMap3D;
-import fr.ign.cogit.simplu3d.generation.ParametricBuilding;
-import fr.ign.cogit.simplu3d.generation.TopologieBatiment;
-import fr.ign.cogit.simplu3d.generation.TopologieBatiment.FormeEmpriseEnum;
-import fr.ign.cogit.simplu3d.generation.TopologieBatiment.FormeToitEnum;
 import fr.ign.cogit.simplu3d.representation.theme.RepresentationBatiment;
 
 /**

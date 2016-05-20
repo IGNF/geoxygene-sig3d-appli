@@ -1,5 +1,4 @@
-package fr.ign.cogit.simplu3d.generation;
-
+package fr.ign.cogit.generation;
 import fr.ign.cogit.simplu3d.model.RoofSurface;
 /**
  * 

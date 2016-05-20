@@ -34,7 +34,6 @@ import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
 import fr.ign.cogit.geoxygene.sig3d.representation.Default3DRep;
 import fr.ign.cogit.geoxygene.sig3d.representation.basic.Object1d;
-import fr.ign.cogit.geoxygene.sig3d.representation.basic.Object2d;
 import fr.ign.cogit.geoxygene.sig3d.representation.texture.TextureManager;
 import fr.ign.cogit.geoxygene.sig3d.sample.Symbology;
 import fr.ign.cogit.geoxygene.sig3d.semantic.Map3D;
