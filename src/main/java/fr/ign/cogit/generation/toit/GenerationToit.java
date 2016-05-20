@@ -1,4 +1,4 @@
-package fr.ign.cogit.generation;
+package fr.ign.cogit.generation.toit;
 import java.util.List;
 
 import fr.ign.cogit.generation.ToitProcedural;

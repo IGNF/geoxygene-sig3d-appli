@@ -1,4 +1,4 @@
-package fr.ign.cogit.generation;
+package fr.ign.cogit.generation.toit;
 
 import java.util.ArrayList;
 import java.util.Collection;
