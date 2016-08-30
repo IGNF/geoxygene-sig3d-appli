@@ -61,7 +61,7 @@ public class GenerationToit {
     }
 
     // On affecte le matériau
-    t.setMat(m);
+    t.setMaterial(m);
 
     return t;
   }
@@ -88,8 +88,8 @@ public class GenerationToit {
     iS.add(emprise);
 
     // On affecte les géométries
-    t.setGeom(emprise);
-    t.setLod2MultiSurface(iS);
+    t.setGeom(iS);
+
 
     // On affecte les autres informations géographiques
     t.setGutter(iMS);
@@ -151,8 +151,8 @@ public class GenerationToit {
     iS.add(emprise);
 
     // On affecte les géométries
-    t.setGeom(emprise);
-    t.setLod2MultiSurface(iS);
+    t.setGeom(iS);
+   
 
     // On affecte les autres informations géographiques
     t.setGutter(new GM_MultiCurve<ILineString>(FromPolygonToLineString

@@ -58,8 +58,6 @@ public class Decoupage {
 
       IFeature feat = coll1.get(i);
 
-      Box3D b = new Box3D(feat.getGeom());
-
       // GM_Object geom = b.to_2D();
 
       if (geomDecoupeuse.contains(feat.getGeom())) {

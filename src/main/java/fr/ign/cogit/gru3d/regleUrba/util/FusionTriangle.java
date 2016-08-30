@@ -106,7 +106,6 @@ public class FusionTriangle {
 
       lCurveAtraiter = FusionTriangle.prepareLCurve(lCurveAtraiter);
 
-      int nbAgarder = 0;
 
       for (int j = 0; j < lCurveAtraiter.size(); j++) {
 
@@ -130,7 +129,6 @@ public class FusionTriangle {
 
         if (!exist) {
 
-          nbAgarder++;
           lCurveAGarder.add(cActu);
         }
       }
