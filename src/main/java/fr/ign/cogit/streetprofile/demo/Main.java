@@ -30,7 +30,7 @@ import fr.ign.cogit.streetprofile.model.Profile;
 public class Main {
 
   public static void main(String[] args) {
-	  
+	  //Mandatory due to precision trunk in Geoxygene core
 	  DirectPosition.PRECISION = 10;
 	  
 	  //Settings of out folder
