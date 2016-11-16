@@ -68,7 +68,7 @@ public class GenerationFacade {
 
       FacadeProcedural f = new FacadeProcedural();
       f.setGeom(mS);
-      f.setLod2MultiSurface(mS);
+
 
       if (lMat != null) {
 

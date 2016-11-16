@@ -1,6 +1,7 @@
 package fr.ign.cogit.generation;
 
-import fr.ign.cogit.simplu3d.model.SpecificWallSurface;
+import fr.ign.cogit.simplu3d.model.WallSurface;
+
 /**
  * 
  *        This software is released under the licence CeCILL
@@ -17,7 +18,7 @@ import fr.ign.cogit.simplu3d.model.SpecificWallSurface;
  * 
  * @version 1.0
  **/
-public class FacadeProcedural extends SpecificWallSurface{
+public class FacadeProcedural extends WallSurface{
   
   
   public FacadeProcedural(){

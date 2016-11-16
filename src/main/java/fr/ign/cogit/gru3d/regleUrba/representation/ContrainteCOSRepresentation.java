@@ -62,8 +62,6 @@ import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
  **/
 public class ContrainteCOSRepresentation extends Default3DRep {
 
-  private Texture2D text;
-
   public static void main(String[] args) {
 
     MainWindow fenPrincipale = new MainWindow();

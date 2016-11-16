@@ -9,8 +9,8 @@ import org.apache.log4j.Logger;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
 
-import fr.ign.cogit.appli.geopensim.feature.micro.FormeBatiment;
-import fr.ign.cogit.appli.geopensim.geom.ShapeFactory;
+import fr.ign.cogit.generation.emprise.FormeBatiment;
+import fr.ign.cogit.generation.emprise.ShapeFactory;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;

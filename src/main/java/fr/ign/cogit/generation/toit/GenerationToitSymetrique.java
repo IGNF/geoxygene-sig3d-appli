@@ -326,7 +326,7 @@ public class GenerationToitSymetrique {
 
     t.setGutter(goutOut);
     t.setGeom(generatedRoof);
-    t.setLod2MultiSurface(generatedRoof);
+
 
     return generatedRoof;
   }

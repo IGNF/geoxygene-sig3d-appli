@@ -15,6 +15,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
+import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.sig3d.semantic.DTM;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
@@ -23,7 +24,7 @@ import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.indicator.StoreyCalculation;
 import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.model.Materiau;
-import fr.ign.cogit.simplu3d.model.SpecificWallSurface;
+
 
 
 /**
@@ -132,7 +133,6 @@ public class ParametricBuilding extends Building {
       boolean[] facadesNonAveugles, IDirectPosition centre, double angle,
       DTM mnt, double angleToit) {
     super();
-    this.isNew = true;
     this.tB = tB;
     this.largeur = largeur;
     this.hauteur = hauteur;
@@ -218,11 +218,10 @@ public class ParametricBuilding extends Building {
       this.setRoofSurface(t);
     }else{
       this.getRoof().setGeom(t.getGeom());
-      this.getRoof().setGable(t.gable);
-      this.getRoof().setGutter(t.gutter);
-      this.getRoof().setRoofing(t.roofing);
+      this.getRoof().setGable(t.getGable());
+      this.getRoof().setGutter(t.getGutter());
+      this.getRoof().setRoofing(t.getRoofing());
       this.getRoof().setInteriorEdge(t.getInteriorEdge());
-      this.getRoof().setLod2MultiSurface(t.getLod2MultiSurface());
     }
 
 
@@ -237,13 +236,13 @@ public class ParametricBuilding extends Building {
     IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<IOrientableSurface>();
     iMS.addAll(this.getRoof().getLod2MultiSurface());
 
-    for (SpecificWallSurface f : lF) {
-      iMS.addAll(f.getLod2MultiSurface());
+    for (FacadeProcedural f : lF) {
+      iMS.addAll(FromGeomToSurface.convertGeom(f.getGeom()));
     }
 
     this.setFacade(lF);
     this.setGeom(iMS);
-    this.setLod2MultiSurface(iMS);
+
 
     return true;
 
@@ -463,7 +462,7 @@ public class ParametricBuilding extends Building {
   }
 
   public void changeTextureToit(Materiau materiau) {
-    this.getRoof().setMat(materiau);
+    this.getRoof().setMaterial(materiau);
     this.materiauToit = materiau;
   }
 

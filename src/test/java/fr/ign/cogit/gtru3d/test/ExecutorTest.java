@@ -1,14 +1,17 @@
 package fr.ign.cogit.gtru3d.test;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
+import fr.ign.cogit.geoxygene.sig3d.util.Java3DInstallated;
 import fr.ign.cogit.gru3d.regleUrba.Executor;
+import junit.framework.Assert;
 
 
 
 public class ExecutorTest {
+	
+	
+	private static boolean isJava3DInstalled = Java3DInstallated.isJava3DInstalled();
 
   /**
    * @param args
@@ -21,6 +24,8 @@ public class ExecutorTest {
   
   @Test
   public void testLoader(){
+	  
+	  if(!isJava3DInstalled) return;
     
     
     fr.ign.cogit.gru3d.regleUrba.Executor.DATA_REPOSITORY = ExecutorTest.class.getClassLoader()

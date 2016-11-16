@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.ign.cogit.appli.geopensim.feature.micro.FormeBatiment;
-import fr.ign.cogit.appli.geopensim.geom.ConstructionBatiment;
-import fr.ign.cogit.appli.geopensim.geom.ShapeFactory;
+import fr.ign.cogit.generation.emprise.ConstructionBatiment;
+import fr.ign.cogit.generation.emprise.FormeBatiment;
+import fr.ign.cogit.generation.emprise.ShapeFactory;
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;

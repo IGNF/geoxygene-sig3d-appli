@@ -21,16 +21,15 @@ import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.Environnement;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
 
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -40,183 +39,175 @@ import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
  * 
  * @version 1.0
  *
- * Barre d'outils permettant la génération de certains éléments réglementaires 
+ *          Barre d'outils permettant la génération de certains éléments
+ *          réglementaires
  * 
  * 
  *
  */
 public class GTRUToolBar extends JMenu implements ActionListener {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-  private MainWindow mW;
+	private MainWindow mW;
 
-  private JMenuItem mITemActionBatiment, butGenerateProspect,
-      butGenerateHeight, butAsBuilding;
+	private JMenuItem mITemActionBatiment, butGenerateProspect, butGenerateHeight, butAsBuilding;
 
-  private JMenu subMenuGenerateConstraint;
+	private JMenu subMenuGenerateConstraint;
 
-  private static int COUNT = 0;
+	private static int COUNT = 0;
 
-  public GTRUToolBar(MainWindow mW) {
+	public GTRUToolBar(MainWindow mW) {
 
-    super("GTRU3D");
-    this.mW = mW;
+		super("GTRU3D");
+		this.mW = mW;
 
-    mITemActionBatiment = new JMenuItem("Action Building");
-    mITemActionBatiment.addActionListener(this);
-    this.add(mITemActionBatiment);
+		mITemActionBatiment = new JMenuItem("Action Building");
+		mITemActionBatiment.addActionListener(this);
+		this.add(mITemActionBatiment);
 
-    butAsBuilding = new JMenuItem("Convert as Building");
-    butAsBuilding.addActionListener(this);
-    this.add(butAsBuilding);
+		butAsBuilding = new JMenuItem("Convert as Building");
+		butAsBuilding.addActionListener(this);
+		this.add(butAsBuilding);
 
-    subMenuGenerateConstraint = new JMenu("Generate constraint");
-    this.add(this.subMenuGenerateConstraint);
+		subMenuGenerateConstraint = new JMenu("Generate constraint");
+		this.add(this.subMenuGenerateConstraint);
 
-    this.butGenerateProspect = new JMenuItem("Generate prospect");
-    subMenuGenerateConstraint.add(this.butGenerateProspect);
-    this.butGenerateProspect.addActionListener(this);
+		this.butGenerateProspect = new JMenuItem("Generate prospect");
+		subMenuGenerateConstraint.add(this.butGenerateProspect);
+		this.butGenerateProspect.addActionListener(this);
 
-    this.butGenerateHeight = new JMenuItem("Generate height");
-    subMenuGenerateConstraint.add(this.butGenerateHeight);
-    this.butGenerateHeight.addActionListener(this);
+		this.butGenerateHeight = new JMenuItem("Generate height");
+		subMenuGenerateConstraint.add(this.butGenerateHeight);
+		this.butGenerateHeight.addActionListener(this);
 
-    this.mW.getMainMenuBar().add(this);
+		this.mW.getMainMenuBar().add(this);
 
-  }
+	}
 
-  @Override
-  public void actionPerformed(ActionEvent e) {
+	@Override
+	public void actionPerformed(ActionEvent e) {
 
-    Object source = e.getSource();
+		Object source = e.getSource();
 
-    if (source == mITemActionBatiment) {
+		if (source == mITemActionBatiment) {
 
-      mW.getActionPanel().setActionComponent(
-          new ButtonActionPanel(mW.getInterfaceMap3D()));
+			mW.getActionPanel().setActionComponent(new ButtonActionPanel(mW.getInterfaceMap3D()));
 
-    }
+		}
 
-    IFeatureCollection<IFeature> sel = this.mW.getInterfaceMap3D()
-        .getSelection();
+		IFeatureCollection<IFeature> sel = this.mW.getInterfaceMap3D().getSelection();
 
-    if (sel.isEmpty()) {
+		if (sel.isEmpty()) {
 
-      JOptionPane.showMessageDialog(this,
-          "Module de règles d'urbanisme", "Aucune parcelle sélectionnée", //$NON-NLS-1$//$NON-NLS-2$ 
-          JOptionPane.ERROR_MESSAGE);
-      return;
+			JOptionPane.showMessageDialog(this, "Module de règles d'urbanisme", "Aucune parcelle sélectionnée", //$NON-NLS-1$//$NON-NLS-2$
+					JOptionPane.ERROR_MESSAGE);
+			return;
 
-    }
+		}
 
-    if (source == butAsBuilding) {
+		if (source == butAsBuilding) {
 
-      IFeatureCollection<Building> new_Buildings = new FT_FeatureCollection<Building>();
+			IFeatureCollection<Building> new_Buildings = new FT_FeatureCollection<Building>();
 
-      for (IFeature feat : sel) {
+			for (IFeature feat : sel) {
 
-        new_Buildings.add(new Building(feat.getGeom()));
+				new_Buildings.add(new Building(feat.getGeom()));
 
-      }
+			}
 
-      VectorLayer vL2 = new VectorLayer(new_Buildings, "Result : " + (++COUNT),
-          Color.green);
+			VectorLayer vL2 = new VectorLayer(new_Buildings, "Result : " + (++COUNT), Color.green);
 
-      this.mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vL2);
-    }
+			this.mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vL2);
+		}
 
-    // //////////Cette partie ne concerne que les unités foncières
+		// //////////Cette partie ne concerne que les unités foncières
 
-    IFeatureCollection<BasicPropertyUnit> bPUColl = new FT_FeatureCollection<BasicPropertyUnit>();
+		IFeatureCollection<BasicPropertyUnit> bPUColl = new FT_FeatureCollection<BasicPropertyUnit>();
 
-    for (IFeature feat : sel) {
-      if (feat instanceof CadastralParcel) {
+		for (IFeature feat : sel) {
+			if (feat instanceof CadastralParcel) {
 
-        bPUColl.addUnique(((CadastralParcel) feat).getbPU());
+				bPUColl.addUnique(((CadastralParcel) feat).getbPU());
 
-      }
+			}
 
-    }
+		}
 
-    if (source == butGenerateHeight) {
+		if (source == butGenerateHeight) {
 
-      String s = (String) JOptionPane.showInputDialog(this,
-          "Quelle hauteur ? ", "Extrusion", JOptionPane.QUESTION_MESSAGE, null,
-          null, // c'est ouvert !!!
-          10); // valeur initiale
+			String s = (String) JOptionPane.showInputDialog(this, "Quelle hauteur ? ", "Extrusion",
+					JOptionPane.QUESTION_MESSAGE, null, null, // c'est ouvert
+																// !!!
+					10); // valeur initiale
 
-      double d = Double.parseDouble(s);
+			double d = Double.parseDouble(s);
 
-      if (!Double.isNaN(d)) {
+			if (!Double.isNaN(d)) {
 
-        IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<IFeature>();
+				IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<IFeature>();
 
-        for (BasicPropertyUnit bPU : bPUColl) {
+				for (BasicPropertyUnit bPU : bPUColl) {
 
-          IGeometry geom = Extrusion3DObject.conversionFromGeom(
-              bPU.generateGeom(), d);
-          featColl.add(new DefaultFeature(geom));
+					IGeometry geom = Extrusion3DObject.conversionFromGeom(bPU.generateGeom(), d);
+					featColl.add(new DefaultFeature(geom));
 
-        }
+				}
 
-        VectorLayer vL2 = new VectorLayer(featColl, "Result : " + (++COUNT),
-            Color.green);
-        this.mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vL2);
+				VectorLayer vL2 = new VectorLayer(featColl, "Result : " + (++COUNT), Color.green);
+				this.mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vL2);
 
-      }
+			}
 
-    }
+		}
 
-    if (source == butGenerateProspect) {
+		if (source == butGenerateProspect) {
 
-      String s = (String) JOptionPane.showInputDialog(this,
-          "Quelle hauteur initiale ? ", "Prospect",
-          JOptionPane.QUESTION_MESSAGE, null, null, // c'est ouvert !!!
-          10); // valeur initiale
+			String s = (String) JOptionPane.showInputDialog(this, "Quelle hauteur initiale ? ", "Prospect",
+					JOptionPane.QUESTION_MESSAGE, null, null, // c'est ouvert
+																// !!!
+					10); // valeur initiale
 
-      double hIni = Double.parseDouble(s);
+			double hIni = Double.parseDouble(s);
 
-      s = (String) JOptionPane.showInputDialog(this, "Quelle pente ? ",
-          "Prospect", JOptionPane.QUESTION_MESSAGE, null, null, // c'est ouvert
-                                                                // !!!
-          10); // valeur initiale
+			s = (String) JOptionPane.showInputDialog(this, "Quelle pente ? ", "Prospect", JOptionPane.QUESTION_MESSAGE,
+					null, null, // c'est ouvert
+								// !!!
+					10); // valeur initiale
 
-      double slope = Double.parseDouble(s);
+			double slope = Double.parseDouble(s);
 
-      if (!Double.isNaN(hIni) && !Double.isInfinite(slope)) {
+			if (!Double.isNaN(hIni) && !Double.isInfinite(slope)) {
 
-        IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<IFeature>();
+				IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<IFeature>();
 
-        for (IFeature feat : sel) {
+				for (IFeature feat : sel) {
 
-          if (feat instanceof SpecificCadastralBoundary) {
+					if (feat instanceof ParcelBoundary) {
 
-            for (CadastralParcel cP : Environnement.getInstance()
-                .getCadastralParcels()) {
+						for (CadastralParcel cP : Environnement.getInstance().getCadastralParcels()) {
 
-              if (cP.getSpecificCadastralBoundary().contains(feat)) {
-                IGeometry geom = ProspectCalculation.calculate(cP.getGeom(),
-                    feat.getGeom(), slope, hIni);
-                featColl.add(new DefaultFeature(geom));
-              }
+							if (cP.getBoundaries().contains(feat)) {
+								IGeometry geom = ProspectCalculation.calculate(cP.getGeom(), feat.getGeom(), slope,
+										hIni);
+								featColl.add(new DefaultFeature(geom));
+							}
 
-            }
+						}
 
-          }
+					}
 
-        }
+				}
 
-        VectorLayer vL2 = new VectorLayer(featColl, "Result : " + (++COUNT),
-            Color.green);
-        this.mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vL2);
+				VectorLayer vL2 = new VectorLayer(featColl, "Result : " + (++COUNT), Color.green);
+				this.mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vL2);
 
-      }
+			}
 
-    }
+		}
 
-  }
+	}
 }
