@@ -13,6 +13,12 @@ public class BuildingProfileParameters {
 
   //Nom de l'identifiant des bâtiments
    public final static String ID = "FID";
+   
+   
+   //Attributes stored in profile points
+	public static String NAM_ATT_X = "X";
+	public static String NAM_ATT_Y = "Y";
+	public static String NAM_ATT_DISTANCE = "Distance";
   
     
 }

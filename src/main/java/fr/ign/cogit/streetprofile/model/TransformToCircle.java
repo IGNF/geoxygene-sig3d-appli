@@ -40,9 +40,9 @@ public class TransformToCircle {
       try {
         IFeature pOut = point.cloneGeom();
 
-        double x = Double.parseDouble(pOut.getAttribute("X").toString());
+        double x = Double.parseDouble(pOut.getAttribute(BuildingProfileParameters.NAM_ATT_X).toString());
 
-        double y = Double.parseDouble(pOut.getAttribute("Y").toString());
+        double y = Double.parseDouble(pOut.getAttribute(BuildingProfileParameters.NAM_ATT_Y).toString());
 
         double valAlpha = x * pas;
 

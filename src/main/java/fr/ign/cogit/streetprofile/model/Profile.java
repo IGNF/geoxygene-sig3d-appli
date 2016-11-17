@@ -52,6 +52,10 @@ import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
  */
 public class Profile {
 
+	public enum SIDE {
+		UPSIDE, DOWNSIDE, BOTH
+	}
+
 	private static Logger logger = Logger.getLogger(Profile.class);
 
 	// ---------------------------------- ATTRIBUTS
@@ -107,7 +111,7 @@ public class Profile {
 		return pas;
 	}
 
-	public double getZSyep() {
+	public double getZStep() {
 		return pasZ;
 	}
 
@@ -205,7 +209,7 @@ public class Profile {
 	/**
 	 * Ensemble des points projetés
 	 */
-	private IFeatureCollection<IFeature> pproj;
+	private IFeatureCollection<IFeature> pproj = null;
 
 	/**
 	 * 
@@ -238,7 +242,7 @@ public class Profile {
 	public Profile(IFeatureCollection<? extends IFeature> roadsProfiled,
 			IFeatureCollection<? extends IFeature> buildings, IFeatureCollection<? extends IFeature> parcels) {
 		this.roadsProfiled = new FT_FeatureCollection<>();
-		this.roadsProfiled.addAll(roadsProfiled);	
+		this.roadsProfiled.addAll(roadsProfiled);
 		this.setBuildings(buildings);
 		this.setParcels(parcels);
 	}
@@ -260,8 +264,9 @@ public class Profile {
 	 * @param zMax
 	 *            altitude maximale pour le calcul du profil
 	 */
-	public Profile(IFeatureCollection<? extends IFeature> roadsProfiled, IFeatureCollection<? extends IFeature> buildings,
-			IFeatureCollection<? extends IFeature> parcels, double zMin, double zMax) {
+	public Profile(IFeatureCollection<? extends IFeature> roadsProfiled,
+			IFeatureCollection<? extends IFeature> buildings, IFeatureCollection<? extends IFeature> parcels,
+			double zMin, double zMax) {
 		this(roadsProfiled, buildings, parcels);
 		this.setAltMin(zMin);
 		this.setAltMax(zMax);
@@ -291,14 +296,15 @@ public class Profile {
 	 * @param stepZ
 	 *            pas en z pour les lancers de rayons
 	 */
-	public Profile(IFeatureCollection<? extends IFeature> roadsProfiled, IFeatureCollection<? extends IFeature> buildings,
-			IFeatureCollection<? extends IFeature> parcels, double zMin, double zMax, double stepXY, double stepZ) {
+	public Profile(IFeatureCollection<? extends IFeature> roadsProfiled,
+			IFeatureCollection<? extends IFeature> buildings, IFeatureCollection<? extends IFeature> parcels,
+			double zMin, double zMax, double stepXY, double stepZ) {
 		this(roadsProfiled, buildings, parcels, zMin, zMax);
 		this.setXYStep(stepXY);
 		this.setZStep(stepZ);
 	}
 
-	// ----------------------------------- METHODES
+	// ----------------------------------- METHODES de calcul
 	// ----------------------------------
 
 	// -------------------------------------------------------------------------------
@@ -350,46 +356,6 @@ public class Profile {
 
 	public void loadData() {
 		loadData(true);
-	}
-
-	/**
-	 * Méthode affichant la scène. A appeler avant updateDisplay
-	 */
-	public void display() {
-
-		logger.info("-------------------------------------------");
-		logger.info("Affichage graphique");
-		logger.info("-------------------------------------------");
-
-		if (bati == null) {
-			logger.error("Erreur : les données bâtis doivent être chargées avant affichage");
-			return;
-		}
-
-		if (parcelle == null) {
-			logger.error("Erreur : les données parcellaires doivent être chargées avant affichage");
-			return;
-		}
-
-		for (IFeature feat : bati) {
-
-			feat.setRepresentation(new ObjectCartoon(feat, Color.lightGray));
-		}
-
-		for (IFeature p : parcelle) {
-			p.setRepresentation(new ObjectCartoon(p, ColorRandom.getRandomColor()));
-		}
-
-		MainWindow fenetre = new MainWindow();
-		fenetre.getInterfaceMap3D().removeLight(0);
-		carte = fenetre.getInterfaceMap3D().getCurrent3DMap();
-
-		carte.addLayer(new VectorLayer(bati, "Batiments"));
-		carte.addLayer(new VectorLayer(roadsProfiled, "Routes", Color.RED));
-		carte.addLayer(new VectorLayer(parcelle, "Parcelles"));
-
-		displayInit = true;
-
 	}
 
 	/**
@@ -500,8 +466,10 @@ public class Profile {
 			ILineString ls1 = new GM_LineString(dplLineS1);
 
 			// Création d'une entité pour afficher avec la géométrie de la ligne
-			featOrthoColl.add(new DefaultFeature(ls));
-			featOrthoColl.add(new DefaultFeature(ls1));
+			if (displayInit) {
+				featOrthoColl.add(new DefaultFeature(ls));
+				featOrthoColl.add(new DefaultFeature(ls1));
+			}
 
 			double X = i * pas;
 
@@ -554,11 +522,11 @@ public class Profile {
 
 							// Ajout de l'attribut distance)
 							Object O = pointbati2.getAttribute("Distance");
-							AttributeManager.addAttribute(ftP, "DistanceP", O, "Double");
+							AttributeManager.addAttribute(ftP, BuildingProfileParameters.NAM_ATT_DISTANCE, O, "Double");
 							Object Ox = X;
-							AttributeManager.addAttribute(ftP, "X", Ox, "Double");
+							AttributeManager.addAttribute(ftP, BuildingProfileParameters.NAM_ATT_X, Ox, "Double");
 							Object Oy = Y1;
-							AttributeManager.addAttribute(ftP, "Y", Oy, "Double");
+							AttributeManager.addAttribute(ftP, BuildingProfileParameters.NAM_ATT_Y, Oy, "Double");
 							Object Oid = pointbati2.getAttribute(BuildingProfileParameters.ID);
 							AttributeManager.addAttribute(ftP, BuildingProfileParameters.ID, Oid, "Double");
 							pproj.add(ftP);
@@ -600,11 +568,12 @@ public class Profile {
 
 							IFeature ftP1 = (new DefaultFeature(new GM_Point(ptproj1)));
 							Object O1 = pointbati1.getAttribute("Distance");
-							AttributeManager.addAttribute(ftP1, "DistanceP", O1, "Double");
+							AttributeManager.addAttribute(ftP1, BuildingProfileParameters.NAM_ATT_DISTANCE, O1,
+									"Double");
 							Object Ox1 = X;
-							AttributeManager.addAttribute(ftP1, "X", Ox1, "Double");
+							AttributeManager.addAttribute(ftP1, BuildingProfileParameters.NAM_ATT_X, Ox1, "Double");
 							Object Oy1 = Y2;
-							AttributeManager.addAttribute(ftP1, "Y", Oy1, "Double");
+							AttributeManager.addAttribute(ftP1, BuildingProfileParameters.NAM_ATT_Y, Oy1, "Double");
 							Object Oid1 = pointbati1.getAttribute(BuildingProfileParameters.ID);
 							AttributeManager.addAttribute(ftP1, BuildingProfileParameters.ID, Oid1, "Double");
 							pproj.add(ftP1);
@@ -633,40 +602,6 @@ public class Profile {
 			}
 		}
 
-		double Max = 0;
-		double Min = Double.POSITIVE_INFINITY;
-		double opa = 1;
-
-		for (IFeature ftpp2 : batibati) {
-
-			double A = (Double) ftpp2.getAttribute("Distance");
-
-			if (A > Max) {
-				Max = A;
-			}
-			if (A < Min) {
-				Min = A;
-			}
-
-		}
-		for (IFeature ftpp1 : batibati1) {
-
-			double A = (Double) ftpp1.getAttribute("Distance");
-
-			if (A > Max) {
-				Max = A;
-			}
-			if (A < Min) {
-				Min = A;
-			}
-
-			if (displayInit) {
-				Color degr = BuildingProfileTools.degrade(Min, Max, A);
-				ftpp1.setRepresentation(new Object0d(ftpp1, true, degr, opa, true));
-			}
-
-		}
-
 		if (!displayInit) {
 			logger.info("-------------------------------------------");
 			logger.info("Fin de la procédure de calcul");
@@ -674,30 +609,11 @@ public class Profile {
 
 		}
 
-		// Affectation des représentations
-		for (IFeature ftpp2 : batibati) {
-
-			double A = (Double) ftpp2.getAttribute("Distance");
-
-			Color degr = BuildingProfileTools.degrade(Min, Max, A);
-
-			ftpp2.setRepresentation(new Object0d(ftpp2, true, degr, opa, true));
-
-		}
-		for (IFeature ftpp1 : batibati1) {
-
-			double A = (Double) ftpp1.getAttribute("Distance");
-
-			Color degr = BuildingProfileTools.degrade(Min, Max, A);
-
-			ftpp1.setRepresentation(new Object0d(ftpp1, true, degr, opa, true));
-
-		}
-
-		logger.info("-------------------------------------------");
-		logger.info("Fin de la procédure de calcul");
-
 	}
+
+	////////////////////////
+	//// EXPORT METHODE
+	///////////////////////
 
 	/**
 	 * Méthode de sauvegarde des points projetés
@@ -740,6 +656,132 @@ public class Profile {
 
 	}
 
+	// Select points on a side
+	public IFeatureCollection<IFeature> selectSide(SIDE side) {
+
+		IFeatureCollection<IFeature> iFeatureCollOut = new FT_FeatureCollection<>();
+
+		if (pproj == null) {
+			logger.error("Erreur : profile is not generated");
+			return iFeatureCollOut;
+		}
+
+		for (IFeature feat : this.pproj) {
+
+			double y = Double.parseDouble(feat.getAttribute(BuildingProfileParameters.NAM_ATT_Y).toString());
+
+			if (side.equals(SIDE.BOTH)) {
+				iFeatureCollOut.add(feat);
+			} else if (side.equals(SIDE.UPSIDE) && y > 0) {
+				iFeatureCollOut.add(feat);
+			} else if (side.equals(SIDE.DOWNSIDE) && y < 0) {
+				iFeatureCollOut.add(feat);
+			}
+
+		}
+
+		return iFeatureCollOut;
+
+	}
+
+	public List<Double> getHeightAlongRoad(SIDE side) {
+
+		List<Double> heights = new ArrayList<>();
+
+		if (pproj == null) {
+			logger.error("Erreur : profile is not generated");
+			return heights;
+		}
+
+		for (int i = 0; i < counterX; i++) {
+
+			IFeatureCollection<IFeature> iFeatureCollTemp = this.getPointAtXstep(i * this.getXYStep(), side);
+
+			heights.add(iFeatureCollTemp.size() * this.getZStep());
+
+		}
+
+		return heights;
+	}
+
+	// Get the points at the X value
+	public IFeatureCollection<IFeature> getPointAtXstep(double xValue, SIDE side) {
+
+		IFeatureCollection<IFeature> iFeatureCollOut = new FT_FeatureCollection<>();
+
+		if (pproj == null) {
+			logger.error("Erreur : profile is not generated");
+			return iFeatureCollOut;
+		}
+
+		for (IFeature feat : this.pproj) {
+
+			double x = Double.parseDouble(feat.getAttribute(BuildingProfileParameters.NAM_ATT_X).toString());
+
+			if (x != xValue) {
+				continue;
+			}
+
+			double y = Double.parseDouble(feat.getAttribute(BuildingProfileParameters.NAM_ATT_Y).toString());
+
+			if (side.equals(SIDE.BOTH)) {
+				iFeatureCollOut.add(feat);
+			} else if (side.equals(SIDE.UPSIDE) && y > 0) {
+				iFeatureCollOut.add(feat);
+			} else if (side.equals(SIDE.DOWNSIDE) && y < 0) {
+				iFeatureCollOut.add(feat);
+			}
+
+		}
+
+		return iFeatureCollOut;
+
+	}
+
+	///////////////////////////////
+	//// Display CODE
+	///////////////////////////////
+
+	/**
+	 * Méthode affichant la scène. A appeler avant updateDisplay
+	 */
+	public void display() {
+
+		logger.info("-------------------------------------------");
+		logger.info("Affichage graphique");
+		logger.info("-------------------------------------------");
+
+		if (bati == null) {
+			logger.error("Erreur : les données bâtis doivent être chargées avant affichage");
+			return;
+		}
+
+		if (parcelle == null) {
+			logger.error("Erreur : les données parcellaires doivent être chargées avant affichage");
+			return;
+		}
+
+		for (IFeature feat : bati) {
+
+			feat.setRepresentation(new ObjectCartoon(feat, Color.lightGray));
+		}
+
+		for (IFeature p : parcelle) {
+			p.setRepresentation(new ObjectCartoon(p, ColorRandom.getRandomColor()));
+		}
+
+		MainWindow fenetre = new MainWindow();
+		fenetre.getInterfaceMap3D().removeLight(0);
+		carte = fenetre.getInterfaceMap3D().getCurrent3DMap();
+
+		carte.addLayer(new VectorLayer(bati, "Buildings"));
+		carte.addLayer(new VectorLayer(roadsProfiled, "Roads", Color.RED));
+		carte.addLayer(new VectorLayer(parcelle, "Parcels"));
+
+		displayInit = true;
+
+	}
+
 	/**
 	 * Méthode de rafraîchissement de l'affichage graphique. A appeler après
 	 * display() et process()
@@ -750,6 +792,60 @@ public class Profile {
 
 			logger.error("Erreur : la méthode display doit avoir été appelée pour pouvoir rafraîchir l'affichage");
 			return;
+
+		}
+
+		double Max = 0;
+		double Min = Double.POSITIVE_INFINITY;
+		double opa = 1;
+
+		for (IFeature ftpp2 : batibati) {
+
+			double A = (Double) ftpp2.getAttribute("Distance");
+
+			if (A > Max) {
+				Max = A;
+			}
+			if (A < Min) {
+				Min = A;
+			}
+
+		}
+		for (IFeature ftpp1 : batibati1) {
+
+			double A = (Double) ftpp1.getAttribute("Distance");
+
+			if (A > Max) {
+				Max = A;
+			}
+			if (A < Min) {
+				Min = A;
+			}
+
+			if (displayInit) {
+				Color degr = BuildingProfileTools.degrade(Min, Max, A);
+				ftpp1.setRepresentation(new Object0d(ftpp1, true, degr, opa, true));
+			}
+
+		}
+
+		// Affectation des représentations
+		for (IFeature ftpp2 : batibati) {
+
+			double A = (Double) ftpp2.getAttribute("Distance");
+
+			Color degr = BuildingProfileTools.degrade(Min, Max, A);
+
+			ftpp2.setRepresentation(new Object0d(ftpp2, true, degr, opa, true));
+
+		}
+		for (IFeature ftpp1 : batibati1) {
+
+			double A = (Double) ftpp1.getAttribute("Distance");
+
+			Color degr = BuildingProfileTools.degrade(Min, Max, A);
+
+			ftpp1.setRepresentation(new Object0d(ftpp1, true, degr, opa, true));
 
 		}
 
