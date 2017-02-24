@@ -25,7 +25,7 @@ import fr.ign.cogit.geoxygene.sig3d.util.ColorRandom;
 import fr.ign.cogit.gru3d.regleUrba.propositionBuilding.PropositionCOS;
 import fr.ign.cogit.gru3d.regleUrba.propositionBuilding.PropositionResidential;
 import fr.ign.cogit.gru3d.regleUrba.propositionScenario.ProposeCOS;
-import fr.ign.cogit.gru3d.regleUrba.reglesUrbanismes.ihm.MainWindow;
+import fr.ign.cogit.gru3d.regleUrba.reglesUrbanismes.ihm.UrbanRulesWindow;
 import fr.ign.cogit.gru3d.regleUrba.reglesUrbanismes.io.Chargement;
 import fr.ign.cogit.gru3d.regleUrba.reglesUrbanismes.regles.PLU;
 import fr.ign.cogit.gru3d.regleUrba.reglesUrbanismes.regles.Regle;
@@ -116,7 +116,7 @@ public class BarreReglesUrbanisme extends JMenu implements ActionListener {
 
     if (o.equals(this.butDefinirRegle)) {
       // On affiche l'éditeur de règles
-      (new MainWindow(false)).setVisible(true);
+      (new UrbanRulesWindow(false)).setVisible(true);
       return;
     }
 

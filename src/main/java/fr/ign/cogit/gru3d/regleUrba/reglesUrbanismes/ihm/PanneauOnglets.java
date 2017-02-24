@@ -32,11 +32,11 @@ public class PanneauOnglets extends JPanel {
 	 */
   private static final long serialVersionUID = 5348795190442549234L;
 
-  private MainWindow fenetrePrincipale;
+  private UrbanRulesWindow fenetrePrincipale;
 
   protected static int compteurModif = 0;
 
-  public PanneauOnglets(MainWindow fen) {
+  public PanneauOnglets(UrbanRulesWindow fen) {
     super(new GridLayout(1, 1));
 
     this.tPane = new JTabbedPane();

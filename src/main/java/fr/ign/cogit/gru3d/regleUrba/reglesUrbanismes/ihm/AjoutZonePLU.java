@@ -33,7 +33,7 @@ import fr.ign.cogit.gru3d.regleUrba.reglesUrbanismes.regles.ZonePLU;
 public class AjoutZonePLU extends JDialog implements WindowListener,
     ActionListener {
 
-  private MainWindow fen;
+  private UrbanRulesWindow fen;
 
   // Zone d'inscription du nom de la zone
   private JTextField jTFNomZone;
@@ -54,7 +54,7 @@ public class AjoutZonePLU extends JDialog implements WindowListener,
    * Initialisation de la fenetre
    * @param f
    */
-  public AjoutZonePLU(MainWindow fen) {
+  public AjoutZonePLU(UrbanRulesWindow fen) {
     super();
 
     this.fen = fen;

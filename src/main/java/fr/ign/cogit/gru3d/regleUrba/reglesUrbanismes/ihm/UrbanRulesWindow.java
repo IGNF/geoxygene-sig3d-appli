@@ -26,7 +26,7 @@ import javax.swing.WindowConstants;
  * 
  * @version 1.0
  **/
-public class MainWindow extends JFrame implements WindowListener,
+public class UrbanRulesWindow extends JFrame implements WindowListener,
     WindowFocusListener {
 
   public BarreMenu getMenu() {
@@ -45,7 +45,7 @@ public class MainWindow extends JFrame implements WindowListener,
   private BarreMenu menu;
   private PanneauOnglets panneauOnglets;
 
-  public MainWindow(final boolean isAlone) {
+  public UrbanRulesWindow(final boolean isAlone) {
 
     super();
 
@@ -99,7 +99,7 @@ public class MainWindow extends JFrame implements WindowListener,
     this.addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {
-        MainWindow.this.dispose();
+        UrbanRulesWindow.this.dispose();
         
         if(isAlone){
           System.exit(NORMAL);
@@ -115,7 +115,7 @@ public class MainWindow extends JFrame implements WindowListener,
 
   public static void main(String[] args) {
 
-    (new MainWindow(true)).setVisible(true);
+    (new UrbanRulesWindow(true)).setVisible(true);
 
   }
 

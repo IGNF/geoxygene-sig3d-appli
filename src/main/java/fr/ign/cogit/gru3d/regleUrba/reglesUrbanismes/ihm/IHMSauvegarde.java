@@ -53,7 +53,7 @@ public class IHMSauvegarde extends JDialog implements WindowListener,
   JButton ok = new JButton();
   JButton annul = new JButton();
 
-  private MainWindow fenetreP;
+  private UrbanRulesWindow fenetreP;
 
   /**
 	 */
@@ -65,7 +65,7 @@ public class IHMSauvegarde extends JDialog implements WindowListener,
    * 
    * @param regle
    */
-  public IHMSauvegarde(MainWindow fenetre) {
+  public IHMSauvegarde(UrbanRulesWindow fenetre) {
     super();
     // Elle est rendue modale
     this.setFocusable(true);

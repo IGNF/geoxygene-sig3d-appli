@@ -52,7 +52,7 @@ public class IHMChargement extends JDialog implements WindowListener,
   JButton ok = new JButton();
   JButton annul = new JButton();
 
-  private MainWindow fenetreP;
+  private UrbanRulesWindow fenetreP;
 
   /**
 	 */
@@ -64,7 +64,7 @@ public class IHMChargement extends JDialog implements WindowListener,
    * 
    * @param regle
    */
-  public IHMChargement(MainWindow fenetre) {
+  public IHMChargement(UrbanRulesWindow fenetre) {
     super();
     // Elle est rendue modale
     this.setFocusable(true);
