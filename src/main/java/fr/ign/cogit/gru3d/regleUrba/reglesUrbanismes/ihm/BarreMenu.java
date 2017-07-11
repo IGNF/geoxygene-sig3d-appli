@@ -45,7 +45,7 @@ public class BarreMenu extends JMenuBar implements ActionListener {
 
   private JButton ajoutRegle, ajoutZone, suppZone, suppRegle;
 
-  private MainWindow fen;
+  private UrbanRulesWindow fen;
 
   private static String nomDocument = "";
 
@@ -53,7 +53,7 @@ public class BarreMenu extends JMenuBar implements ActionListener {
     return BarreMenu.nomDocument;
   }
 
-  public BarreMenu(MainWindow fenPrin) {
+  public BarreMenu(UrbanRulesWindow fenPrin) {
 
     this.fen = fenPrin;
 
