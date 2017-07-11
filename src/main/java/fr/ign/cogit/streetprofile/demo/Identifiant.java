@@ -2,10 +2,10 @@ package  fr.ign.cogit.streetprofile.demo;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.BuildingProfileParameters;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
-import fr.ign.cogit.streetprofile.model.BuildingProfileParameters;
 
 /**
  * Classe permettant d'ajouter un identifiant aux bâtiments (identifiant

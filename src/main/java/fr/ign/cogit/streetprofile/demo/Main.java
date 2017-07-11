@@ -1,8 +1,9 @@
 package fr.ign.cogit.streetprofile.demo;
 
+import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.Profile;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
-import fr.ign.cogit.streetprofile.model.Profile;
+import fr.ign.cogit.streetprofile.visu.StreetProfilRenderer;
 
 /**
  * Classe de démonstration permettant d'exploiter les résultats du stage de
@@ -53,7 +54,8 @@ public class Main {
     profile.loadData();
 
     // This lines allows the visualisation of the scene
-     profile.display();
+    StreetProfilRenderer sPR = new StreetProfilRenderer();
+    sPR.display(profile);
 
     // Calculation of the profilLe
     //The results may be acccessible by getPproj method
@@ -64,7 +66,7 @@ public class Main {
     profile.process();
  
     //Update in the visualisation if available
-  profile.updateDisplay();
+    sPR.updateDisplay(profile);
 
     //Point export
     profile.exportPoints(BuildingProfilExecParamters.FOLDER_OUT + BuildingProfilExecParamters.FILE_OUT_POINTS_DEMO);
