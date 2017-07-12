@@ -90,8 +90,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.ign.cogit</groupId>
-			<artifactId>geoxygene-sig3d</artifactId>
+			<artifactId>geoxygene-sig3d-gui</artifactId>
 			<version>1.9-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.ign.cogit</groupId>
+			<artifactId>simplu3d-rules</artifactId>
+			<version>1.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
