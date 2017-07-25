@@ -196,18 +196,7 @@ public class ParisProposition {
 
 	}
 
-	/**
-	 * 
-	 * @param lE
-	 * @return
-	 */
-	private static EnveloppeConstructible chooseE(List<EnveloppeConstructible> lE) {
 
-		int nbElem = lE.size();
-
-		return lE.get((int) Math.random() * nbElem);
-
-	}
 
 	/**
 	 * 

@@ -35,7 +35,7 @@ public class Demo {
 			Chargement.REL_PATH_TO_SCHEMA = args[0]+"reglesUrba.xsd";
 		}
 
-		Executor.main(null);
+		Executor.main(args);
 	}
 
 }

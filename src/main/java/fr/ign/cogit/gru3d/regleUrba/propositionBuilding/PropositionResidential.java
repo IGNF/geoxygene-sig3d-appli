@@ -443,7 +443,6 @@ public class PropositionResidential {
 
     int nbPans = (int) (3 * Math.random());
 
-    Random r = new Random();
 
     double spFacteur = 2 * Math.random();
 

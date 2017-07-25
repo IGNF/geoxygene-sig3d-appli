@@ -45,7 +45,7 @@ import fr.ign.cogit.simplu3d.model.Materiau;
  * 
  *
  */
-public class ParametricBuilding extends Building {
+public class ParametricBuilding extends Building implements Cloneable {
 
 	public void settB(TopologieBatiment tB) {
 		this.tB = tB;
@@ -510,7 +510,7 @@ public class ParametricBuilding extends Building {
 		return this.generationFacade();
 
 	}
-
+	@Override
 	public ParametricBuilding clone() {
 
 		ParametricBuilding pB = new ParametricBuilding(this.tB, this.largeur, this.hauteur, this.largeur2,

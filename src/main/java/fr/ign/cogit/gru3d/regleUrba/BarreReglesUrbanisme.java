@@ -38,11 +38,11 @@ import fr.ign.cogit.gru3d.regleUrba.schemageo.Toit;
 
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -52,390 +52,354 @@ import fr.ign.cogit.gru3d.regleUrba.schemageo.Toit;
  * 
  * @version 1.0
  *
- * La barre à ajouter pour que l'on ait les règles d'urbanismes
+ *          La barre à ajouter pour que l'on ait les règles d'urbanismes
  * 
  */
 public class BarreReglesUrbanisme extends JMenu implements ActionListener {
 
-  /**
-     * 
-     */
-  private static final long serialVersionUID = 4116419071955303775L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4116419071955303775L;
 
-  private Environnement env = null;
-  private List<Regle> lRegles = null;
+	private Environnement env = null;
+	private List<Regle> lRegles = null;
 
-  private InterfaceMap3D interCarte3D;
+	private InterfaceMap3D interCarte3D;
 
-  private static int comptCalc = 0;
+	private static int comptCalc = 0;
 
-  private JMenuItem butDefinirRegle, butChargerFichierRegle, butVerifieRegle,
-      butCalculVolum, butTreatAll, butProposeBuilding, butProposeScenario;
+	private JMenuItem butDefinirRegle, butChargerFichierRegle, butVerifieRegle, butCalculVolum, butTreatAll,
+			butProposeBuilding, butProposeScenario;
 
-  public BarreReglesUrbanisme(InterfaceMap3D c) {
+	public BarreReglesUrbanisme(InterfaceMap3D c) {
 
-    super("Outil regle");
+		super("Outil regle");
 
-    this.interCarte3D = c;
+		this.interCarte3D = c;
 
-    this.butDefinirRegle = new JMenuItem("Définir une règle");
-    this.butDefinirRegle.addActionListener(this);
-    this.add(this.butDefinirRegle);
+		this.butDefinirRegle = new JMenuItem("Définir une règle");
+		this.butDefinirRegle.addActionListener(this);
+		this.add(this.butDefinirRegle);
 
-    this.butChargerFichierRegle = new JMenuItem("Charger un fichier  de règle");
-    this.butChargerFichierRegle.addActionListener(this);
-    this.add(this.butChargerFichierRegle);
+		this.butChargerFichierRegle = new JMenuItem("Charger un fichier  de règle");
+		this.butChargerFichierRegle.addActionListener(this);
+		this.add(this.butChargerFichierRegle);
 
-    this.butVerifieRegle = new JMenuItem("Vérifier les règles");
-    this.butVerifieRegle.addActionListener(this);
-    this.add(this.butVerifieRegle);
+		this.butVerifieRegle = new JMenuItem("Vérifier les règles");
+		this.butVerifieRegle.addActionListener(this);
+		this.add(this.butVerifieRegle);
 
-    this.butCalculVolum = new JMenuItem("Calculer volume");
-    this.butCalculVolum.addActionListener(this);
-    this.add(this.butCalculVolum);
+		this.butCalculVolum = new JMenuItem("Calculer volume");
+		this.butCalculVolum.addActionListener(this);
+		this.add(this.butCalculVolum);
 
-    /*
-     * this.butTreatAll = new JButton("Calcul la totale");
-     * this.butTreatAll.addActionListener(this); this.add(this.butTreatAll);
-     */
+		this.butTreatAll = new JMenuItem("Calcul la totale");
+		this.butTreatAll.addActionListener(this);
+		this.add(this.butTreatAll);
 
-    this.butProposeBuilding = new JMenuItem("Proposer bâtiment");
-    this.butProposeBuilding.addActionListener(this);
-    this.add(this.butProposeBuilding);
-    
-    this.butProposeScenario = new JMenuItem("Proposer scénario");
-    this.butProposeScenario.addActionListener(this);
-    this.add(this.butProposeScenario);
-  }
+		this.butProposeBuilding = new JMenuItem("Proposer bâtiment");
+		this.butProposeBuilding.addActionListener(this);
+		this.add(this.butProposeBuilding);
 
-  @Override
-  public void actionPerformed(ActionEvent e) {
-    // TODO Auto-generated method stub
+		this.butProposeScenario = new JMenuItem("Proposer scénario");
+		this.butProposeScenario.addActionListener(this);
+		this.add(this.butProposeScenario);
+	}
 
-    Object o = e.getSource();
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
 
-    if (o.equals(this.butDefinirRegle)) {
-      // On affiche l'éditeur de règles
-      (new UrbanRulesWindow(false)).setVisible(true);
-      return;
-    }
+		Object o = e.getSource();
 
-    if (o.equals(this.butChargerFichierRegle)) {
-      // On charge un fichier et on modifie les règles
-      // chargées dans l'environnement
-      JFileChooser homeChooser = new JFileChooser(
-          Messages.getString("")); //$NON-NLS-1$
+		if (o.equals(this.butDefinirRegle)) {
+			// On affiche l'éditeur de règles
+			(new UrbanRulesWindow(false)).setVisible(true);
+			return;
+		}
 
-      FileFilter filtre = new XMLFilter();
+		if (o.equals(this.butChargerFichierRegle)) {
+			// On charge un fichier et on modifie les règles
+			// chargées dans l'environnement
+			JFileChooser homeChooser = new JFileChooser(Messages.getString("")); //$NON-NLS-1$
 
-      homeChooser.setAcceptAllFileFilterUsed(false);
+			FileFilter filtre = new XMLFilter();
 
-      // Un certain type de fichier est acceepté
-      homeChooser.addChoosableFileFilter(filtre);
+			homeChooser.setAcceptAllFileFilterUsed(false);
 
-      homeChooser.showOpenDialog(null);
+			// Un certain type de fichier est acceepté
+			homeChooser.addChoosableFileFilter(filtre);
 
-      File file = homeChooser.getSelectedFile();
+			homeChooser.showOpenDialog(null);
 
-      if (file == null) {
-        return;
-      }
-      String nomfichier = file.getPath();
+			File file = homeChooser.getSelectedFile();
 
-      PLU plu = Chargement.chargementFichier(nomfichier);
+			if (file == null) {
+				return;
+			}
+			String nomfichier = file.getPath();
 
-      if (plu.getZonePLU().size() > 0) {
+			PLU plu = Chargement.chargementFichier(nomfichier);
 
-        this.lRegles = plu.getZonePLU().get(0).getRegles();
+			if (plu.getZonePLU().size() > 0) {
 
-      }
+				this.lRegles = plu.getZonePLU().get(0).getRegles();
 
-      return;
-    }
+			}
 
-    if (this.env == null) {
+			return;
+		}
 
-      JOptionPane.showMessageDialog(this,
-          "Module de règles d'urbanisme", "Environnement non défini", //$NON-NLS-1$//$NON-NLS-2$ 
-          JOptionPane.ERROR_MESSAGE);
-      return;
-    }
+		if (this.env == null) {
 
-    if (this.lRegles == null) {
+			JOptionPane.showMessageDialog(this, "Module de règles d'urbanisme", "Environnement non défini", //$NON-NLS-1$//$NON-NLS-2$
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
-      JOptionPane.showMessageDialog(this,
-          "Module de règles d'urbanisme", "Aucune règle chargée", //$NON-NLS-1$//$NON-NLS-2$ 
-          JOptionPane.ERROR_MESSAGE);
-      return;
-    }
+		if (this.lRegles == null) {
 
-    // On calcule les solides pour les parcelles sélectionnées
+			JOptionPane.showMessageDialog(this, "Module de règles d'urbanisme", "Aucune règle chargée", //$NON-NLS-1$//$NON-NLS-2$
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
-    if (o.equals(this.butTreatAll)) {
-      FT_FeatureCollection<Parcelle> lParcelles = this.env.getlParcelles();
-      int nbParcelle = lParcelles.size();
+		// On calcule les solides pour les parcelles sélectionnées
 
-      Moteur m = new Moteur(this.env, this.lRegles);
+		if (o.equals(this.butTreatAll)) {
+			FT_FeatureCollection<Parcelle> lParcelles = this.env.getlParcelles();
+			int nbParcelle = lParcelles.size();
 
-      for (int i = 0; i < nbParcelle; i++) {
+			Moteur m = new Moteur(this.env, this.lRegles);
 
-        Parcelle p = lParcelles.get(i);
+			for (int i = 0; i < nbParcelle; i++) {
 
-        List<FT_FeatureCollection<Contrainte>> collContraintes = m
-            .computeConstraints(p);
+				Parcelle p = lParcelles.get(i);
 
-        /*
-         * if (Executor.VERBOSE) {
-         * 
-         * VectorLayer cv = new VectorLayer(collContraintes,
-         * "Contraintes parcelle : " + i);
-         * this.interCarte3D.getCurrent3DMap().addLayer(cv);
-         * 
-         * }
-         */
+				List<FT_FeatureCollection<Contrainte>> collContraintes = m.computeConstraints(p);
 
-        int nbLContraintes = collContraintes.size();
+				/*
+				 * if (Executor.VERBOSE) {
+				 * 
+				 * VectorLayer cv = new VectorLayer(collContraintes,
+				 * "Contraintes parcelle : " + i);
+				 * this.interCarte3D.getCurrent3DMap().addLayer(cv);
+				 * 
+				 * }
+				 */
 
-        for (int j = 0; j < nbLContraintes; j++) {
+				int nbLContraintes = collContraintes.size();
 
-          IFeatureCollection<EnveloppeConstructible> featColl = m
-              .computeGeomFromConstraints(collContraintes.get(j));
+				for (int j = 0; j < nbLContraintes; j++) {
 
-          if (featColl.size() != 0) {
+					IFeatureCollection<EnveloppeConstructible> featColl = m
+							.computeGeomFromConstraints(collContraintes.get(j));
 
-            VectorLayer cv = new VectorLayer(featColl, "Enveloppe parcelle : "
-                + i);
-            this.interCarte3D.getCurrent3DMap().addLayer(cv);
+					if (featColl.size() != 0) {
 
-          }
+						VectorLayer cv = new VectorLayer(featColl, "Enveloppe parcelle : " + i);
+						this.interCarte3D.getCurrent3DMap().addLayer(cv);
 
-        }
+					}
 
-        System.out.println(i + "/" + nbParcelle);
+				}
 
-      }
+				System.out.println(i + "/" + nbParcelle);
 
-      return;
-    }
+			}
 
-    // Une sélection est obligatoire pour déclencher ces actions
+			return;
+		}
 
-    if (this.interCarte3D.getSelection().size() == 0) {
+		// Une sélection est obligatoire pour déclencher ces actions
 
-      JOptionPane.showMessageDialog(this,
-          "Module de règles d'urbanisme", "Aucune parcelle sélectionnée", //$NON-NLS-1$//$NON-NLS-2$ 
-          JOptionPane.ERROR_MESSAGE);
-      return;
+		if (this.interCarte3D.getSelection().size() == 0) {
 
-    }
+			JOptionPane.showMessageDialog(this, "Module de règles d'urbanisme", "Aucune parcelle sélectionnée", //$NON-NLS-1$//$NON-NLS-2$
+					JOptionPane.ERROR_MESSAGE);
+			return;
 
-    Moteur m = new Moteur(this.env, this.lRegles);
+		}
 
-    IFeatureCollection<IFeature> objetSelc = this.interCarte3D.getSelection();
-    List<Parcelle> lParcelles = new ArrayList<Parcelle>();
-    int nbElem = objetSelc.size();
+		Moteur m = new Moteur(this.env, this.lRegles);
 
-    for (int i = 0; i < nbElem; i++) {
+		IFeatureCollection<IFeature> objetSelc = this.interCarte3D.getSelection();
+		List<Parcelle> lParcelles = new ArrayList<Parcelle>();
+		int nbElem = objetSelc.size();
 
-      IFeature feat = objetSelc.get(i);
+		for (int i = 0; i < nbElem; i++) {
 
-      if (feat instanceof Parcelle) {
+			IFeature feat = objetSelc.get(i);
 
-        lParcelles.add((Parcelle) feat);
-        
-        
-        
-        
-        
-      }
+			if (feat instanceof Parcelle) {
 
-    }
-    
-    this.interCarte3D.setSelection(new FT_FeatureCollection<IFeature>());
+				lParcelles.add((Parcelle) feat);
 
-    // On vérifie les règles pour les parcelles sélectionnées
+			}
 
-    if (o.equals(this.butVerifieRegle)) {
+		}
 
-      List<FT_FeatureCollection<Incoherence>> lIncoherence = m
-          .processIsParcelOk(lParcelles);
+		this.interCarte3D.setSelection(new FT_FeatureCollection<IFeature>());
 
-      int nbParcelleIncoherence = lIncoherence.size();
+		// On vérifie les règles pour les parcelles sélectionnées
 
-      int nbParcelleM = 0;
-      
-      
-      IFeatureCollection<IFeature> lIncoherenceFeat = new FT_FeatureCollection<IFeature>();
-      
-      
-      for (int i = 0; i < nbParcelleIncoherence; i++) {
+		if (o.equals(this.butVerifieRegle)) {
 
-        if (lIncoherence.get(i).size() != 0) {
-          lIncoherenceFeat.addAll(lIncoherence.get(i));
+			List<FT_FeatureCollection<Incoherence>> lIncoherence = m.processIsParcelOk(lParcelles);
 
-          nbParcelleM++;
-        }
+			int nbParcelleIncoherence = lIncoherence.size();
 
-      }
-      
-      VectorLayer cv = new VectorLayer(lIncoherenceFeat, "Incoherences détectées" + (comptCalc++) ) ;
-      this.interCarte3D.getCurrent3DMap().addLayer(cv);
+			int nbParcelleM = 0;
 
-      JOptionPane
-          .showMessageDialog(
-              this,
-              "Module de règles d'urbanisme", nbParcelleM + " ne respecte les règles sélectionnées", //$NON-NLS-1$//$NON-NLS-2$ 
-              JOptionPane.ERROR_MESSAGE);
+			IFeatureCollection<IFeature> lIncoherenceFeat = new FT_FeatureCollection<IFeature>();
 
-      return;
-    }
+			for (int i = 0; i < nbParcelleIncoherence; i++) {
 
-    // On calcule les solides pour les parcelles sélectionnées
-    // Ne prend en compte que la première liste de contraintes
-    if (o.equals(this.butCalculVolum)) {
+				if (lIncoherence.get(i).size() != 0) {
+					lIncoherenceFeat.addAll(lIncoherence.get(i));
 
-      int nbParcelle = lParcelles.size();
+					nbParcelleM++;
+				}
 
-      for (int i = 0; i < nbParcelle; i++) {
+			}
 
-        Parcelle p = lParcelles.get(i);
+			VectorLayer cv = new VectorLayer(lIncoherenceFeat, "Incoherences détectées" + (comptCalc++));
+			this.interCarte3D.getCurrent3DMap().addLayer(cv);
 
-        List<FT_FeatureCollection<Contrainte>> lCollContraintes = m
-            .computeConstraints(p);
+			JOptionPane.showMessageDialog(this, "Module de règles d'urbanisme", //$NON-NLS-1$
+					nbParcelleM + " ne respecte les règles sélectionnées", //$NON-NLS-1$
+					JOptionPane.ERROR_MESSAGE);
 
-        if (lCollContraintes == null) {
-          continue;
-        }
+			return;
+		}
 
-        FT_FeatureCollection<Contrainte> collContraintes = lCollContraintes
-            .get(0);
+		// On calcule les solides pour les parcelles sélectionnées
+		// Ne prend en compte que la première liste de contraintes
+		if (o.equals(this.butCalculVolum)) {
 
-        if (Executor.VERBOSE) {
+			int nbParcelle = lParcelles.size();
 
-          VectorLayer cv = new VectorLayer(collContraintes,
-              "Contraintes parcelle : " + i);
-          this.interCarte3D.getCurrent3DMap().addLayer(cv);
+			for (int i = 0; i < nbParcelle; i++) {
 
-        }
+				Parcelle p = lParcelles.get(i);
 
-        IFeatureCollection<EnveloppeConstructible> featColl = m
-            .computeGeomFromConstraints(collContraintes);
+				List<FT_FeatureCollection<Contrainte>> lCollContraintes = m.computeConstraints(p);
 
-        if (featColl != null && featColl.size() != 0) {
+				if (lCollContraintes == null) {
+					continue;
+				}
 
-          int nbElemC = featColl.size();
+				FT_FeatureCollection<Contrainte> collContraintes = lCollContraintes.get(0);
 
-          for (int j = 0; j < nbElemC; j++) {
-            IFeature feat = featColl.get(j);
+				if (Executor.VERBOSE) {
 
-            feat.setRepresentation(new ObjectCartoon(feat, ColorRandom
-                .getRandomColor()));
+					VectorLayer cv = new VectorLayer(collContraintes, "Contraintes parcelle : " + i);
+					this.interCarte3D.getCurrent3DMap().addLayer(cv);
 
-          }
+				}
 
-          VectorLayer cv = new VectorLayer(featColl, "Enveloppe parcelle : "
-              + (BarreReglesUrbanisme.comptCalc++));
-          this.interCarte3D.getCurrent3DMap().addLayer(cv);
+				IFeatureCollection<EnveloppeConstructible> featColl = m.computeGeomFromConstraints(collContraintes);
 
-        }
+				if (featColl != null && featColl.size() != 0) {
 
-        System.out.println(i + "/" + nbParcelle);
-      }
+					int nbElemC = featColl.size();
 
-      return;
-    }
+					for (int j = 0; j < nbElemC; j++) {
+						IFeature feat = featColl.get(j);
 
-    if (o.equals(butProposeBuilding)) {
+						feat.setRepresentation(new ObjectCartoon(feat, ColorRandom.getRandomColor()));
 
-      IFeatureCollection<Batiment> featB = new FT_FeatureCollection<Batiment>();
-      IFeatureCollection<Toit> featR = new FT_FeatureCollection<Toit>();
-      
-      
-      // On affiche les choix disponibles et on les récupère
-      String[] options = {  "Optimisation COS",  "Optimisation CES",};
+					}
 
-      // Propose de choisir entre les différentes applications
-      Object obj = JOptionPane.showInputDialog(null,
-          "Quelle stratégie de peuplement ?", "Choix de la stratégie",
-          JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-      if (obj == null) {
+					VectorLayer cv = new VectorLayer(featColl,
+							"Enveloppe parcelle : " + (BarreReglesUrbanisme.comptCalc++));
+					this.interCarte3D.getCurrent3DMap().addLayer(cv);
 
-        return;
-      }
+				}
 
-      int nbOptions = options.length;
-      int i;
+				System.out.println(i + "/" + nbParcelle);
+			}
 
-      for (i = 0; i < nbOptions; i++) {
-        if (options[i].equals(obj.toString())) {
-          break;
-        }
+			return;
+		}
 
-      }
+		if (o.equals(butProposeBuilding)) {
 
+			IFeatureCollection<Batiment> featB = new FT_FeatureCollection<Batiment>();
+			IFeatureCollection<Toit> featR = new FT_FeatureCollection<Toit>();
 
-      for (Parcelle p : lParcelles) {
-        
-        
-        
-        
-        
-        
+			// On affiche les choix disponibles et on les récupère
+			String[] options = { "Optimisation COS", "Optimisation CES", };
 
-        // Batiment b = RandomProposition.proposition(p,m);
-        // Batiment b = ParisProposition.proposition(p, m);
-        Batiment b = null;
-        if(i ==0){
-          
-          System.out.println("Je passe là");
-          b = PropositionCOS.proposition(p, m);
+			// Propose de choisir entre les différentes applications
+			Object obj = JOptionPane.showInputDialog(null, "Quelle stratégie de peuplement ?", "Choix de la stratégie",
+					JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			if (obj == null) {
 
-        }else{
-          b =   PropositionResidential.proposition(p, m);
-        }
-        
-      
+				return;
+			}
 
-        if (b != null) {
-          featB.add(b);
+			int nbOptions = options.length;
+			int i;
 
-          b.setRepresentation(new ObjectCartoon(b, Color.red));
+			for (i = 0; i < nbOptions; i++) {
+				if (options[i].equals(obj.toString())) {
+					break;
+				}
 
-          featR.add(b.getToit());
+			}
 
-          b.getToit().setRepresentation(
-              new ObjectCartoon(b.getToit(), Color.yellow));
+			for (Parcelle p : lParcelles) {
 
-        }
+				// Batiment b = RandomProposition.proposition(p,m);
+				// Batiment b = ParisProposition.proposition(p, m);
+				Batiment b = null;
+				if (i == 0) {
 
-      }
+					System.out.println("Je passe là");
+					b = PropositionCOS.proposition(p, m);
 
-      VectorLayer cv = new VectorLayer(featB, "Batiments "
-          + (BarreReglesUrbanisme.comptCalc++));
+				} else {
+					b = PropositionResidential.proposition(p, m);
+				}
 
-      VectorLayer cv2 = new VectorLayer(featR, "Toits  "
-          + (BarreReglesUrbanisme.comptCalc++));
+				if (b != null) {
+					featB.add(b);
 
-      this.interCarte3D.getCurrent3DMap().addLayer(cv);
-      this.interCarte3D.getCurrent3DMap().addLayer(cv2);
-    }
-    
-    
-    if(o.equals(butProposeScenario)){
-      
-      ProposeCOS.optimizeCOS(m, 0, 10, 5, 1, 3, 1, 5);    
-      
-    }
+					b.setRepresentation(new ObjectCartoon(b, Color.red));
 
-  }
+					featR.add(b.getToit());
 
-  public void setEnvironnement(Environnement env) {
+					b.getToit().setRepresentation(new ObjectCartoon(b.getToit(), Color.yellow));
 
-    this.env = env;
-  }
+				}
 
-  public void setRegles(List<Regle> lRegles) {
-    this.lRegles = lRegles;
-  }
+			}
+
+			VectorLayer cv = new VectorLayer(featB, "Batiments " + (BarreReglesUrbanisme.comptCalc++));
+
+			VectorLayer cv2 = new VectorLayer(featR, "Toits  " + (BarreReglesUrbanisme.comptCalc++));
+
+			this.interCarte3D.getCurrent3DMap().addLayer(cv);
+			this.interCarte3D.getCurrent3DMap().addLayer(cv2);
+		}
+
+		if (o.equals(butProposeScenario)) {
+
+			ProposeCOS.optimizeCOS(m, 0, 10, 5, 1, 3, 1, 5);
+
+		}
+
+	}
+
+	public void setEnvironnement(Environnement env) {
+
+		this.env = env;
+	}
+
+	public void setRegles(List<Regle> lRegles) {
+		this.lRegles = lRegles;
+	}
 
 }

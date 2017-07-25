@@ -162,7 +162,7 @@ public class LimitationCES extends Consequence {
                 Symbology.class.getResource("/demo3D/reglesurba/cos.png")
                     .getPath())));
         ;
-      }else if(represent){
+      }else if(! represent){
         
         lIncoherence.add(new Incoherence(this));
         return lIncoherence;

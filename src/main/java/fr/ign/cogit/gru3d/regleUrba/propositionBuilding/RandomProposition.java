@@ -210,7 +210,7 @@ public class RandomProposition {
 
     int nbElem = lE.size();
 
-    return lE.get((int) Math.random() * nbElem);
+    return lE.get((int) (Math.random() * nbElem));
 
   }
 
