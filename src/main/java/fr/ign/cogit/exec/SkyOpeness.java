@@ -1,10 +1,7 @@
 package fr.ign.cogit.exec;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -13,8 +10,6 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -38,12 +33,12 @@ public class SkyOpeness {
 
 	public static void main(String[] args) throws ParseException, IOException {
 
-		// Preparing inputs
-		args = new String[] { "-buildings",
-				"/home/mickael/data/mbrasebin/donnees/ecolthematique/part-dieu/LYON-3E-LOD2/Building_LOD2.shp", "-points",
-				"/home/mickael/data/mbrasebin/donnees/ecolthematique/part-dieu/trees.shp", "-output",
-				"/home/mickael/data/mbrasebin/donnees/ecolthematique/temp/", "-z","163" , "HAUTEUR",
-				"-r", "100", "-s", "360", "-id", "gid", "-g3D" };
+		if (args == null || args.length == 0) {
+			args = new String[] { "-buildings", "/home/mickael/Téléchargements/fusionne/LOD_BUILDING_2012.shp",
+					"-points", "/home/mickael/data/mbrasebin/donnees/ecolthematique/part-dieu/trees.shp", "-output",
+					"/home/mickael/data/mbrasebin/donnees/ecolthematique/temp/", "-z", "172", "HAUTEUR", "-r", "100",
+					"-s", "360", "-id", "gid", "-g3D", "-g2D" };
+		}
 
 		// Defining and parsing options
 		Options options = configFirstParameters();
@@ -80,7 +75,7 @@ public class SkyOpeness {
 		if (cmd.hasOption(FORCE_POINT_ZERO_ARGS)) {
 			LOGGER.info("Point altitude is set to zero");
 			double z = Double.parseDouble(cmd.getOptionValue(FORCE_POINT_ZERO_ARGS));
-			featCollPoints = setPointToZero(pointFile,z);
+			featCollPoints = setPointToZero(pointFile, z);
 		} else {
 			featCollPoints = ShapefileReader.read(pointFile);
 		}
@@ -111,7 +106,7 @@ public class SkyOpeness {
 		LOGGER.info("---Export parameters---");
 
 		boolean exportGeom3D = cmd.hasOption(GEOMETRY_3D_ARGS);
-		boolean exportGeom2D = cmd.hasOption(GEOMETRY_3D_ARGS);
+		boolean exportGeom2D = cmd.hasOption(GEOMETRY_2D_ARGS);
 
 		if (exportGeom3D) {
 			LOGGER.info("---Export 3D geometry---");
@@ -145,7 +140,7 @@ public class SkyOpeness {
 	}
 
 	private final static String BUILDING_FILE_ARGS = "buildings";
-	private final static String POINT_FILE_ARGS = "points";
+	private final static String POINT_FILE_ARGS = "" + "points";
 	private final static String OUTPUT_FILE_ARGS = "output";
 	private final static String FORCE_POINT_ZERO_ARGS = "z";
 	private final static String EXTRUDE_BUILINDGS_ARGS = "extrude";
@@ -188,12 +183,12 @@ public class SkyOpeness {
 		extrudeBuildings.setArgName("extrude-attribute");
 		options.addOption(extrudeBuildings);
 
-		Option radius = new Option(RADIUS_ARGS, true, "Radius of raycasting");
+		Option radius = new Option(RADIUS_ARGS, true, "Radius of raycasting (500 m as default value)");
 		radius.setArgName("radius");
 		radius.setRequired(false);
 		options.addOption(radius);
 
-		Option s = new Option(STEP_ARGS, true, "Number of point for 180°.");
+		Option s = new Option(STEP_ARGS, true, "Number of point for 180° (180 as default value).");
 		s.setArgName("path");
 		s.setRequired(false);
 		options.addOption(s);
@@ -207,7 +202,7 @@ public class SkyOpeness {
 		options.addOption(g2);
 
 		Option id = new Option(ID_ARGS, true, "ID of point feature (ID by default).");
-		id.setRequired(false);
+		id.setRequired(true);
 		id.setArgName("id");
 		options.addOption(id);
 
@@ -259,6 +254,16 @@ public class SkyOpeness {
 	public static void run(IFeatureCollection<IFeature> buildingFeatures, IFeatureCollection<IFeature> pointFeatures,
 			double rayon, int step, File outputFolder, boolean export2D, boolean export3D) throws IOException {
 
+		if (buildingFeatures.isEmpty()) {
+			LOGGER.error("BUILDING FILE DOES NOT EXIST OR IS EMPTY");
+			return;
+		}
+
+		if (pointFeatures.isEmpty()) {
+			LOGGER.error("POINT FILE DOES NOT EXIST OR IS EMPTY");
+			return;
+		}
+
 		int resultType = RayCasting.TYPE_FIRST_POINT_AND_SPHERE;
 
 		// DefaultParameters
@@ -266,72 +271,71 @@ public class SkyOpeness {
 		Visibility.WELL_ORIENTED_FACE = false;
 		RayCasting.CHECK_IS_ON_EDGE = true;
 
-		//Préparation of CSV Output
-		CSVPrinter csvFilePrinter = null;
-		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withHeader();
-		File fOutput = new File(outputFolder, OUTPUT_FILE_NAME + ".csv");
-		FileWriter fileWriter = new FileWriter(fOutput);
-		csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
-		
-		//CSV HEADER
-		Object[] header = { "minimalRadialDistance", "maximalRadialDistance", "avgRadialDistance", "varRadialDistance",
-				"minimalRadialDistance2D", "maximalRadialDistance2D", "avgRadialDistance2D", "openess", "ratioSphere",
-				"visibleSkySurface", "visibleVolume", "visibleVolumeRatio", "solidPerimeter" };
-		csvFilePrinter.printRecord(header);
-
-		// Geographic outputs
-		File fOutput3D = new File(outputFolder, OUTPUT_FILE_NAME + "3D.shp");
-		File fOutput2D = new File(outputFolder, OUTPUT_FILE_NAME + "2D.shp");
-		IFeatureCollection<IFeature> iFeature2D = new FT_FeatureCollection<>();
-		IFeatureCollection<IFeature> iFeature3D = new FT_FeatureCollection<>();
+		IFeatureCollection<IFeature> featCOut = new FT_FeatureCollection<>();
 
 		int nbTot = pointFeatures.size();
-		for (int i = 0; i < 1; i++) { 
+		for (int i = 0; i < nbTot; i++) {
 
 			LOGGER.info("------Begin of point " + (i + 1) + "  /  " + nbTot);
 			LOGGER.info("Begin of ray casting");
-			//Casting points around current feature
+			// Casting points around current feature
 			IFeature currentFeat = pointFeatures.get(i);
 			RayCasting rC = new RayCasting(currentFeat.getGeom().coord().get(0), buildingFeatures, step, rayon,
 					resultType, isSphere);
 			rC.cast();
-			
+
 			LOGGER.info("End of ray casting");
 			LOGGER.info("Preparing results");
 
-			//Getting statistics around current feature
-			List<Object> lO = prepareRayCastingRecords(rC);
-			csvFilePrinter.printRecord(lO);
-			csvFilePrinter.flush();
+			// Getting statistics around current feature
+			IFeature featOut = prepareRayCastingRecords(rC, currentFeat);
 
-			//If 3D export is activated
+			if (featOut != null) {
+				featCOut.add(featOut);
+			}
+
+			String id = currentFeat.getAttribute(ID_ATT).toString();
+
+			// Geographic outputs
+			File fOutput3D = new File(outputFolder, OUTPUT_FILE_NAME + "_" + id + "_3D.shp");
+			File fOutput2D = new File(outputFolder, OUTPUT_FILE_NAME + "_" + id + "_2D.shp");
+			IFeatureCollection<IFeature> iFeature2D = new FT_FeatureCollection<>();
+			IFeatureCollection<IFeature> iFeature3D = new FT_FeatureCollection<>();
+
+			// If 3D export is activated
 			if (export3D) {
-				//Generating the geometry
+				// Generating the geometry
 				IFeature feat = new DefaultFeature(new GM_MultiSurface<>(rC.getGeneratedSolid().getFacesList()));
-				AttributeManager.addAttribute(feat, ID_ATT, currentFeat.getAttribute(ID_ATT).toString(), "String");
+				AttributeManager.addAttribute(feat, ID_ATT, id, "String");
 				iFeature3D.add(feat);
 			}
 
-			//If 2D export is activated
+			// If 2D export is activated
 			if (export2D) {
-				//Currently a new raycasting has to be proceeded with other parameters
-				resultType = RayCasting.TYPE_CAST_SOLID_POINT;
-				rC = new RayCasting(currentFeat.getGeom().coord().get(0), buildingFeatures, step, rayon, resultType,
-						isSphere);
-				rC.cast();
 
-				//Polygon is generated
+				// Polygon is generated
 				IPolygon pol = rC.getGeneratedPolygon();
-
-				//Adding new feature to 2D exports
+				// System.out.println("Pol : " + pol);
+				// Adding new feature to 2D exports
 				if (pol != null && !pol.isEmpty()) {
 					IFeature feat = new DefaultFeature(pol);
-					AttributeManager.addAttribute(feat, ID_ATT, currentFeat.getAttribute(ID_ATT).toString(), "String");
+					AttributeManager.addAttribute(feat, ID_ATT, id, "String");
 					iFeature2D.add(feat);
 				}
 
-				//Writing results
-				resultType = RayCasting.TYPE_FIRST_POINT_AND_SPHERE;
+				if (!iFeature3D.isEmpty()) {
+					// Writing 3D features
+					LOGGER.info("---Writing 3D geometries---");
+					LOGGER.info(fOutput3D.getAbsolutePath());
+					ShapefileWriter.write(iFeature3D, fOutput3D.getAbsolutePath());
+				}
+
+				if (!iFeature2D.isEmpty()) {
+					// Writing 2D features
+					LOGGER.info("---Writing 2D geometries---");
+					LOGGER.info(fOutput3D.getAbsolutePath());
+					ShapefileWriter.write(iFeature2D, fOutput2D.getAbsolutePath());
+				}
 
 			}
 
@@ -339,49 +343,39 @@ public class SkyOpeness {
 
 		}
 		LOGGER.info("Writing output");
-
-		//Writing CSV
-		csvFilePrinter.close();
-		
-		
-		if (!iFeature3D.isEmpty()) {
-			//Writing 3D features
-			LOGGER.info("---Writing 3D geometries---");
-			LOGGER.info(fOutput3D.getAbsolutePath());
-			ShapefileWriter.write(iFeature3D, fOutput3D.getAbsolutePath());
-		}
-
-		if (!iFeature2D.isEmpty()) {
-			//Writing 2D features
-			LOGGER.info("---Writing 2D geometries---");
-			ShapefileWriter.write(iFeature2D, fOutput2D.getAbsolutePath());
-		}
+		ShapefileWriter.write(featCOut, outputFolder + "/" + OUTPUT_FILE_NAME);
 
 		LOGGER.info("End of processus");
 
 	}
 
-	private static List<Object> prepareRayCastingRecords(RayCasting rC) {
+	private static IFeature prepareRayCastingRecords(RayCasting rC, IFeature currentFeature) {
+
+		IFeature feat = null;
+		try {
+			feat = currentFeature.cloneGeom();
+		} catch (CloneNotSupportedException e) {
+
+			e.printStackTrace();
+		}
+
 		IndicatorVisu Iv = new IndicatorVisu(rC);
 
-		List<Object> records = new ArrayList<>();
-		records.add(Iv.getMinimalRadialDistance());
-		records.add(Iv.getMaximalRadialDistance());
-		records.add(Iv.getMoyRadialDistance());
-		records.add(Iv.getVarianceRadialDistance());
-		records.add(Iv.getMinimalRadialDistance2D());
-		records.add(Iv.getMaximalRadialDistance2D());
-		records.add(Iv.getMoyRadialDistance2D());
-		records.add(Iv.getOpeness());
-		records.add(Iv.getRatioSphere());
-		records.add(Iv.getVisibleSkySurface());
-		records.add(Iv.getVisibleVolume());
-		records.add(Iv.getVisibleVolumeRatio());
-		records.add(Iv.getSolidPerimeter());
+		AttributeManager.addAttribute(feat, "miniRadDis", Iv.getMinimalRadialDistance(), "Double");
+		AttributeManager.addAttribute(feat, "maxRadDis", Iv.getMaximalRadialDistance(), "Double");
+		AttributeManager.addAttribute(feat, "avgRadDis", Iv.getMoyRadialDistance(), "Double");
+		AttributeManager.addAttribute(feat, "varRadDis", Iv.getVarianceRadialDistance(), "Double");
+		AttributeManager.addAttribute(feat, "mnRDis2D", Iv.getMaximalRadialDistance2D(), "Double");
+		AttributeManager.addAttribute(feat, "avgRDis2D", Iv.getMoyRadialDistance2D(), "Double");
+		AttributeManager.addAttribute(feat, "openess", Iv.getOpeness(), "Double");
+		AttributeManager.addAttribute(feat, "ratioSph", Iv.getRatioSphere(), "Double");
+		AttributeManager.addAttribute(feat, "visSkySurf", Iv.getVisibleSkySurface(), "Double");
+		AttributeManager.addAttribute(feat, "visVol", Iv.getVisibleVolume(), "Double");
+		AttributeManager.addAttribute(feat, "visVolRa", Iv.getVisibleVolumeRatio(), "Double");
+		AttributeManager.addAttribute(feat, "solPeri", Iv.getSolidPerimeter(), "Double");
 
-		return records;
+		return feat;
 
 	}
 
-	
 }
