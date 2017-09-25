@@ -33,7 +33,7 @@ The test class fr.ign.cogit.streetprofile.demo.Main.java is directly runnable as
 
 Sky openess calculation
 ---------------------
-![Image of generated geometry](https://raw.githubusercontent.com/IGNF/geoxygene-sig3d-appli/master/img/openess.png =200x)
+![Image of generated geometry](https://raw.githubusercontent.com/IGNF/geoxygene-sig3d-appli/master/img/openess.png  | width=200)
 
 
 
