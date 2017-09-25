@@ -73,30 +73,37 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.3</version>
 			</plugin>
-			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-assembly-plugin</artifactId>
-			    <executions>
-				<execution>
-				    <phase>package</phase>
-				    <goals>
-					<goal>single</goal>
-				    </goals>
-				    <configuration>
-					<archive>
-					<manifest>
-					    <mainClass>
-						fr.ign.cogit.exec.SkyOpeness
-					    </mainClass>
-					</manifest>
-					</archive>
-					<descriptorRefs>
-					    <descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				    </configuration>
-				</execution>
-			    </executions>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <!-- <minimizeJar>true</minimizeJar> -->
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <!-- Additional configuration. -->
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <transformers>
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>

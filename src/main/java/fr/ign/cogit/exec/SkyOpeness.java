@@ -37,11 +37,26 @@ public class SkyOpeness {
 			args = new String[] { "-buildings", "/home/mickael/Téléchargements/fusionne/LOD_BUILDING_2012.shp",
 					"-points", "/home/mickael/data/mbrasebin/donnees/ecolthematique/part-dieu/trees.shp", "-output",
 					"/home/mickael/data/mbrasebin/donnees/ecolthematique/temp/", "-z", "172", "HAUTEUR", "-r", "100",
-					"-s", "360", "-id", "gid", "-g3D", "-g2D" };
+					"-s", "360", "-id", "gid", "-g3D", "-g2D"};
 		}
 
 		// Defining and parsing options
+		Options optionsHelp = configHelpParameters();
 		Options options = configFirstParameters();
+		
+		CommandLineParser parserHelp = new DefaultParser();
+
+		CommandLine cmdHelp = parserHelp.parse(optionsHelp, args, true);
+		// Write help
+		if (cmdHelp.hasOption(HELP_ARGS)) {
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("skyopeness", options);
+			System.exit(0);
+		}
+		
+		
+		
+
 		CommandLineParser parser = new DefaultParser();
 
 		CommandLine cmd = parser.parse(options, args);
@@ -120,9 +135,10 @@ public class SkyOpeness {
 
 		if (cmd.hasOption(ID_ARGS)) {
 			ID_ATT = cmd.getOptionValue(ID_ARGS).toString();
+			LOGGER.info("Used ID : " + ID_ATT);
 		}
 
-		LOGGER.info("Used ID : " + ID_ATT);
+
 
 		if (cmd.hasOption(OUTPUT_FILE_NAME_ARGS)) {
 			OUTPUT_FILE_NAME = cmd.getOptionValue(cmd.getOptionValue(OUTPUT_FILE_NAME_ARGS).toString());
@@ -155,6 +171,17 @@ public class SkyOpeness {
 	private static String ID_ATT = "ID";
 	private static String OUTPUT_FILE_NAME = "out";
 
+	private static Options configHelpParameters() {
+		Options options = new Options();
+		
+
+		Option help = new Option(HELP_ARGS, false, "Help");
+		help.setRequired(false);
+		options.addOption(help);
+		
+		return options;
+		
+	}
 	private static Options configFirstParameters() {
 		Options options = new Options();
 
@@ -188,7 +215,7 @@ public class SkyOpeness {
 		radius.setRequired(false);
 		options.addOption(radius);
 
-		Option s = new Option(STEP_ARGS, true, "Number of point for 180° (180 as default value).");
+		Option s = new Option(STEP_ARGS, true, "  Number of points casted for 180° (180 as default value).");
 		s.setArgName("path");
 		s.setRequired(false);
 		options.addOption(s);
@@ -202,7 +229,7 @@ public class SkyOpeness {
 		options.addOption(g2);
 
 		Option id = new Option(ID_ARGS, true, "ID of point feature (ID by default).");
-		id.setRequired(true);
+		id.setRequired(false);
 		id.setArgName("id");
 		options.addOption(id);
 
@@ -294,11 +321,22 @@ public class SkyOpeness {
 				featCOut.add(featOut);
 			}
 
-			String id = currentFeat.getAttribute(ID_ATT).toString();
+			String id = "";
+	
 
 			// Geographic outputs
-			File fOutput3D = new File(outputFolder, OUTPUT_FILE_NAME + "_" + id + "_3D.shp");
-			File fOutput2D = new File(outputFolder, OUTPUT_FILE_NAME + "_" + id + "_2D.shp");
+			File fOutput3D = null;
+			if(export3D){
+				id = currentFeat.getAttribute(ID_ATT).toString();
+				fOutput3D = new File(outputFolder, OUTPUT_FILE_NAME + "_" + id + "_3D.shp");
+			}
+
+			File fOutput2D = null;
+			if(export2D){
+				id = currentFeat.getAttribute(ID_ATT).toString();
+				fOutput2D = new File(outputFolder, OUTPUT_FILE_NAME + "_" + id + "_2D.shp");
+			}
+		
 			IFeatureCollection<IFeature> iFeature2D = new FT_FeatureCollection<>();
 			IFeatureCollection<IFeature> iFeature3D = new FT_FeatureCollection<>();
 
