@@ -22,6 +22,10 @@ Julien Perret, [Lastig/COGIT](http://recherche.ign.fr/labos/cogit/cv.php?nom=Per
 
 Street profil calculation
 ---------------------
+
+![Image of profile result](https://raw.githubusercontent.com/IGNF/geoxygene-sig3d-appli/master/img/StreetProfile.png)
+
+
 This code (in the package streetprofile) was developed during a Msc training course. The thesis is available [here](http://recherche.ign.fr/labos/cogit/publiCOGITDetail.php?idpubli=5214).
 
 The test class fr.ign.cogit.streetprofile.demo.Main.java is directly runnable as it uses data included in the project.
@@ -29,6 +33,9 @@ The test class fr.ign.cogit.streetprofile.demo.Main.java is directly runnable as
 
 Sky openess calculation
 ---------------------
+![Image of generated geometry](https://raw.githubusercontent.com/IGNF/geoxygene-sig3d-appli/master/img/openess.png =200x)
+
+
 
 This code (in the package exec) was developed for a research work about the influence of data quality on Sky openess calcaultion. The paper about this work is available [here](http://recherche.ign.fr/labos/cogit/publiCOGITDetail.php?idpubli=4759&portee=chercheur&id=59&classement=date&duree=100&nomcomplet=Brasebin%20Mickael&annee=2012&principale=)
 
