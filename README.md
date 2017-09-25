@@ -5,8 +5,8 @@
 
 This project contains a set of 3D GIS applications developed from GeOxygene3D module from [GeOxygene platform](https://github.com/IGNF/geoxygene). It includes several published works :
  - [Street profil calculation](#street-profil-calculation)   
- - [Sky openess calculation](http://recherche.ign.fr/labos/cogit/publiCOGITDetail.php?idpubli=4759&portee=chercheur&id=59&classement=date&duree=100&nomcomplet=Brasebin%20Mickael&annee=2012&principale=)
- - [Generation of hulls and buildings from urban regulation](http://recherche.ign.fr/labos/cogit/publiCOGITDetail.php?idpubli=4120&portee=chercheur&id=59&classement=date&duree=100&nomcomplet=Brasebin%20Mickael&annee=2011&principale=)
+ - [Sky openess calculation](#sky-openess-calculation)
+ - [Generation of hulls and buildings from urban regulation](#Generation-of-hulls-and-buildings-from-urban-regulation)
 
 ## Things to know
 
