@@ -36,7 +36,7 @@ public class SkyOpeness {
 		if (args == null || args.length == 0) {
 			args = new String[] { "-buildings", "/home/mickael/Téléchargements/fusionne/LOD_BUILDING_2012.shp",
 					"-points", "/home/mickael/data/mbrasebin/donnees/ecolthematique/part-dieu/trees.shp", "-output",
-					"/home/mickael/data/mbrasebin/donnees/ecolthematique/temp/", "-z", "172", "HAUTEUR", "-r", "100",
+					"/home/mickael/data/mbrasebin/donnees/ecolthematique/temp/", "-z", "172", "-r", "100",
 					"-s", "360", "-id", "gid", "-g3D", "-g2D"};
 		}
 
@@ -61,12 +61,6 @@ public class SkyOpeness {
 
 		CommandLine cmd = parser.parse(options, args);
 
-		// Write help
-		if (cmd.hasOption(HELP_ARGS)) {
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("skyopeness", options);
-			System.exit(0);
-		}
 
 		LOGGER.setLevel(Level.ALL);
 		LOGGER.info("---Initialization of option---");
@@ -118,6 +112,9 @@ public class SkyOpeness {
 			step = Integer.parseInt(cmd.getOptionValue(STEP_ARGS));
 		}
 
+		LOGGER.info("Angular step set to  :" + step);
+
+		
 		LOGGER.info("---Export parameters---");
 
 		boolean exportGeom3D = cmd.hasOption(GEOMETRY_3D_ARGS);

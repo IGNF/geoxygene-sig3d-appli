@@ -31,7 +31,7 @@ public class BuildingProfilExecParamters {
    
     
   //Output folder
-  public  static String FOLDER_OUT = "/home/";
+  public  static String FOLDER_OUT = "~/temps";
   
   
   //Output point file
