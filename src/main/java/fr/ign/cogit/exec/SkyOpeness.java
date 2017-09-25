@@ -274,7 +274,7 @@ public class SkyOpeness {
 		IFeatureCollection<IFeature> featCOut = new FT_FeatureCollection<>();
 
 		int nbTot = pointFeatures.size();
-		for (int i = 249; i < nbTot; i++) {
+		for (int i = 0; i < nbTot; i++) {
 
 			LOGGER.info("------Begin of point " + (i + 1) + "  /  " + nbTot);
 			LOGGER.info("Begin of ray casting");
