@@ -64,13 +64,16 @@ A basic method to run the program is to execute the following command line :
 
 ```
 ./ProfileCalculation.sh -buildings buildings.shp -trajectory road.shp -output /home/mickael/temp/ -sXY 10-sZ 10 -d 200
-    ```
+```
 
 ### Outputs
 
+
 As output, the intersection points are stored as a 2D shapefile. Each point an attribute ID that contains the ID of the building (attribute *-id*) intersected by the ray and an attribute about the length of the ray.
 
+A result vizualized in QGIS :
 
+![Image of generated geometry](https://raw.githubusercontent.com/IGNF/geoxygene-sig3d-appli/master/img/StreetProfile.png )
 
 
 ## Sky openess calculation
