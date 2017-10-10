@@ -66,6 +66,7 @@ public class StreetProfilRenderer {
 		map3d.addLayer(new VectorLayer(profile.getRoadsProfiled(), "Roads", Color.RED));
 		map3d.addLayer(new VectorLayer(parcelle, "Parcels"));
 
+		profile.setDisplayInit(true);
 		displayInit = true;
 
 	}

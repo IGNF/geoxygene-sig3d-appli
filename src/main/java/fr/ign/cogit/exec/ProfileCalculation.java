@@ -17,9 +17,12 @@ import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.BuildingProfileParameters;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.Profile;
+import fr.ign.cogit.geoxygene.sig3d.calculation.raycasting.RayCasting;
 import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;
+import fr.ign.cogit.geoxygene.sig3d.equation.LineEquation;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
+import fr.ign.cogit.streetprofile.visu.StreetProfilRenderer;
 
 public class ProfileCalculation {
 	protected static final Logger LOGGER = Logger.getLogger(SkyOpeness.class);
@@ -27,14 +30,10 @@ public class ProfileCalculation {
 	public static void main(String[] args) throws ParseException, IOException {
 
 		if (args == null || args.length == 0) {
-			args = new String[] { "-buildings", "/home/mickael/data/mbrasebin/workspace/Geoxygene/geoxygene-sig3d-appli/src/main/resources/fr/ign/cogit/streetprofile/building.shp",
-					"-trajectory", "/home/mickael/data/mbrasebin/workspace/Geoxygene/geoxygene-sig3d-appli/src/main/resources/fr/ign/cogit/streetprofile/road.shp", "-output",
-					"/home/mickael/temp/"};
+			args = new String[] { "-buildings", "/home/mickael/data/mbrasebin/donnees/Marina/Bati.shp", "-trajectory",
+					"/home/mickael/data/mbrasebin/donnees/Marina/Route.shp", "-output", "/home/mickael/temp/",
+					"-sXY", "10", "-sZ", "10", "-d", "200" };
 		}
-
-		// String folderOut, String roadFile, String buildingFile, String
-		// parcelFile, double stepXY, double stepZ, String fileOutPoint, String
-		// fileOutPolygon, double circleRadius, double maxDist
 
 		// Defining and parsing options
 		Options optionsHelp = configHelpParameters();
@@ -75,12 +74,8 @@ public class ProfileCalculation {
 		if (cmd.hasOption(PARCEL_FILE_ARGS)) {
 			parcelFileName = cmd.getOptionValue(PARCEL_FILE_ARGS);
 		}
-		
-		
-		
-		featCollTrajectory = ShapefileReader.read(trajectoryFile);
-		
 
+		featCollTrajectory = ShapefileReader.read(trajectoryFile);
 
 		LOGGER.info("Parcel file : " + parcelFileName);
 
@@ -96,6 +91,8 @@ public class ProfileCalculation {
 		} else {
 			featCollBuildings = ShapefileReader.read(buildingFile);
 		}
+
+		LOGGER.info("Number of buildings : " + featCollBuildings.size());
 
 		LOGGER.info("---Setting parameters---");
 
@@ -139,8 +136,8 @@ public class ProfileCalculation {
 		// buildings, String parcelFile, double stepXY, double stepZ, String
 		// fileOutPoint, double maxDist, String attID
 
-		run(OUTPUT_FILE_NAME, featCollTrajectory, featCollBuildings, parcelFileName, stepXY, stepZ, outputFolder, radius,
-				ID_ATT);
+		run(OUTPUT_FILE_NAME, featCollTrajectory, featCollBuildings, parcelFileName, stepXY, stepZ, outputFolder,
+				radius, ID_ATT);
 
 	}
 
@@ -274,30 +271,31 @@ public class ProfileCalculation {
 		BuildingProfileParameters.ID = attID;
 		// Mandatory due to precision trunk in Geoxygene core
 		DirectPosition.PRECISION = 10;
+	
 
 		IFeatureCollection<IFeature> parcelles = null;
 
 		if (parcelFile != null) {
 			parcelles = ShapefileReader.read(parcelFile);
 		}
-		
+
 		Profile profile = new Profile(trajectories,
 				// Set of contigus roads from which the profil is calculated
 				buildings,
 				// 3D buildings used
-			
-				parcelles
-		);
+
+				parcelles);
 		profile.setXYStep(stepXY);
 		profile.setZStep(stepZ);
 		profile.setLongCut(maxDist);
-		
-	
 
-		profile.setLongCut(maxDist);
+		StreetProfilRenderer sPR = new StreetProfilRenderer();
+
+		sPR.display(profile);
+
 		// Data loading, if parcels have no z they are translated to the minimal
 		// z of the scene
-		profile.loadData();
+		profile.loadData(false);
 
 		// Calculation of the profilLe
 		// The results may be acccessible by getPproj method
@@ -309,8 +307,12 @@ public class ProfileCalculation {
 		// parametrized by profile.setYProjectionShifting
 		profile.process();
 
+		sPR.updateDisplay(profile);
+
+		System.out.println("Updated");
+
 		// Point export
-		profile.exportPoints(outputFolder + "/" +  outFileName);
+		profile.exportPoints(outputFolder + "/" + outFileName);
 
 	}
 
