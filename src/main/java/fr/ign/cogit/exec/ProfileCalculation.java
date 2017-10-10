@@ -17,12 +17,10 @@ import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.BuildingProfileParameters;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.Profile;
-import fr.ign.cogit.geoxygene.sig3d.calculation.raycasting.RayCasting;
 import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;
-import fr.ign.cogit.geoxygene.sig3d.equation.LineEquation;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
-import fr.ign.cogit.streetprofile.visu.StreetProfilRenderer;
+
 
 public class ProfileCalculation {
 	protected static final Logger LOGGER = Logger.getLogger(SkyOpeness.class);
@@ -31,8 +29,8 @@ public class ProfileCalculation {
 
 		if (args == null || args.length == 0) {
 			args = new String[] { "-buildings", "/home/mickael/data/mbrasebin/donnees/Marina/Bati.shp", "-trajectory",
-					"/home/mickael/data/mbrasebin/donnees/Marina/Route.shp", "-output", "/home/mickael/temp/",
-					"-sXY", "10", "-sZ", "10", "-d", "200" };
+					"/home/mickael/data/mbrasebin/donnees/Marina/Route.shp", "-output", "/home/mickael/temp/", "-sXY",
+					"10", "-sZ", "10", "-d", "200" };
 		}
 
 		// Defining and parsing options
@@ -271,7 +269,6 @@ public class ProfileCalculation {
 		BuildingProfileParameters.ID = attID;
 		// Mandatory due to precision trunk in Geoxygene core
 		DirectPosition.PRECISION = 10;
-	
 
 		IFeatureCollection<IFeature> parcelles = null;
 
@@ -289,9 +286,9 @@ public class ProfileCalculation {
 		profile.setZStep(stepZ);
 		profile.setLongCut(maxDist);
 
-		StreetProfilRenderer sPR = new StreetProfilRenderer();
+		//StreetProfilRenderer sPR = new StreetProfilRenderer();
 
-		sPR.display(profile);
+		//sPR.display(profile);
 
 		// Data loading, if parcels have no z they are translated to the minimal
 		// z of the scene
@@ -307,7 +304,7 @@ public class ProfileCalculation {
 		// parametrized by profile.setYProjectionShifting
 		profile.process();
 
-		sPR.updateDisplay(profile);
+		//sPR.updateDisplay(profile);
 
 		System.out.println("Updated");
 

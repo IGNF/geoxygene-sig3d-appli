@@ -19,15 +19,58 @@ Mickaël Brasebin, [Lastig/COGIT](http://recherche.ign.fr/labos/cogit/cv.php?nom
 Julien Perret, [Lastig/COGIT](http://recherche.ign.fr/labos/cogit/cv.php?nom=Perret), julien.perret at ign dot fr
 
 
-## Street profil calculation
+## Street profile calculation
 
 
 ![Image of profile result](https://raw.githubusercontent.com/IGNF/geoxygene-sig3d-appli/master/img/StreetProfile.png)
 
+### Introduction
+
+The street profile code is dedicated to analyze 3D façade rhythm along a trajectory (a road for example). In order to help in this task, the code aims at calculating a discrete 3D skyline from both part of a street with information (such as ID of the concerned building and distance to the road). The result is exported as a 2D shapefile that allows to visualize and analyze the results in a classical GIS.
 
 This code (in the package streetprofile) was developed during a Msc training course. The thesis is available [here](http://recherche.ign.fr/labos/cogit/publiCOGITDetail.php?idpubli=5214).
 
-The test class fr.ign.cogit.streetprofile.demo.Main.java is directly runnable as it uses data included in the project.
+A demo class fr.ign.cogit.streetprofile.demo.Main.java is directly runnable as it uses data included in the project.
+
+An executable is available in the folder executable of the project. All the geographic data used during the process are in the 3D shapefile format. Concerning buildings, it requires that the roofs and the facades have to be modelled in a same feature.
+
+The executed code is in the class fr.ign.cogit.exec.ProfileCalculation.
+
+### Algorithm
+![Image of the ray casting process](https://raw.githubusercontent.com/IGNF/geoxygene-sig3d-appli/master/img/ProfilAlg.png )
+
+A 3D discretization is proceeded according to a curvilinear abscissa step (*sXY*) and an altitude step (*sZ*) like presented in the left figure. For each point, a ray is casted for each part of the trajectory (the right figure shows this for the left part of the trajectory) for each altitude from the minimal altitude of the scene to the maximal one. The first intersection between the ray and the 3D building layer is stored (if the distance is inferior than *-d* value). If a parcel layer is provided, only the buildings in the first parcel in the direction of the ray are considered in the process.
+
+
+### Inputs
+
+The parameters of the algorithm can be shown with the *-h* parameter.
+
+Some parameters are mandatory :
+ + *-buildings <building-file>* : the file path to the building shapefile.  Either geometries are stored as 3D surfaces (Roofs and Walls must be modelled as a multi-surface in a unique feature), either they can be extruded according to an attribute with *-extrude  extrude-attribute* and the minimal z is set to zero.
+ + *-trajectory <trajectory-file>* : the file path to the analyzed trajectory. It must be represented as a LineString. If the file contains several linestrings, they are merged together.
+ + *-output <output-folder>*  : the output folder where all results will be stored
+
+Others are optionnal :
+   + *-d <maximaldistance>* :  the maximal distance until buildings are considred (50 m by default)
+   + *-id <id>*          :  the id attribute from the points layer (ID by default). It is used to indicated which building is visible in a direction.
+   + *-o <file-out>* : the output file where points with attributes are stored (by default out.shp)
+    + *-parcels <parcel-file>* : a parcel shapefile. By activating this option, at each step of the algorithm. Only buildings that lay inside the first met parcel are kept during the process.
+    + *-sXY <StepXY>* : the discretization step according to the curvilinear abscissa (4 m by default)
+    + *-sZ <StepZ>* : the discretization according to the altitude (4 m by default).
+
+A basic method to run the program is to execute the following command line :
+
+
+```
+./ProfileCalculation.sh -buildings buildings.shp -trajectory road.shp -output /home/mickael/temp/ -sXY 10-sZ 10 -d 200
+    ```
+
+### Outputs
+
+As output, the intersection points are stored as a 2D shapefile. Each point an attribute ID that contains the ID of the building (attribute *-id*) intersected by the ray and an attribute about the length of the ray.
+
+
 
 
 ## Sky openess calculation
@@ -40,17 +83,23 @@ Sky openess is a 3D spatial indicator that assess the sky visibility from a give
 
 This code (in the package exec) was developed for a research work about the influence of data quality on sky openess calcultion. The paper about this work is available [here](http://recherche.ign.fr/labos/cogit/publiCOGITDetail.php?idpubli=4759&portee=chercheur&id=59&classement=date&duree=100&nomcomplet=Brasebin%20Mickael&annee=2012&principale=)
 
-An executable is available in the folder executable of the project. All the geographic data used during the process are in the shapefile format.
+An executable is available in the folder executable of the project. All the geographic data used during the process are in the 3D shapefile format.
+
+The executed code is in the class fr.ign.cogit.exec.SkyOpeness.
+
+### Algorithm
+
+The method proposed here allows the generation of the 3D geometry resulting from the sky openess calculation. A discrete ray casting is proceed according to a given angular step (*-s*) and the first intersection is considered if the distance if lesser than the given radius (*-r*).
 
 ### Inputs
 
-The parameters of the algorithm can be show with the *-h* parameter.
+The parameters of the algorithm can be shown with the *-h* parameter.
 
 A minimal set of parameters is mandatory :
-+ *-buildings filepath* : the file path to the building shapefile. Either geometries are stored as 3D surfaces, either they can be extruded according to an attribute with *-extrude  extrude-attribute* and the minimal z is set to zero.
++ *-buildings filepath* : the file path to the building shapefile. Either geometries are stored as 3D surfaces, either they can be extruded according to an attribute with *-extrude  extrude-attrib### Algorithmute* and the minimal z is set to zero.
 + *-points filepath* : the file path to the points from which the calculation is proceeded. Either there are 3D points and the z is used, either they are 2D points and the z can be set at a given altitude with *-z value*
 + *-o <file-out>* : the output points with attributes about sky openess indicators
-+ *-output <output-folder>*  : the output folder where all results will be stored
++ *-output <output-folder>*  : the output folder where all results will be stored.
 
 Other parameters are optionnal :
 + About discretization :
@@ -61,9 +110,7 @@ Other parameters are optionnal :
  +  *-g2D*   : export the 2D geometry of polygon visibility limited by the input radius(what is visible at the height of the point).
   +  *-g3D*   :  export the 3D geometry of what is visible from a point (like in the figure at the begin of this section)
 
-### Algorithm
 
-The method proposed here allows the generation of the 3D geometry resulting from the sky openess calculation. A discrete ray casting is proceed according to a given angular step and the first intersection is considered if the distance if lesser than the given radius.
 
 A basic method to run the program is to execute the following command line :
 
