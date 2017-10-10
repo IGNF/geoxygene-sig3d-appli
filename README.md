@@ -71,7 +71,7 @@ A basic method to run the program is to execute the following command line :
 
 As output, the intersection points are stored as a 2D shapefile. Each point an attribute ID that contains the ID of the building (attribute *-id*) intersected by the ray and an attribute about the length of the ray.
 
-A result vizualized in QGIS :
+A result in QGIS :
 
 ![Image of generated geometry](https://raw.githubusercontent.com/IGNF/geoxygene-sig3d-appli/master/img/StreetProfileOut.png )
 
