@@ -73,7 +73,7 @@ As output, the intersection points are stored as a 2D shapefile. Each point an a
 
 A result vizualized in QGIS :
 
-![Image of generated geometry](https://raw.githubusercontent.com/IGNF/geoxygene-sig3d-appli/master/img/StreetProfile.png )
+![Image of generated geometry](https://raw.githubusercontent.com/IGNF/geoxygene-sig3d-appli/master/img/StreetProfileOut.png )
 
 
 ## Sky openess calculation
