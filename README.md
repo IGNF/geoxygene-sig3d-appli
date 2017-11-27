@@ -4,9 +4,11 @@
 ![3D Image](https://raw.githubusercontent.com/IGNF/geoxygene-sig3d-appli/master/img/3Dimg.png)
 
 This project contains a set of 3D GIS applications developed from GeOxygene3D module from [GeOxygene platform](https://github.com/IGNF/geoxygene). It includes several published works :
- - [Street profil calculation](#street-profil-calculation)   
+ - [Street profile calculation](#street-profil-calculation)   
  - [Sky openess calculation](#sky-openess-calculation)
  - [Generation of hulls and buildings from urban regulation](#Generation-of-hulls-and-buildings-from-urban-regulation)
+
+ Scripts were prepared to use more easily the code for street profile and sky openess calculation : [scripts in the last release](https://github.com/IGNF/geoxygene-sig3d-appli/releases/tag/1.9). Details about these scripts are described in the following sections.
 
 ## Things to know
 
