@@ -18,6 +18,17 @@ Mickaël Brasebin, [Lastig/COGIT](http://recherche.ign.fr/labos/cogit/cv.php?nom
 
 Julien Perret, [Lastig/COGIT](http://recherche.ign.fr/labos/cogit/cv.php?nom=Perret), julien.perret at ign dot fr
 
+## System requirements
+
+For running script and development:
++ Java (JDK 8 or more recent)
+
+Only for development:
++ Eclipse
++ Maven
+The necessary developpers tools are the same as necessary for GeOxygene project, you can find an installation manual [here](http://ignf.github.io/geoxygene/documentation/developer/install.html).
+
+
 
 ## Street profile calculation
 
@@ -35,6 +46,22 @@ A demo class fr.ign.cogit.streetprofile.demo.Main.java is directly runnable as i
 An executable is available in the folder executable of the project. All the geographic data used during the process are in the 3D shapefile format. Concerning buildings, it requires that the roofs and the facades have to be modelled in a same feature.
 
 The executed code is in the class fr.ign.cogit.exec.ProfileCalculation.
+
+### Publication
+
+If you use this script in a publication, please cite the [following article](http://recherche.ign.fr/labos/cogit/publiCOGITDetail.php?idpubli=5214) :
+```TeX
+@MastersThesis\{Fund12,
+  author       = "Fund, Marina",
+  title        = "Exploitabilit\'e des bases de donn\'ees 3D pour le calcul d'indicateurs urbains 3D",
+  school       = "M2 Information G\'eographique \& M2 G\'enie urbain, Universit\'e Paris Est MLV, ENSG",
+  month        = "sep",
+  year         = "2012",
+  type         = "Rapport de stage",
+  keywords     = "3d, indicateur",
+}
+```
+
 
 ### Algorithm
 ![Image of the ray casting process](https://raw.githubusercontent.com/IGNF/geoxygene-sig3d-appli/master/img/ProfilAlg.png )
@@ -62,7 +89,7 @@ Others are optionnal :
 A basic method to run the program is to execute the following command line :
 
 
-```
+```bash
 ./ProfileCalculation.sh -buildings buildings.shp -trajectory road.shp -output /home/mickael/temp/ -sXY 10-sZ 10 -d 200
 ```
 
@@ -89,6 +116,20 @@ This code (in the package exec) was developed for a research work about the infl
 An executable is available in the folder executable of the project. All the geographic data used during the process are in the 3D shapefile format.
 
 The executed code is in the class fr.ign.cogit.exec.SkyOpeness.
+
+
+### Publication
+
+If you use this script in a publication, please cite the [following article](http://recherche.ign.fr/labos/cogit/publiCOGITDetail.php?idpubli=4759) :
+```TeX
+@InProceedings\{Brasebin12,
+  author       = "Brasebin, Micka{\"e}l and Perret, Julien and Musti\`ere, S\'ebastien and Weber, Christiane",
+  title        = "Measuring the impact of 3D data geometric modeling on spatial analysis : illustration with Skyview factor.",
+  booktitle    = "3u3d2012: Usage, Usability, and Utility of 3D City models",
+  month        = "oct",
+  year         = "2012",
+}
+```
 
 ### Algorithm
 
@@ -117,7 +158,7 @@ Other parameters are optionnal :
 
 A basic method to run the program is to execute the following command line :
 
-```
+```bash
 ./SkyOpeness.sh -buildings LOD_BUILDING_2012.shp -points trees.shp -output /temp/ -z 172 -r 100 -s 360 -id gid -g3D -g2D
 ```
 ### Outputs
@@ -145,13 +186,6 @@ If *-g2D* and/or  *-g3D*, shapefiles will be written in the output folder *<outp
 ![Simulation image](https://raw.githubusercontent.com/IGNF/geoxygene-sig3d-appli/master/img/simul.png)
 
 This code (in the package gru3d) was developed for a research work about assessing constructability from urban local regulation. The paper about this work is available [here](http://recherche.ign.fr/labos/cogit/publiCOGITDetail.php?idpubli=4120&portee=chercheur&id=59&classement=date&duree=100&nomcomplet=Brasebin%20Mickael&annee=2011&principale=)
-
-## System requirements
-
-+ Java (JDK 8 or more recent)
-+ Eclipse
-+ Maven
-The necessary developpers tools are the same as necessary for GeOxygene project, you can find an installation manual [here](http://ignf.github.io/geoxygene/documentation/developer/install.html).
 
 ## Acknowledgments
 
