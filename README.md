@@ -8,7 +8,7 @@ This project contains a set of 3D GIS applications developed from GeOxygene3D mo
  - [Sky openess calculation](#sky-openess-calculation)
  - [Generation of hulls and buildings from urban regulation](#Generation-of-hulls-and-buildings-from-urban-regulation)
 
- Scripts were prepared to use more easily the code for street profile and sky openess calculation : [scripts in the last release](https://github.com/IGNF/geoxygene-sig3d-appli/releases/tag/1.9). Details about these scripts are described in the following sections.
+ Scripts were prepared to use more easily the code for street profile and sky openess calculation : [scripts in the last release](https://github.com/IGNF/geoxygene-sig3d-appli/releases/download/1.9/geoxgygene-sig3d-appli-1.9.zip). Details about these scripts are described in the following sections.
 
 ## Things to know
 
