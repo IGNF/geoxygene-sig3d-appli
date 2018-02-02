@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.BuildingProfileParameters;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.Profile;
 import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;
@@ -232,8 +233,18 @@ public class ProfileCalculation {
 	}
 
 	public static IFeatureCollection<IFeature> prepareBuildingCollection(String buildingFile, String heightAttribute) {
+		
+		
+		if(buildingFile == null){
+			return new FT_FeatureCollection<>();
+		}
 
 		IFeatureCollection<IFeature> buildings = ShapefileReader.read(buildingFile);
+		
+		if(buildings == null ||buildings.isEmpty()){
+			return new FT_FeatureCollection<>();
+		}
+		
 
 		for (IFeature feat : buildings) {
 			Object o = feat.getAttribute(heightAttribute);
