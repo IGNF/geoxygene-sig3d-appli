@@ -3,6 +3,7 @@ package fr.ign.cogit.task;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,6 +13,8 @@ import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.Profile;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.Profile.SIDE;
+import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.pattern.Pattern;
+import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.pattern.ProfilePatternDetector;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.stats.ProfileAutoCorrelation;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.stats.ProfileBasicStats;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.stats.ProfileMoran;
@@ -225,9 +228,53 @@ public class ProfileTask {
 		    writer.append("AutocorrelationMultiPle=" + Arrays.toString(pMDCDown.getTabACF()) +"\n");
 	    	
 	    }  
+	    
+	    
+		
+	    
+	    
+	    ProfilePatternDetector pPD = new ProfilePatternDetector(20);
 
+	    // "X" >= 72 AND "X" < 92 AND "Y" > 0
+	    
+	    List<Pattern> patternListUp = pPD.patternDetector(profile, SIDE.UPSIDE);
+	    
+	    List<Pattern> patternTemp = new ArrayList<>();
+	    
+	    
+	    
+	    for(int i= 0; i < patternListUp.size(); i ++){
+	    	Pattern p = patternListUp.get(i);
+	    	
+	    	if(p.getRepeat() < 2){
+	    		continue;
+	    	}
+	    	patternTemp.add(p);
+	    	break;
+	    }
+	    
+	    
+	    for(int i=  patternListUp.size() -1; i > 0; i --){
+	    	Pattern p = patternListUp.get(i);
+	    	
+	    	if(p.getRepeat() < 3){
+	    		continue;
+	    	}
+	    	patternTemp.add(p);
+	    	break;
+	    }
+	    
+	    
+	  //  List<Pattern> patternListDown= pPD.patternDetector(profile, SIDE.DOWNSIDE);
+	    System.out.println("Worst correlation : " + patternTemp.get(0).getCorrelationScore());
+	    System.out.println("Best correlation : " + patternTemp.get(patternTemp.size() - 1).getCorrelationScore());
+
+	    ShapefileWriter.write(patternTemp.get(0).getSignal(), folderOut + "/wcsig.shp");
+	    ShapefileWriter.write(patternTemp.get(patternTemp.size() - 1).getGenerator(), folderOut + "/bcgen.shp");
+	    ShapefileWriter.write(patternTemp.get(patternTemp.size() - 1).getSignal(), folderOut + "/bcsig.shp");
+	
 		     
-		    writer.close();
+	    writer.close();
 
 		return folderOut;
 	}
