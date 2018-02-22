@@ -3,8 +3,8 @@ package fr.ign.cogit.task;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import fr.ign.cogit.exec.ProfileCalculation;
@@ -12,7 +12,6 @@ import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.Profile;
-import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.Profile.SIDE;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.pattern.Pattern;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.pattern.ProfilePatternDetector;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.stats.ProfileAutoCorrelation;
@@ -33,24 +32,31 @@ public class ProfileTask {
 		File buildingsFile = new File(
 				"/home/mbrasebin/Documents/Code/GeOxygene/geoxygene-sig3d-appli/script/out/81812/buildings.shp");
 
+		String dirName = "81812";
+
 		double stepXY = 1;
 		double stepZ = 1;
 		double maxDist = 500;
 
+		double correlationThreshold = 0.8;
+		
+		int minimalPeriod = 20;
+
 		String heightAttribute = "HAUTEUR";
 
-		run(folderOut, roadsFile, buildingsFile, stepXY, stepZ, maxDist, heightAttribute);
+		run(folderOut, roadsFile, buildingsFile, stepXY, stepZ, maxDist, correlationThreshold,  minimalPeriod, heightAttribute,
+				dirName);
 	}
 
 	public static File runDefault(File folderOut, File folderIn, double stepXY, double stepZ, double maxDist,
-			String heightAttribute) throws Exception {
+			double correlationThreshold, int minimalPeriod, String heightAttribute, String dirName) throws Exception {
 		return run(folderOut, new File(folderIn, "road.shp"), new File(folderIn, "buildings.shp"), stepXY, stepZ,
-				maxDist, heightAttribute);
+				maxDist,  correlationThreshold, minimalPeriod, heightAttribute, dirName);
 
 	}
 
 	public static File run(File folderOut, File roadsFile, File buildingsFile, double stepXY, double stepZ,
-			double maxDist, String heightAttribute) throws Exception {
+			double maxDist, double correlationThreshold, int minimalPeriod, String heightAttribute, String dirName) throws Exception {
 
 		// Preparing outputfolder
 		System.out.println("folder out = " + folderOut);
@@ -67,11 +73,16 @@ public class ProfileTask {
 		}
 
 		// Reading roads
+		System.out.println("Reading roads ");
 		IFeatureCollection<IFeature> roads = readShapefile(roadsFile.getParentFile(), roadsFile.getName());
 
 		if (roads == null || roads.isEmpty()) {
 			return folderOut;
 		}
+		
+		
+		
+		System.out.println("Reading buildings");
 
 		// Reading and extruding buildings
 		IFeatureCollection<IFeature> buildings = ProfileCalculation.prepareBuildingCollection(
@@ -95,18 +106,22 @@ public class ProfileTask {
 		profile.setZStep(stepZ);
 		profile.setLongCut(maxDist);
 
-
+		
 		profile.setDisplayInit(true);
 
+		System.out.println("Loading data");
 		profile.loadData(false);
+		System.out.println("Processing");
 		profile.process();
 
-		//Writing point profile
+		
+		
+		System.out.println("Writing output");
+		// Writing point profile
 		String fileName = folderOut + "/out_profile.shp";
 		profile.exportPoints(fileName);
 
-		
-		//Writing points on geographic coordinate system
+		// Writing points on geographic coordinate system
 		IFeatureCollection<IFeature> ft1 = profile.getBuildingSide1();
 		IFeatureCollection<IFeature> ft2 = profile.getBuildingSide2();
 
@@ -119,164 +134,129 @@ public class ProfileTask {
 			featCollPointOut.addAll(ft2);
 		}
 
-	    List<Double> heightsUP = profile.getHeightAlongRoad(SIDE.UPSIDE);
 
-	    //////////////////////Writing shapefile output
-	    
 
+		////////////////////// Writing shapefile output
+
+		System.out.println("Export points");
 		ShapefileWriter.write(featCollPointOut, folderOut + "/out_points.shp");
 
+		
+		System.out.println("Export debug");
 		IFeatureCollection<IFeature> featCOut = profile.getFeatOrthoColl();
 		ShapefileWriter.write(featCOut, folderOut + "/debug.shp");
+
+		///////////////// WRITING STATISTICS
+
+		////////////// GLOBAL STATISTICS
 		
+
+		///////////////////////////////// UPPER PROFILE STATS
+
+		System.out.println("Export global upper");
+		writeGlobalStats(profile, Profile.SIDE.UPSIDE, folderOut, dirName, maxDist);
+
+		///////////////////////////////// DOWN PROFILE STATS
+		System.out.println("Export global down");
+		writeGlobalStats(profile, Profile.SIDE.DOWNSIDE, folderOut, dirName, maxDist);
+
+		////////////// LOCAL STATISTICS
 		
+		///////////////////////////////// UPPER PROFILE STATS
 		
+		System.out.println("Export local upper");
+		writeLocalStats(profile, Profile.SIDE.UPSIDE, folderOut, dirName, minimalPeriod, correlationThreshold);
 		
-		/////////////////WRITING STATISTICS
-		
-	    
+		///////////////////////////////// DOWN PROFILE STATS
+		System.out.println("Export local dower");
+		writeLocalStats(profile, Profile.SIDE.DOWNSIDE, folderOut, dirName, minimalPeriod, correlationThreshold);
 
-	    BufferedWriter writer = new BufferedWriter(new FileWriter(new File(folderOut, "stats.txt"), true));
-	    
-	    /////////////////////////////////UPPER PROFILE STATS
-		
-	    
-	    if(heightsUP != null && ! heightsUP.isEmpty()){
-
-		    //Moran up
-		    ProfileMoran pMUP = new ProfileMoran();
-		    pMUP.calculate(heightsUP);
-		    double moranProfileUp = pMUP.getMoranProfileFinal();
-		   
-		    
-		    
-		    
-		    //Basic stats
-		    ProfileBasicStats pBSUp = new ProfileBasicStats();
-		    pBSUp.calculate(heightsUP);
-		    
-		    //Height autocorrelation : up
-		    ProfileAutoCorrelation pACUp = new ProfileAutoCorrelation();
-		    pACUp.calculateACF(heightsUP);
-		    pACUp.calculateMethodYin(heightsUP);
-		    
-		    
-
-		    
-		    
-		    //Height Depth Autocorrelation
-		    ProfileMultiDimensionnalCorrelation pMDCUP = new ProfileMultiDimensionnalCorrelation();
-		    pMDCUP.calculate(profile, SIDE.UPSIDE, maxDist, pBSUp.getMax());
-		    
-		    
-		    writer.append("MinUp=" + pBSUp.getMin()+"\n");
-		    writer.append("MaxUp=" + pBSUp.getMax()+"\n");
-		    writer.append("MoyUp=" + pBSUp.getMoy()+"\n");
-		    writer.append("MedUp=" + pBSUp.getMed()+"\n");
-		    
-		    writer.append("MorabUp="+moranProfileUp +"\n");
-		    
-		    
-		    
-		    writer.append("AutocorrelationUp="+  Arrays.toString(pACUp.getTabACF()) +"\n");
-		    writer.append("AutocorrelationYinUP=" +  Arrays.toString(pACUp.getTabYIN()) +"\n");
-		    
-		    writer.append("AutocorrelationMultiPle=" + Arrays.toString( pMDCUP.getTabACF()) +"\n");
-	    }
-	    
-	    /////////////////////////////////DOWN PROFILE STATS
-	    
-	    List<Double> heightsDown = profile.getHeightAlongRoad(SIDE.DOWNSIDE);
-	    
-	    
-	    if(heightsDown != null && ! heightsDown.isEmpty()){
-	    	
-		    //Moran downs
-		    ProfileMoran pDown = new ProfileMoran();
-		    pDown.calculate(heightsDown);
-		    double moranProfileDown = pDown.getMoranProfileFinal();
-		    
-
-		    
-		    
-		    //Basic stats2
-		    ProfileBasicStats pBSDown = new ProfileBasicStats();
-		    pBSDown.calculate(heightsDown);
-		    
-		    
-		    //Height autocorrelation : down
-		    ProfileAutoCorrelation pACDown = new ProfileAutoCorrelation();
-		    pACDown.calculateACF(heightsDown);
-		    pACDown.calculateMethodYin(heightsDown);
-		    
-		    ProfileMultiDimensionnalCorrelation pMDCDown = new ProfileMultiDimensionnalCorrelation();
-		    pMDCDown.calculate(profile, SIDE.DOWNSIDE, maxDist, pBSDown.getMax());
-		    
-		    
-		    writer.append("MinDown=" + pBSDown.getMin()+"\n");
-		    writer.append("MaxDown=" + pBSDown.getMax()+"\n");
-		    writer.append("MoyDown=" + pBSDown.getMoy()+"\n");
-		    writer.append("MedDown=" + pBSDown.getMed()+"\n");
-
-
-		    writer.append("MoranDown="+moranProfileDown +"\n");
-		    
-		    
-		    writer.append("AutocorrelationUp="+ Arrays.toString(pACDown.getTabACF()) +"\n");
-		    writer.append("AutocorrelationYinUP=" + Arrays.toString(pACDown.getTabYIN()) +"\n");
-		    
-		    writer.append("AutocorrelationMultiPle=" + Arrays.toString(pMDCDown.getTabACF()) +"\n");
-	    	
-	    }  
-	    
-	    
-		
-	    
-	    
-	    ProfilePatternDetector pPD = new ProfilePatternDetector(20);
-
-	    // "X" >= 72 AND "X" < 92 AND "Y" > 0
-	    
-	    List<Pattern> patternListUp = pPD.patternDetector(profile, SIDE.UPSIDE);
-	    
-	    List<Pattern> patternTemp = new ArrayList<>();
-	    
-	    
-	    
-	    for(int i= 0; i < patternListUp.size(); i ++){
-	    	Pattern p = patternListUp.get(i);
-	    	
-	    	if(p.getRepeat() < 2){
-	    		continue;
-	    	}
-	    	patternTemp.add(p);
-	    	break;
-	    }
-	    
-	    
-	    for(int i=  patternListUp.size() -1; i > 0; i --){
-	    	Pattern p = patternListUp.get(i);
-	    	
-	    	if(p.getRepeat() < 3){
-	    		continue;
-	    	}
-	    	patternTemp.add(p);
-	    	break;
-	    }
-	    
-	    
-	  //  List<Pattern> patternListDown= pPD.patternDetector(profile, SIDE.DOWNSIDE);
-	    System.out.println("Worst correlation : " + patternTemp.get(0).getCorrelationScore());
-	    System.out.println("Best correlation : " + patternTemp.get(patternTemp.size() - 1).getCorrelationScore());
-
-	    ShapefileWriter.write(patternTemp.get(0).getSignal(), folderOut + "/wcsig.shp");
-	    ShapefileWriter.write(patternTemp.get(patternTemp.size() - 1).getGenerator(), folderOut + "/bcgen.shp");
-	    ShapefileWriter.write(patternTemp.get(patternTemp.size() - 1).getSignal(), folderOut + "/bcsig.shp");
-	
-		     
-	    writer.close();
-
+		System.out.println("Taks end");
 		return folderOut;
+	}
+	
+	
+	public static void writeLocalStats(Profile profile, Profile.SIDE s, File folderOut, String dirName, int minimalPeriod, double correlationThreshold) throws IOException{
+		
+		ProfilePatternDetector pPD = new ProfilePatternDetector(minimalPeriod);
+		//HEADER : "dirName;begin;length;repeat;correlation"
+
+		BufferedWriter writerPattern = new BufferedWriter(new FileWriter(new File(folderOut, "patternOut.csv"), true));
+
+		HashMap<Integer, List<Pattern>> patternListUp = pPD.patternDetector(profile, s, correlationThreshold);
+
+		if (!patternListUp.isEmpty()) {
+
+			for (Integer length : patternListUp.keySet()) {
+
+				List<Pattern> lP = patternListUp.get(length);
+
+				for (Pattern p : lP) {
+					
+					writerPattern.append(dirName + ";");
+					writerPattern.append( s + ";");
+					writerPattern.append(p.getIndexBegin()+";");
+					writerPattern.append(p.getLength()+";");
+					writerPattern.append(p.getRepeat()+";");
+					writerPattern.append(p.getCorrelationScore()+"\n");
+
+				}
+
+			}
+
+		}
+
+		writerPattern.close();
+
+		
+		
+	}
+	
+	public static void writeGlobalStats(Profile profile, Profile.SIDE s, File folderOut, String dirName, double maxDist) throws IOException{
+		
+		
+		
+		List<Double> heights = profile.getHeightAlongRoad(s);
+		
+		if(heights == null ||heights.isEmpty()){
+			return;
+		}
+		
+		BufferedWriter writer = new BufferedWriter(new FileWriter(new File(folderOut, "output.csv"), true));
+
+		// HEADER = "dirname;side;minH;maxH;avgH;medH;moran;"
+		
+		// Identifing information
+		writer.append(dirName + ";");
+		writer.append(s + ";");
+
+		// Moran up
+		ProfileMoran pM = new ProfileMoran();
+		pM.calculate(heights);
+		double moranProfileValue = pM.getMoranProfileFinal();
+
+		// Basic stats
+		ProfileBasicStats pBS = new ProfileBasicStats();
+		pBS.calculate(heights);
+
+		// Height autocorrelation : up
+		ProfileAutoCorrelation pAC = new ProfileAutoCorrelation();
+		pAC.calculateACF(heights);
+		pAC.calculateMethodYin(heights);
+
+		// Height Depth Autocorrelation
+		ProfileMultiDimensionnalCorrelation pMDC = new ProfileMultiDimensionnalCorrelation();
+		pMDC.calculate(profile, s, maxDist, pBS.getMax());
+
+		writer.append(pBS.getMin() + ";");
+		writer.append(pBS.getMax() + ";");
+		writer.append(pBS.getMoy() + ";");
+		writer.append(pBS.getMed() + ";");
+
+		writer.append(moranProfileValue + " \n");
+
+			
+		writer.close();
 	}
 
 	private static String getFileName(File folder, String filename) {
