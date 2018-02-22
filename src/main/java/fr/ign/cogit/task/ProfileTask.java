@@ -21,7 +21,6 @@ import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.stats.ProfileMultiDim
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
-import fr.ign.cogit.simplu3d.util.FileLocator;
 
 public class ProfileTask {
 
@@ -39,24 +38,25 @@ public class ProfileTask {
 		double maxDist = 500;
 
 		double correlationThreshold = 0.8;
-		
+
 		int minimalPeriod = 20;
 
 		String heightAttribute = "HAUTEUR";
 
-		run(folderOut, roadsFile, buildingsFile, stepXY, stepZ, maxDist, correlationThreshold,  minimalPeriod, heightAttribute,
-				dirName);
+		run(folderOut, roadsFile, buildingsFile, stepXY, stepZ, maxDist, correlationThreshold, minimalPeriod,
+				heightAttribute, dirName);
 	}
 
 	public static File runDefault(File folderOut, File folderIn, double stepXY, double stepZ, double maxDist,
 			double correlationThreshold, int minimalPeriod, String heightAttribute, String dirName) throws Exception {
 		return run(folderOut, new File(folderIn, "road.shp"), new File(folderIn, "buildings.shp"), stepXY, stepZ,
-				maxDist,  correlationThreshold, minimalPeriod, heightAttribute, dirName);
+				maxDist, correlationThreshold, minimalPeriod, heightAttribute, dirName);
 
 	}
 
 	public static File run(File folderOut, File roadsFile, File buildingsFile, double stepXY, double stepZ,
-			double maxDist, double correlationThreshold, int minimalPeriod, String heightAttribute, String dirName) throws Exception {
+			double maxDist, double correlationThreshold, int minimalPeriod, String heightAttribute, String dirName)
+			throws Exception {
 
 		// Preparing outputfolder
 		System.out.println("folder out = " + folderOut);
@@ -79,9 +79,7 @@ public class ProfileTask {
 		if (roads == null || roads.isEmpty()) {
 			return folderOut;
 		}
-		
-		
-		
+
 		System.out.println("Reading buildings");
 
 		// Reading and extruding buildings
@@ -106,7 +104,6 @@ public class ProfileTask {
 		profile.setZStep(stepZ);
 		profile.setLongCut(maxDist);
 
-		
 		profile.setDisplayInit(true);
 
 		System.out.println("Loading data");
@@ -114,8 +111,6 @@ public class ProfileTask {
 		System.out.println("Processing");
 		profile.process();
 
-		
-		
 		System.out.println("Writing output");
 		// Writing point profile
 		String fileName = folderOut + "/out_profile.shp";
@@ -134,14 +129,11 @@ public class ProfileTask {
 			featCollPointOut.addAll(ft2);
 		}
 
-
-
 		////////////////////// Writing shapefile output
 
 		System.out.println("Export points");
 		ShapefileWriter.write(featCollPointOut, folderOut + "/out_points.shp");
 
-		
 		System.out.println("Export debug");
 		IFeatureCollection<IFeature> featCOut = profile.getFeatOrthoColl();
 		ShapefileWriter.write(featCOut, folderOut + "/debug.shp");
@@ -149,7 +141,6 @@ public class ProfileTask {
 		///////////////// WRITING STATISTICS
 
 		////////////// GLOBAL STATISTICS
-		
 
 		///////////////////////////////// UPPER PROFILE STATS
 
@@ -161,12 +152,12 @@ public class ProfileTask {
 		writeGlobalStats(profile, Profile.SIDE.DOWNSIDE, folderOut, dirName, maxDist);
 
 		////////////// LOCAL STATISTICS
-		
+
 		///////////////////////////////// UPPER PROFILE STATS
-		
+
 		System.out.println("Export local upper");
 		writeLocalStats(profile, Profile.SIDE.UPSIDE, folderOut, dirName, minimalPeriod, correlationThreshold);
-		
+
 		///////////////////////////////// DOWN PROFILE STATS
 		System.out.println("Export local dower");
 		writeLocalStats(profile, Profile.SIDE.DOWNSIDE, folderOut, dirName, minimalPeriod, correlationThreshold);
@@ -174,12 +165,12 @@ public class ProfileTask {
 		System.out.println("Taks end");
 		return folderOut;
 	}
-	
-	
-	public static void writeLocalStats(Profile profile, Profile.SIDE s, File folderOut, String dirName, int minimalPeriod, double correlationThreshold) throws IOException{
-		
+
+	public static void writeLocalStats(Profile profile, Profile.SIDE s, File folderOut, String dirName,
+			int minimalPeriod, double correlationThreshold) throws IOException {
+
 		ProfilePatternDetector pPD = new ProfilePatternDetector(minimalPeriod);
-		//HEADER : "dirName;begin;length;repeat;correlation"
+		// HEADER : "dirName;begin;length;repeat;correlation"
 
 		BufferedWriter writerPattern = new BufferedWriter(new FileWriter(new File(folderOut, "patternOut.csv"), true));
 
@@ -192,13 +183,13 @@ public class ProfileTask {
 				List<Pattern> lP = patternListUp.get(length);
 
 				for (Pattern p : lP) {
-					
+
 					writerPattern.append(dirName + ";");
-					writerPattern.append( s + ";");
-					writerPattern.append(p.getIndexBegin()+";");
-					writerPattern.append(p.getLength()+";");
-					writerPattern.append(p.getRepeat()+";");
-					writerPattern.append(p.getCorrelationScore()+"\n");
+					writerPattern.append(s + ";");
+					writerPattern.append(p.getIndexBegin() + ";");
+					writerPattern.append(p.getLength() + ";");
+					writerPattern.append(p.getRepeat() + ";");
+					writerPattern.append(p.getCorrelationScore() + "\n");
 
 				}
 
@@ -208,24 +199,21 @@ public class ProfileTask {
 
 		writerPattern.close();
 
-		
-		
 	}
-	
-	public static void writeGlobalStats(Profile profile, Profile.SIDE s, File folderOut, String dirName, double maxDist) throws IOException{
-		
-		
-		
+
+	public static void writeGlobalStats(Profile profile, Profile.SIDE s, File folderOut, String dirName, double maxDist)
+			throws IOException {
+
 		List<Double> heights = profile.getHeightAlongRoad(s);
-		
-		if(heights == null ||heights.isEmpty()){
+
+		if (heights == null || heights.isEmpty()) {
 			return;
 		}
-		
+
 		BufferedWriter writer = new BufferedWriter(new FileWriter(new File(folderOut, "output.csv"), true));
 
 		// HEADER = "dirname;side;minH;maxH;avgH;medH;moran;"
-		
+
 		// Identifing information
 		writer.append(dirName + ";");
 		writer.append(s + ";");
@@ -255,12 +243,21 @@ public class ProfileTask {
 
 		writer.append(moranProfileValue + " \n");
 
-			
 		writer.close();
 	}
 
+	private static File findFile(File folder, String filename){
+		for ( File file : folder.listFiles() ){
+			if ( file.getName().matches("(?i)"+filename)){
+				return file;
+			}
+		}
+		return null;
+	}
+		
+		
 	private static String getFileName(File folder, String filename) {
-		File file = FileLocator.findFile(folder, filename);
+		File file = findFile(folder, filename);
 		if (file == null) {
 			return null;
 		}

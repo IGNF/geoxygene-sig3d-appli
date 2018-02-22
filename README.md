@@ -6,7 +6,7 @@
 This project contains a set of 3D GIS applications developed from GeOxygene3D module from [GeOxygene platform](https://github.com/IGNF/geoxygene). It includes several published works :
  - [Street profile calculation](#street-profil-calculation)   
  - [Sky openess calculation](#sky-openess-calculation)
- - [Generation of hulls and buildings from urban regulation](#Generation-of-hulls-and-buildings-from-urban-regulation)
+
 
  Scripts were prepared to use more easily the code for street profile and sky openess calculation : [scripts in the last release](https://github.com/IGNF/geoxygene-sig3d-appli/releases/download/1.9/geoxgygene-sig3d-appli-1.9.zip). Details about these scripts are described in the following sections.
 
@@ -183,16 +183,8 @@ If *-g2D* and/or  *-g3D*, shapefiles will be written in the output folder *<outp
 
 
 
-## Generation of hulls and buildings from urban regulation
-
-![Simulation image](https://raw.githubusercontent.com/IGNF/geoxygene-sig3d-appli/master/img/simul.png)
-
-This code (in the package gru3d) was developed for a research work about assessing constructability from urban local regulation. The paper about this work is available [here](http://recherche.ign.fr/labos/cogit/publiCOGITDetail.php?idpubli=4120&portee=chercheur&id=59&classement=date&duree=100&nomcomplet=Brasebin%20Mickael&annee=2011&principale=)
-
 ## Acknowledgments
 
 
 + This research is supported by the French National Mapping Agency ([IGN](http://www.ign.fr))
-+ It is partially funded by the FUI TerraMagna project and by Île-de-France
-Région in the context of [e-PLU projet](www.e-PLU.fr)
 + Marina Fund for the development of street profil module
