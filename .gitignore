@@ -4,3 +4,5 @@
 .project
 log4j.log
 /script/out/
+/distributionScript/build/project/*
+/distributionScript/build/target/*

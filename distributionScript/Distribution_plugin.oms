@@ -1,0 +1,41 @@
+var dirName = Val[String] // Name of the Input directory to process
+
+val folderIn = Val[File] //Input local folder
+val resultFolder = Val[File] //Distant folder where results will be saved
+
+//Algorithm parameters
+val stepXY = Val[Double] //Sampling according to curvilinear abcissa
+val stepZ = Val[Double] //Sampling according to altitude
+val maxDist = Val[Double] //Maximal distance to consider buildings
+val heightAttribute = Val[String] //Height attribute value to extrude buildings
+val correlationThreshold = Val[Double] //Threshold value to keep a correlation
+val minimalPeriod = Val[Int] //Minimal period to consider (distance = stepXY *  minimalPeriod)
+
+
+val explo = ExplorationTask(				
+  (folderIn in (workDirectory / "data") withName dirName)
+)
+
+		
+val ProfileTask = ScalaTask("""
+  | import openmole._
+  | val resultFolder=ProfileScalaTask(newDir(), folderIn, stepXY, stepZ, maxDist, correlationThreshold, minimalPeriod,  heightAttribute, dirName)""".stripMargin) set (
+  plugins += pluginsOf(openmole.ProfileScalaTask),
+  stepXY := 1,
+  stepZ := 1,
+  maxDist := 500,
+  heightAttribute := "HAUTEUR",
+  minimalPeriod := 20,
+  correlationThreshold := 0.8,
+  inputs += ( folderIn, dirName, stepXY, stepZ, maxDist, heightAttribute, correlationThreshold,minimalPeriod ),
+  outputs += (dirName, resultFolder)
+  
+)
+
+val copyHook =  CopyFileHook(resultFolder, workDirectory/"out2/${dirName}/")
+
+val env = EGIEnvironment("vo.complex-systems.eu")
+//val env = LocalEnvironment(4)
+
+
+explo -< (ProfileTask on env hook (copyHook))
