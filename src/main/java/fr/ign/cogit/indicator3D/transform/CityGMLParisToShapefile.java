@@ -14,6 +14,7 @@ import fr.ign.cogit.geoxygene.sig3d.io.xml.citygmlv2.Context;
 import fr.ign.cogit.geoxygene.sig3d.io.xml.citygmlv2.LoaderCityGML;
 import fr.ign.cogit.geoxygene.sig3d.representation.citygml.representation.CG_StyleGenerator;
 import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
+import fr.ign.cogit.geoxygene.sig3d.util.selection.SpatialFilter3D;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.geoxygene.util.index.Tiling;
@@ -74,8 +75,12 @@ public class CityGMLParisToShapefile {
 			
 			VectorLayer vl = LoaderCityGML.read(new File(cityGMLFile), null, "Layer");
 			IFeatureCollection<IFeature> currentFeatureCollection= CityGMLToShapeFile.convertToFeatureCollection(vl, separateBuilding);
+			
+			
 			if(currentFeatureCollection != null){
-				featCollOut.addAll(currentFeatureCollection);
+				
+				
+				featCollOut.addAll(SpatialFilter3D.selectIntersected(currentFeatureCollection, cutCollection));
 			}
 			
 		}
