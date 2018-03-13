@@ -34,7 +34,7 @@ public class LoaderCityGMLExec {
 			String fileName = "ZoneAExporter.gml";
 
 			//FolderName
-			String folder = "/home/mbrasebin/Documents/Donnees/Paris/EXPORT_1288-13725/export-CityGML/";
+			String folder = "/media/paulchapron/Data/DATA-Bati_3D/Paris/EXPORT_1286-13723/export-CityGML/";
 			String path = folder + fileName;
 			
 			//Folder where image are included

@@ -40,7 +40,7 @@ public class CityGMLToShapeFile {
 		String fileName = "ZoneAExporter.gml";
 
 		// CityGML folder
-		String folder = "/home/mbrasebin/Documents/Donnees/Paris/EXPORT_1288-13725/export-CityGML/";
+        String folder = "/media/paulchapron/Data/DATA-Bati_3D/Paris/EXPORT_1286-13723/export-CityGML/";
 		String path = folder + fileName;
 
 		// Path to save shapefile
