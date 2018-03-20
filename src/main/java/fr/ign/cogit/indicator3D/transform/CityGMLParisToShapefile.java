@@ -73,7 +73,7 @@ public class CityGMLParisToShapefile {
 				continue;
 			}
 			
-			VectorLayer vl = LoaderCityGML.read(new File(cityGMLFile), null, "Layer");
+			VectorLayer vl = LoaderCityGML.read(new File(cityGMLFile), null, "Layer", false);
 			IFeatureCollection<IFeature> currentFeatureCollection= CityGMLToShapeFile.convertToFeatureCollection(vl, separateBuilding);
 			
 			

@@ -34,7 +34,7 @@ public class LoaderCityGMLExec {
 			String fileName = "ZoneAExporter.gml";
 
 			//FolderName
-			String folder = "/media/paulchapron/Data/DATA-Bati_3D/Paris/EXPORT_1286-13723/export-CityGML/";
+			String folder = "/home/mbrasebin/Documents/Donnees/Paris/EXPORT_1296-13718/export-CityGML/";
 			String path = folder + fileName;
 			
 			//Folder where image are included
@@ -48,7 +48,7 @@ public class LoaderCityGMLExec {
 
 			
 			//Loading CityGLK
-			VectorLayer vl = LoaderCityGML.read(new File(path), folderImage, "Layer");
+			VectorLayer vl = LoaderCityGML.read(new File(path), folderImage, "Layer", true);
 
 			
 			//Creating main window

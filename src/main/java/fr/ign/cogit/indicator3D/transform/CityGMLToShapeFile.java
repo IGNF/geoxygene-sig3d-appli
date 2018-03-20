@@ -57,7 +57,7 @@ public class CityGMLToShapeFile {
 		// !level of detail
 		Context.LOD_REP = 2;
 
-		VectorLayer vl = LoaderCityGML.read(new File(path), folderImage, "Layer");
+		VectorLayer vl = LoaderCityGML.read(new File(path), folderImage, "Layer", false);
 
 		exportShapeFile(vl, fileOut, separateBuilding);
 
