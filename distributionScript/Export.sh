@@ -9,7 +9,7 @@ username=postgres
 password=postgres
 
 road_id=gid
-folder_output=./out/
+folder_output=/home/mbrasebin/.openmole/ZBOOK-SIGOPT-2016/webui/projects/ProfileDistribution/data/
 
 radius=200
 

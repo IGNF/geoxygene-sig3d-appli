@@ -21,7 +21,7 @@ public class DebugCityGMLLoader {
 		String nameAttFile = "NomFich";
 		String fileCityGMLName = "ZoneAExporter.gml";
 		// Zone to keep (First feature used)
-		String cutFile = "/home/mbrasebin/Documents/Donnees/Paris/cut.shp";
+
 
 		// ShapefileOut
 		String outShapeFile = "/tmp/out.shp";
@@ -32,7 +32,7 @@ public class DebugCityGMLLoader {
 		Context.LOD_REP = 2;
 
 		// Converter parameter
-		boolean separateBuilding = true;
+	
 
 		// Feature collection out
 		IFeatureCollection<IFeature> featCollOut = new FT_FeatureCollection<>();
@@ -62,7 +62,7 @@ public class DebugCityGMLLoader {
 			}
 
 			try {
-				VectorLayer vl = LoaderCityGML.read(new File(cityGMLFile), folder, "Layer", true);
+				 LoaderCityGML.read(new File(cityGMLFile), folder, "Layer", true);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

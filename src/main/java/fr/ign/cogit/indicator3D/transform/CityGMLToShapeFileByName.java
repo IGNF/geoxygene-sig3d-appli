@@ -37,7 +37,7 @@ public class CityGMLToShapeFileByName {
 		String fileOut = "/home/mbrasebin/tmp/out.shp";
 
 		// Indicate that buildings are splitted between wall and roof
-		boolean separateBuilding = true;
+		boolean separateBuilding = false;
 
 
 		// We only need geometry

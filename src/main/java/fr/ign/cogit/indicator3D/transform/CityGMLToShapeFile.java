@@ -93,7 +93,7 @@ public class CityGMLToShapeFile {
 								IFeature featOut = new DefaultFeature(geom);
 
 								AttributeManager.addAttribute(featOut, "Type", "W", "String");
-
+								featCOut.add(featOut);
 							} else if (aBS instanceof CG_RoofSurface) {
 
 								IFeature featOut = new DefaultFeature(geom);
