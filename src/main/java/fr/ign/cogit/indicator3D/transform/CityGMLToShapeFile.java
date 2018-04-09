@@ -75,7 +75,7 @@ public class CityGMLToShapeFile {
 
 		for (IFeature feat : vl) {
 
-			if (feat instanceof CG_Building) {
+			if (feat instanceof CG_Building ) {
 
 				CG_AbstractBuilding abstractBuilding = (CG_AbstractBuilding) feat;
 
