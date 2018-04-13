@@ -2,10 +2,13 @@ package fr.ign.cogit.indicator3D.morpho;
 
 
 
+import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.Collections;
 
 import javax.xml.bind.JAXBException;
@@ -24,18 +27,26 @@ import fr.ign.cogit.geoxygene.sig3d.model.citygml.building.CG_WallSurface;
 import fr.ign.cogit.geoxygene.sig3d.model.citygml.building.CG_AbstractBoundarySurface;
 import fr.ign.cogit.geoxygene.sig3d.model.citygml.building.CG_AbstractBuilding;
 import fr.ign.cogit.geoxygene.sig3d.representation.citygml.representation.CG_StyleGenerator;
+import fr.ign.cogit.geoxygene.sig3d.representation.sample.ObjectCartoon;
+import fr.ign.cogit.geoxygene.sig3d.sample.DisplayData;
 import fr.ign.cogit.geoxygene.sig3d.semantic.Map3D;
 import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
 import fr.ign.cogit.indicator3D.transform.CityGMLToShapeFile;
 
 import  fr.ign.cogit.geoxygene.sig3d.calculation.Util;
-
+import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
+import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
+import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
+import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_OrientableSurface;
+import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Solid;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.feature.Representation;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
@@ -51,10 +62,10 @@ import fr.ign.cogit.geoxygene.sig3d.representation.citygml.building.*;
 public class Computation3DIndicators {
 
   public static void main(String[] args) {
+
     // TODO Auto-generated method stub
-    try {
-      
-      
+   // try {
+
       //Remove geoxygene geometry to lighten memory
       LoaderCityGML.CLEAN_GEOX_GEOM = false;
 
@@ -73,7 +84,7 @@ public class Computation3DIndicators {
 
   
       //Texture is loaded or not
-      CG_StyleGenerator.LOAD_TEXTURE = false;
+      CG_StyleGenerator.LOAD_TEXTURE = true;
 
       //Level of Detail of the data
       Context.LOD_REP = 2;
@@ -82,113 +93,190 @@ public class Computation3DIndicators {
   
       
       //Loading CityGLK
-      VectorLayer vl = LoaderCityGML.read(new File(path), folderImage, "Layer", true);
-    
-      
-      System.out.println( vl.size() + "  objets dans la scène \n");
-
-      ArrayList<CG_Building> batis = new ArrayList<>() ;
-      
-      for (IFeature feat : vl ) {
-        if(feat instanceof CG_Building) {
-          batis.add((CG_Building)feat); 
-        }
-      }
-      
-      int nbbatis = batis.size();
-      System.out.println(nbbatis + " bâtiments dans la scène");
-      
-      CG_Building oneOfBati = batis.get(2);
-       
-        
-    
-    
-    
-    
-    // traitement sur un batiment 
-    
-      
-      CG_AbstractBuilding absBati =   (CG_AbstractBuilding) oneOfBati ;
-        
-      ArrayList<CG_BuildingPart> lBatiPart = (ArrayList<CG_BuildingPart>) absBati.getConsistsOfBuildingPart(); 
-    
-      for (CG_AbstractBuilding partie : lBatiPart) {
-       System.out.println("partie "+ (lBatiPart.indexOf(partie) + 1 )+" / "+ lBatiPart.size() + "\n" );
-        List<CG_AbstractBoundarySurface> boundaries =  partie.getBoundedBySurfaces();
-        System.out.println(boundaries.size()+ " boundaries Surfaces"   );  
-        
-        
-           
-            
-        for (CG_AbstractBoundarySurface aBS : boundaries) {
-
-         IMultiSurface<IOrientableSurface> geom = aBS.getLod2MultiSurface();
-         IGeometry geom2 = aBS.getLod2MultiSurface(); 
-         
-
-          if (aBS instanceof CG_RoofSurface) {
-
-            
-            System.out.println("### toit détecté");
-
-            
-            //conversion deguelasse pour appeller volumeundersurface
-            List < IOrientableSurface> ll = new ArrayList();
-            for(IOrientableSurface g: geom) {
-              ll.add(g);
-            }
-            
-            
-            
-
-            System.out.println("volume sous le toît ? " + Util.volumeUnderSurface(ll));
-            
-            
-        }
-
-      
-      
-      }
-      }
-      
-      
-      
-      
-    
-    
+//      VectorLayer vl = LoaderCityGML.read(new File(path), folderImage, "Layer", true);
 //    
-//    
-//     
-//        
-//      System.out.println(boundaries);
-//      System.out.println("#### Volum" + volume);
-//     
-//
-//      System.out.println("boudariesSurfaces  " + boundaries.size());
 //      
- //     IFeatureCollection<IFeature> bf = CityGMLToShapeFile.convertToFeatureCollection(vl, separateBuilding)
-      
-      
-      
-      
-      //Creating main window
-      //MainWindow win = new MainWindow();
-      //Getting 3D map
-      //Map3D carte = win.getInterfaceMap3D().getCurrent3DMap();
-      //Adding layer to map
-      //carte.addLayer(vl);
+//      System.out.println( vl.size() + "  objets dans la scène \n");
+//
+//      ArrayList<CG_Building> batis = new ArrayList<>() ;
+//      
+//      for (IFeature feat : vl ) {
+//        if(feat instanceof CG_Building) {
+//          batis.add((CG_Building)feat); 
+//        }
+//      }
+//      
+//      int nbbatis = batis.size();
+//      System.out.println(nbbatis + " bâtiments dans la scène");
+//      
+//      CG_Building oneOfBati = batis.get(2);
+//      CG_Building oneOfBati2 = batis.get(5);
+//
+//    
+//
+//      Double volBati = Compacity.volumeOfCGBuilding(oneOfBati);
+//      Double volBati2 = Compacity.volumeOfCGBuilding(oneOfBati2);
+//      
+//      
+//      //System.out.println("volume du bâtiment : " + volBati);
+//      
+//
+//      
+//      //Creating main window
+//      MainWindow win = new MainWindow();
+//      //Getting 3D map
+//      Map3D carte = win.getInterfaceMap3D().getCurrent3DMap();
+//      //Adding layer to map
+//      carte.addLayer(vl);
 
-      System.out.println("tutu titi ");
+      // On fabrique les collection d'objets à afficher
+//      IFeature feat = new DefaultFeature(geomExtraction(oneOfBati2));
+  //    IFeature feat2 = new DefaultFeature(geomExtraction(oneOfBati));
+      // Collection prête
+      FT_FeatureCollection<IFeature> featColl = new FT_FeatureCollection<IFeature>();
+      //featColl.add(feat);
+      //featColl.add(feat2);
+   
+      //premiere façon un peu brutale  : refaire une couche 
+    
+
       
-  } catch (CityGMLReadException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-  } catch (JAXBException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      VectorLayer couche = new VectorLayer(featColl,// la collection qui
+          // constituera la
+          // couche
+          "titi", // Le nom de la couche
+          true, // Indique qu'une couleur déterminée sera appliquée
+          Color.orange, // La couleur à appliquer
+          0.1, // Le coefficient d'opacité
+          true// Indique que l'on souhaite une représentation solide et
+      // non filaire
+      );
+      
+ 
+        // deuxième façon pluis fine  : creer représentation des batiments
+      //feat.setRepresentation(new ObjectCartoon(feat, Color.pink)); 
+      //feat2.setRepresentation(new ObjectCartoon(feat2, Color.red));  
+         
+        //VectorLayer couche = new VectorLayer(featColl,"Cube");
+
+      
+      
+      
+      //carte.addLayer(couche);
+
+      
+      
+      simpleHouse3DModel(10., 10., 0., 0., 0.);
+      
+      System.out.println("tutu titi ");
+//      
+//  } catch (CityGMLReadException e) {
+//      // TODO Auto-generated catch block
+//      e.printStackTrace();
+//  } catch (JAXBException e) {
+//      // TODO Auto-generated catch block
+//      e.printStackTrace();
+//  }
+ 
   }
 
-}
+
+  public static IGeometry geomExtraction(CG_Building b) {
+
+    CG_AbstractBuilding abstractBuilding = (CG_AbstractBuilding) b;
+    IMultiSurface<IOrientableSurface> surfList = new GM_MultiSurface<>();
+    for (CG_AbstractBuilding building : abstractBuilding.getConsistsOfBuildingPart()) {
+      List<CG_AbstractBoundarySurface> lABS = building.getBoundedBySurfaces();
+      for (CG_AbstractBoundarySurface aBS : lABS) {
+        surfList.addAll(aBS.getLod2MultiSurface());
+      }
+    }
+    return surfList;
+  }
+
+  
+  // crée une maison (cube + toit triangulaire)  calée sur un point "en bas à gauche" de coordonnees X0Y0Z0,
+  // le plancher est à l'altitude Zoffset
+  public static GM_Solid simpleHouse3DModel(Double side, Double zOffset, Double X0, Double Y0, Double Z0) {
+    List<DirectPositionList> faces = new ArrayList<DirectPositionList>();
+    
+   // IntStream.range(1, 6)
+    //.forEach(x -> faces.add(new DirectPositionList()));
+  
+    //face  plancher 
+    DirectPositionList LFace1 = new DirectPositionList();
+    //face du grenier
+    DirectPositionList LFace2 = new DirectPositionList();
+  //face à droite  
+    DirectPositionList LFace3 = new DirectPositionList();
+    //face au fond  
+    DirectPositionList LFace4 = new DirectPositionList();
+    //face à gauche  
+    DirectPositionList LFace5 = new DirectPositionList();
+  //face devant  
+    DirectPositionList LFace6 = new DirectPositionList();
+    
+    
+    faces.add(LFace1);
+    faces.add(LFace2);
+    faces.add(LFace3);
+    faces.add(LFace4);
+    faces.add(LFace5);
+    faces.add(LFace6);
+    
+    
+    for (int i = 0 ; i< 4 ; i ++) {
+      Double X = X0 + (i %2) * side ; 
+      Double Y = Y0 + (i/2) * side ; 
+      LFace1.add(new DirectPosition(X,Y, zOffset   ));
+      LFace2.add(new DirectPosition(X,Y, (zOffset+ side)   ));
+    }
+    // on swappe les éléments 3 et 2 pour avoir les points dans le bon ordre 
+    LFace1.permuter(3, 2);
+    LFace2.permuter(3, 2);
+    //on ajoute le premier point pour boucler la face
+    LFace1.add(LFace1.get(0));
+    LFace2.add(LFace2.get(0));
+    
+    
+    
+    
+    // index des points des faces plancher et grenier pour faire les faces des murs 
+    List<Integer> idx= Arrays.asList(1,2,2,1,1);
+    LFace3.setList(Arrays.asList(LFace1.get(idx.get(0)), LFace1.get(idx.get(1)), LFace2.get(idx.get(2)), LFace2.get(idx.get(3)), LFace1.get(idx.get(4))));
+    
+          
+    idx.stream().map(x -> (x +1)%4 );
+    LFace4.setList(Arrays.asList(LFace1.get(idx.get(0)), LFace1.get(idx.get(1)), LFace2.get(idx.get(2)), LFace2.get(idx.get(3)), LFace1.get(idx.get(4))));
+    
+    idx.stream().map(x -> (x +1)%4 );
+    LFace5.setList(Arrays.asList(LFace1.get(1), LFace1.get(2), LFace2.get(2), LFace2.get(1), LFace1.get(1)));
+    
+
+    idx.stream().map(x -> (x +1)%4 );
+    LFace6.setList(Arrays.asList(LFace1.get(1), LFace1.get(2), LFace2.get(2), LFace2.get(1), LFace1.get(1)));
+    
+
+    
+    // affichage coords
+    faces.stream()
+    .map(x->{
+        System.out.println("_________FACE"+(faces.indexOf(x) + 1 )+"________");
+        return x;})
+    .forEach(System.out::println);
+    
+    
+    
+    //creation cube
+  ArrayList<IOrientableSurface> listeFaces = 
+  faces.stream()
+  .map(x-> new GM_LineString(x))
+      .map(x->(GM_OrientableSurface) new GM_Polygon(x))
+      .collect(Collectors.toCollection(ArrayList::new));
+        
+    return new GM_Solid(listeFaces);
+  }
+  
 
 }
 
