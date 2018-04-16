@@ -118,12 +118,23 @@ public class Compacity {
 
 	// Relative compacity with Sphere as reference Volume
 	public Double RelativeCompacitySphere(Double vol, Double surf) {
-
 		// formule approchée : 4.84 * Volume ^2/3 / Aire
-
 		return (4 * Math.PI * Math.pow(3. / (4 * Math.PI), 2.0 / 3.0) * Math.pow(vol, 2. / 3.) / surf);
 	}
+	// Relative compacity with Cube as reference Volume
+    public Double RelativeCompacityCube(Double vol, Double surf) {
+        return (6* Math.pow(vol, 2. / 3.) / surf);
+    }
+    // Relative compacity with hemisphere as reference Volume
+    public Double RelativeCompacityDemiSphere(Double vol, Double surf) {
+      // formule approchée : 3.83 * Volume ^2/3 / Aire
+      return (2 * Math.PI * Math.pow(3. / (2 * Math.PI), 2.0 / 3.0) * Math.pow(vol, 2. / 3.) / surf);
+     }
 
+    
+	
+	
+	
 	public static List<ITriangle> convertToTriangle(IMultiSurface<IOrientableSurface> ims) {
 		return convertToTriangleFromList(ims.getList());
 	}
