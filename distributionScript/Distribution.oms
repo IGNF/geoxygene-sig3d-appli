@@ -20,7 +20,7 @@ val explo = ExplorationTask(
 
 
 //run(File folderOut, File roadsFile, File buildingsFile, double stepXY, double stepZ, double maxDist, String heightAttribute)
-val ProfileTask = ScalaTask("val resultFolder=fr.ign.cogit.task.ProfileTask.runDefault(newDir(), folderIn, stepXY, stepZ, maxDist, heightAttribute);") set (
+val ProfileTask = ScalaTask("val resultFolder=fr.ign.cogit.task.profile.ProfileTask.runDefault(newDir(), folderIn, stepXY, stepZ, maxDist, heightAttribute);") set (
   libraries += workDirectory / "geoxygene-sig3d-appli-1.9-SNAPSHOT-shaded.jar",
   stepXY := 1,
   stepZ := 1,
