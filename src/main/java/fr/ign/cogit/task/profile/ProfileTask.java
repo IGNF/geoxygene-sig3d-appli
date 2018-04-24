@@ -1,4 +1,4 @@
-package fr.ign.cogit.task;
+package fr.ign.cogit.task.profile;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -25,13 +25,13 @@ import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 public class ProfileTask {
 
 	public static void main(String[] args) throws Exception {
-		File folderOut = new File("/tmp/test/");
+		File folderOut = new File("/home/mbrasebin/tmp/test/");
 		File roadsFile = new File(
-				"/home/mbrasebin/Documents/Code/GeOxygene/geoxygene-sig3d-appli/script/out/81812/road.shp");
+				"/home/mbrasebin/.openmole/ZBOOK-SIGOPT-2016/webui/projects/ProfileDistribution/data/44674/road.shp");
 		File buildingsFile = new File(
-				"/home/mbrasebin/Documents/Code/GeOxygene/geoxygene-sig3d-appli/script/out/81812/buildings.shp");
+				"/home/mbrasebin/.openmole/ZBOOK-SIGOPT-2016/webui/projects/ProfileDistribution/data/44674/buildings.shp");
 
-		String dirName = "81812";
+		String dirName = "44674";
 
 		double stepXY = 1;
 		double stepZ = 1;
@@ -113,7 +113,7 @@ public class ProfileTask {
 
 		System.out.println("Writing output");
 		// Writing point profile
-		String fileName = folderOut + "/out_profile.shp";
+		String fileName = folderOut + "/outprofile.shp";
 		profile.exportPoints(fileName);
 
 		// Writing points on geographic coordinate system
@@ -132,7 +132,7 @@ public class ProfileTask {
 		////////////////////// Writing shapefile output
 
 		System.out.println("Export points");
-		ShapefileWriter.write(featCollPointOut, folderOut + "/out_points.shp");
+		ShapefileWriter.write(featCollPointOut, folderOut + "/outpoints.shp");
 
 		System.out.println("Export debug");
 		IFeatureCollection<IFeature> featCOut = profile.getFeatOrthoColl();
