@@ -10,7 +10,9 @@ import java.util.List;
 import fr.ign.cogit.exec.ProfileCalculation;
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.BuildingProfileParameters;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.Profile;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.pattern.Pattern;
 import fr.ign.cogit.geoxygene.sig3d.analysis.streetprofile.pattern.ProfilePatternDetector;
@@ -26,12 +28,16 @@ public class ProfileTask {
 
 	public static void main(String[] args) throws Exception {
 		File folderOut = new File("/home/mbrasebin/tmp/test/");
+		
+		String dirName = "22";
+		
+		
 		File roadsFile = new File(
-				"/home/mbrasebin/.openmole/ZBOOK-SIGOPT-2016/webui/projects/ProfileDistribution/data/44674/road.shp");
+				"/home/mbrasebin/.openmole/ZBOOK-SIGOPT-2016/webui/projects/ProfileDistribution/data/"+dirName+"/road.shp");
 		File buildingsFile = new File(
-				"/home/mbrasebin/.openmole/ZBOOK-SIGOPT-2016/webui/projects/ProfileDistribution/data/44674/buildings.shp");
+				"/home/mbrasebin/.openmole/ZBOOK-SIGOPT-2016/webui/projects/ProfileDistribution/data/"+dirName+"/buildings.shp");
 
-		String dirName = "44674";
+
 
 		double stepXY = 1;
 		double stepZ = 1;
@@ -58,6 +64,7 @@ public class ProfileTask {
 			double maxDist, double correlationThreshold, int minimalPeriod, String heightAttribute, String dirName)
 			throws Exception {
 
+		BuildingProfileParameters.ID = "GID";
 		// Preparing outputfolder
 		System.out.println("folder out = " + folderOut);
 		if (!folderOut.exists()) {
@@ -113,8 +120,11 @@ public class ProfileTask {
 
 		System.out.println("Writing output");
 		// Writing point profile
-		String fileName = folderOut + "/outprofile.shp";
-		profile.exportPoints(fileName);
+		
+		//String fileName = folderOut + "/outprofile.shp";
+		//profile.exportPoints(fileName);
+		
+		writePointOut(profile.getPproj(), folderOut, dirName, "outpointsProfile.csv");
 
 		// Writing points on geographic coordinate system
 		IFeatureCollection<IFeature> ft1 = profile.getBuildingSide1();
@@ -132,8 +142,11 @@ public class ProfileTask {
 		////////////////////// Writing shapefile output
 
 		System.out.println("Export points");
-		ShapefileWriter.write(featCollPointOut, folderOut + "/outpoints.shp");
-
+		//ShapefileWriter.write(featCollPointOut, folderOut + "/outpoints.shp");
+		writePointOut(featCollPointOut, folderOut, dirName, "outpoints.csv");
+		
+		
+		
 		System.out.println("Export debug");
 		IFeatureCollection<IFeature> featCOut = profile.getFeatOrthoColl();
 		ShapefileWriter.write(featCOut, folderOut + "/debug.shp");
@@ -164,6 +177,27 @@ public class ProfileTask {
 
 		System.out.println("Taks end");
 		return folderOut;
+	}
+	
+	public static void writePointOut(IFeatureCollection<IFeature> fPoints, File folderOut, String dirName, String fileName) throws IOException {
+		BufferedWriter writerPattern = new BufferedWriter(new FileWriter(new File(folderOut, fileName), true));
+		
+		for(IFeature feat:fPoints) {
+			
+			IDirectPosition dp = feat.getGeom().coord().get(0);
+			
+			writerPattern.append(dirName + ";");
+			writerPattern.append(dp.getX() + ";");
+			writerPattern.append(dp.getY() + ";");
+			writerPattern.append(dp.getZ() + ";");
+			writerPattern.append(feat.getAttribute(BuildingProfileParameters.ID)+";");
+			writerPattern.append(feat.getAttribute(BuildingProfileParameters.NAM_ATT_DISTANCE) + "\n");
+		}
+		
+		
+		writerPattern.close();
+		
+		
 	}
 
 	public static void writeLocalStats(Profile profile, Profile.SIDE s, File folderOut, String dirName,
@@ -240,8 +274,8 @@ public class ProfileTask {
 		writer.append(pBS.getMax() + ";");
 		writer.append(pBS.getMoy() + ";");
 		writer.append(pBS.getMed() + ";");
-
-		writer.append(moranProfileValue + " \n");
+		writer.append(pBS.getStd() + ";");
+		writer.append(moranProfileValue + "\n");
 
 		writer.close();
 	}

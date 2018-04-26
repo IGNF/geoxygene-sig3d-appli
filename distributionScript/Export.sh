@@ -42,7 +42,7 @@ psql -At -d $database -U $username -h $host -p $port  -c "SELECT $road_id  FROM 
 		echo 	"---- Selecting buildings : select * from BUILDINGS where ST_Intersects( ST_Buffer(ST_GeomFromEWKT('${Record2}'), $radius), geom)"
 		echo "Exporting buildings : $folder_output${Record[0]}/buildings.shp"
 
-		pgsql2shp -f  "$folder_output${Record[0]}/buildings.shp"  -u $username -h $host -p $port   $database "select * from BUILDINGS where ST_Intersects(ST_Buffer(ST_GeomFromEWKT('${Record2[0]}'), $radius), geom)"
+		pgsql2shp -r -f  "$folder_output${Record[0]}/buildings.shp"  -u $username -h $host -p $port   $database "select * from BUILDINGS where ST_Intersects(ST_Buffer(ST_GeomFromEWKT('${Record2[0]}'), $radius), geom)"
 	
 	done
 	
