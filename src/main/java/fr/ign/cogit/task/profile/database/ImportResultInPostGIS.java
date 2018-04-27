@@ -62,14 +62,12 @@ public class ImportResultInPostGIS {
 		int count = 0;
 		for (File fTemp : f) {
 			importDebugLine(fTemp, host, port, database, user, pw, schema);
-			
-			
-			
-			importCSV(fTemp, host, port, database, user, pw, schema, "outpoints.csv",TABLE_OUT_POINT, true);
-			importCSV(fTemp, host, port, database, user, pw, schema, "outpointsProfile.csv",TABLE_OUT_PROFILE, true);
-			
-			importCSV(fTemp, host, port, database, user, pw, schema, "output.csv",TABLE_EXTRA_ROADS_INFO, false);
-			importCSV(fTemp, host, port, database, user, pw, schema, "patternOut.csv",TABLE_PATTERN_DETECTED, false);
+
+			importCSV(fTemp, host, port, database, user, pw, schema, "outpoints.csv", TABLE_OUT_POINT, true);
+			importCSV(fTemp, host, port, database, user, pw, schema, "outpointsProfile.csv", TABLE_OUT_PROFILE, true);
+
+			importCSV(fTemp, host, port, database, user, pw, schema, "output.csv", TABLE_EXTRA_ROADS_INFO, false);
+			importCSV(fTemp, host, port, database, user, pw, schema, "patternOut.csv", TABLE_PATTERN_DETECTED, false);
 
 			System.out.println("Number : " + (count++) + " /  " + f.length);
 			break;
@@ -136,19 +134,17 @@ public class ImportResultInPostGIS {
 			query = "CREATE TABLE  " + schema + "." + TABLE_OUT_POINT + "  (" + ATT_NAME_ID_ROAD
 					+ " varchar(10),X double precision, Y double precision,Z double precision, GID varchar(10), DIST double precision);";
 			s.execute(query);
-			
+
 			// IDRoad;X,Y,Z;GID;Distance
 			query = "CREATE TABLE  " + schema + "." + TABLE_OUT_PROFILE + "  (" + ATT_NAME_ID_ROAD
 					+ " varchar(10),X double precision, Y double precision,Z double precision, GID varchar(10), DIST double precision);";
 			s.execute(query);
 
-			//IDRoad; DIR; Begin; Length; Reapeat; Score
+			// IDRoad; DIR; Begin; Length; Reapeat; Score
 			query = "CREATE TABLE  " + schema + "." + TABLE_PATTERN_DETECTED + "  (" + ATT_NAME_ID_ROAD
 					+ " varchar(10), DIR  varchar(10)   ,BEGIN integer, LENGTH integer, REPEAT integer, SCORE double precision);";
 			s.execute(query);
-			
-	
-			
+
 			s.close();
 			conn.close();
 
@@ -175,12 +171,10 @@ public class ImportResultInPostGIS {
 
 		importInDatabaseWithAttribute(fTemp, host, port, database, user, pw, schema, "debug.shp", TABLE_NAME_RAY);
 	}
-	
-	
+
 	private static void importCSV(File fTemp, String host, String port, String database, String user, String pw,
 			String schema, String fileName, String tableName, boolean createGeom) throws Exception {
-		
-		
+
 		java.sql.Connection conn;
 
 		try {
@@ -195,11 +189,11 @@ public class ImportResultInPostGIS {
 			// De géométrie PostGIS
 			Statement s = conn.createStatement();
 
-			String query = "COPY " + schema + "." + tableName + " FROM '" + fTemp.getAbsolutePath() + "/"
-					+ fileName + "'  DELIMITER ';' CSV";
+			String query = "COPY " + schema + "." + tableName + " FROM '" + fTemp.getAbsolutePath() + "/" + fileName
+					+ "'  DELIMITER ';' CSV";
 			s.execute(query);
-			
-			if(createGeom) {
+
+			if (createGeom) {
 
 				query = "SELECT AddGeometryColumn ('" + schema + "','" + tableName + "','geom'," + SRID
 						+ ",'POINT',2);";
@@ -209,146 +203,6 @@ public class ImportResultInPostGIS {
 
 				s.execute(query);
 			}
-
-			s.close();
-			conn.close();
-
-		} catch (Exception e) {
-			throw e;
-		}
-		
-		
-	}
-
-	// ID;X,Y,Z;GID;Distance
-	private static void importPointOut(File fTemp, String host, String port, String database, String user, String pw,
-			String schema, String fileName) throws Exception {
-
-		java.sql.Connection conn;
-
-		try {
-
-			// Création de l'URL de chargement
-			String url = "jdbc:postgresql://" + host + ":" + port + "/" + database;
-
-			// Connexion
-			conn = DriverManager.getConnection(url, user, pw);
-
-			// Requete sur la table contenant les colonnes
-			// De géométrie PostGIS
-			Statement s = conn.createStatement();
-
-			String query = "COPY " + schema + "." + TABLE_OUT_POINT + " FROM '" + fTemp.getAbsolutePath() + "/"
-					+ fileName + "'  DELIMITER ';' CSV";
-			s.execute(query);
-
-			query = "SELECT AddGeometryColumn ('" + schema + "','" + TABLE_OUT_POINT + "','geom'," + SRID
-					+ ",'POINT',2);";
-			s.execute(query);
-
-			query = "UPDATE " + TABLE_OUT_POINT + " SET geom=ST_SetSRID(ST_Point(X, Y)," + SRID + ")";
-
-			s.close();
-			conn.close();
-
-		} catch (Exception e) {
-			throw e;
-		}
-
-	}
-	
-	//IDRoad; DIR; Begin; Length; Reapeat; Score
-	private static void importPattern(File fTemp, String host, String port, String database, String user, String pw,
-			String schema) throws Exception {
-
-		java.sql.Connection conn;
-
-		try {
-
-			// Création de l'URL de chargement
-			String url = "jdbc:postgresql://" + host + ":" + port + "/" + database;
-
-			// Connexion
-			conn = DriverManager.getConnection(url, user, pw);
-
-			// Requete sur la table contenant les colonnes
-			// De géométrie PostGIS
-			Statement s = conn.createStatement();
-
-			String query = "COPY " + schema + "." + TABLE_PATTERN_DETECTED + " FROM '" + fTemp.getAbsolutePath() + "/"
-					+ "patternOut.csv" + "'  DELIMITER ';' CSV";
-			s.execute(query);
-
-			s.close();
-			conn.close();
-
-		} catch (Exception e) {
-			throw e;
-		}
-
-	}
-
-	
-	
-
-	// ID;X,Y,Z;GID;Distance
-	private static void importPointProfile(File fTemp, String host, String port, String database, String user, String pw,
-			String schema, String fileName) throws Exception {
-
-		java.sql.Connection conn;
-
-		try {
-
-			// Création de l'URL de chargement
-			String url = "jdbc:postgresql://" + host + ":" + port + "/" + database;
-
-			// Connexion
-			conn = DriverManager.getConnection(url, user, pw);
-
-			// Requete sur la table contenant les colonnes
-			// De géométrie PostGIS
-			Statement s = conn.createStatement();
-
-			String query = "COPY " + schema + "." + TABLE_OUT_PROFILE + " FROM '" + fTemp.getAbsolutePath() + "/"
-					+ fileName + "'  DELIMITER ';' CSV";
-			s.execute(query);
-
-			query = "SELECT AddGeometryColumn ('" + schema + "','" + TABLE_OUT_PROFILE + "','geom'," + SRID
-					+ ",'POINT',2);";
-			s.execute(query);
-
-			query = "UPDATE " + TABLE_OUT_PROFILE + " SET geom=ST_SetSRID(ST_Point(X, Y)," + SRID + ")";
-
-			s.close();
-			conn.close();
-
-		} catch (Exception e) {
-			throw e;
-		}
-
-	}
-
-	// ID;UP/DOWN;MIN;MAX;MOY;MED;STD;MORAN
-	private static void importGlobalStats(File fTemp, String host, String port, String database, String user, String pw,
-			String schema) throws Exception {
-
-		java.sql.Connection conn;
-
-		try {
-
-			// Création de l'URL de chargement
-			String url = "jdbc:postgresql://" + host + ":" + port + "/" + database;
-
-			// Connexion
-			conn = DriverManager.getConnection(url, user, pw);
-
-			// Requete sur la table contenant les colonnes
-			// De géométrie PostGIS
-			Statement s = conn.createStatement();
-
-			String query = "COPY " + schema + "." + TABLE_EXTRA_ROADS_INFO + " FROM '" + fTemp.getAbsolutePath() + "/"
-					+ "output.csv" + "'  DELIMITER ';' CSV";
-			s.execute(query);
 
 			s.close();
 			conn.close();
