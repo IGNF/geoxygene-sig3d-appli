@@ -26,33 +26,44 @@ public class ProfileTask {
 
 	public static void main(String[] args) throws Exception {
 		File folderOut = new File("/home/mbrasebin/tmp/test/");
-
-		String dirName = "227";
-
-		File roadsFile = new File("/home/mbrasebin/.openmole/ZBOOK-SIGOPT-2016/webui/projects/ProfileDistribution/data/"
-				+ dirName + "/road.shp");
-		File buildingsFile = new File(
-				"/home/mbrasebin/.openmole/ZBOOK-SIGOPT-2016/webui/projects/ProfileDistribution/data/" + dirName
-						+ "/buildings.shp");
-
+		
+		String[] dirNames = { "75661"};
+		
 		double stepXY = 1;
 		double stepZ = 1;
-		double maxDist = 500;
+		double maxDist = 200;
 
 		double correlationThreshold = 0.8;
 
 		int minimalPeriod = 20;
 
-		int numberOfMinimalRepeat = 2;
+		int numberOfMinimalRepeat = 1;
 
 		int maxPatternLength = 200;
 
 		int maxRepeat = 10;
 
 		String heightAttribute = "HAUTEUR";
+		
+		
+		for(String dirName : dirNames) {
+			
+			
+			File roadsFile = new File("/home/mbrasebin/.openmole/ZBOOK-SIGOPT-2016/webui/projects/ProfileDistribution/data/"
+					+ dirName + "/road.shp");
+			File buildingsFile = new File(
+					"/home/mbrasebin/.openmole/ZBOOK-SIGOPT-2016/webui/projects/ProfileDistribution/data/" + dirName
+							+ "/buildings.shp");
 
-		run(folderOut, roadsFile, buildingsFile, stepXY, stepZ, maxDist, correlationThreshold, minimalPeriod,
-				heightAttribute, dirName, numberOfMinimalRepeat, maxPatternLength, maxRepeat);
+			
+
+			run(new File(folderOut+ "/" +dirName), roadsFile, buildingsFile, stepXY, stepZ, maxDist, correlationThreshold, minimalPeriod,
+					heightAttribute, dirName, numberOfMinimalRepeat, maxPatternLength, maxRepeat);
+		}
+		
+		
+
+
 	}
 
 	public static File runDefault(File folderOut, File folderIn, double stepXY, double stepZ, double maxDist,

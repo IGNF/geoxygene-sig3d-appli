@@ -43,7 +43,7 @@ public class ImportResultInPostGIS {
 	public static void main(String[] args) throws Exception {
 
 		// Folder where data is stored (it contains subfolder with id name)
-		String folderOut = "/home/mbrasebin/tmp/test/";
+		String folderOut = "/home/mbrasebin/.openmole/ZBOOK-SIGOPT-2016/webui/projects/ProfileDistribution/out/";
 
 		// Database information
 		String host = "localhost";
@@ -63,23 +63,24 @@ public class ImportResultInPostGIS {
 		for (File fTemp : f) {
 			importDebugLine(fTemp, host, port, database, user, pw, schema);
 
-			importCSV(fTemp, host, port, database, user, pw, schema, "outpoints.csv", TABLE_OUT_POINT, true);
-			importCSV(fTemp, host, port, database, user, pw, schema, "outpointsProfile.csv", TABLE_OUT_PROFILE, true);
+			importCSV(fTemp, host, port, database, user, pw, schema, "outpoints.csv", TABLE_OUT_POINT);
+			importCSV(fTemp, host, port, database, user, pw, schema, "outpointsProfile.csv", TABLE_OUT_PROFILE);
 
-			importCSV(fTemp, host, port, database, user, pw, schema, "output.csv", TABLE_EXTRA_ROADS_INFO, false);
-			importCSV(fTemp, host, port, database, user, pw, schema, "patternOut.csv", TABLE_PATTERN_DETECTED, false);
+			importCSV(fTemp, host, port, database, user, pw, schema, "output.csv", TABLE_EXTRA_ROADS_INFO);
+			importCSV(fTemp, host, port, database, user, pw, schema, "patternOut.csv", TABLE_PATTERN_DETECTED);
 
-			System.out.println("Number : " + (count++) + " /  " + f.length);
-			break;
+			System.out.println("Number : " + (++count) + " /  " + f.length);
+
 		}
-
+		postTreatment( host, port, database, user, pw, schema);
 	}
 
-	public static void eraseExistingTable(String host, String port, String database, String user, String pw,
-			String schema) throws Exception {
+	private static void postTreatment(String host, String port, String database, String user, String pw, String schema)
+			throws Exception {
 
-		java.sql.Connection conn;
+		java.sql.Connection conn = null;
 
+		String query;
 		try {
 
 			// Création de l'URL de chargement
@@ -92,6 +93,52 @@ public class ImportResultInPostGIS {
 			// De géométrie PostGIS
 			Statement s = conn.createStatement();
 
+			query = "SELECT AddGeometryColumn ('" + schema + "','" + TABLE_OUT_POINT + "','geom'," + SRID
+					+ ",'POINT',2);";
+
+			s.execute(query);
+
+			query = "UPDATE " + TABLE_OUT_POINT + " SET geom=ST_SetSRID(ST_Point(X, Y)," + SRID + ")";
+
+			s.execute(query);
+
+			query = "SELECT AddGeometryColumn ('" + schema + "','" + TABLE_OUT_PROFILE + "','geom'," + SRID
+					+ ",'POINT',2);";
+
+			s.execute(query);
+
+			query = "UPDATE " + TABLE_OUT_PROFILE + " SET geom=ST_SetSRID(ST_Point(X, Y)," + SRID + ")";
+
+			s.execute(query);
+
+			s.close();
+
+		} catch (Exception e) {
+			throw e;
+		} finally {
+
+			conn.close();
+		}
+
+	}
+
+	public static void eraseExistingTable(String host, String port, String database, String user, String pw,
+			String schema) throws Exception {
+
+		java.sql.Connection conn = null;
+
+		try {
+			Statement s;
+			// Création de l'URL de chargement
+			String url = "jdbc:postgresql://" + host + ":" + port + "/" + database;
+
+			// Connexion
+			conn = DriverManager.getConnection(url, user, pw);
+
+			// Requete sur la table contenant les colonnes
+			// De géométrie PostGIS
+			s = conn.createStatement();
+
 			for (String tableName : allTable) {
 				String query = "DROP TABLE IF EXISTS " + schema + "." + tableName;
 				s.execute(query);
@@ -99,10 +146,12 @@ public class ImportResultInPostGIS {
 			}
 
 			s.close();
-			conn.close();
 
 		} catch (Exception e) {
 			throw e;
+		} finally {
+
+			conn.close();
 		}
 
 	}
@@ -111,7 +160,7 @@ public class ImportResultInPostGIS {
 			throws Exception {
 		// TODO Auto-generated method stub
 
-		java.sql.Connection conn;
+		java.sql.Connection conn = null;
 
 		try {
 
@@ -145,11 +194,14 @@ public class ImportResultInPostGIS {
 					+ " varchar(10), DIR  varchar(10)   ,BEGIN integer, LENGTH integer, REPEAT integer, SCORE double precision);";
 			s.execute(query);
 
-			s.close();
-			conn.close();
+		
 
+			s.close();
 		} catch (Exception e) {
 			throw e;
+		} finally {
+
+			conn.close();
 		}
 
 	}
@@ -173,7 +225,7 @@ public class ImportResultInPostGIS {
 	}
 
 	private static void importCSV(File fTemp, String host, String port, String database, String user, String pw,
-			String schema, String fileName, String tableName, boolean createGeom) throws Exception {
+			String schema, String fileName, String tableName) throws Exception {
 
 		java.sql.Connection conn;
 
@@ -192,17 +244,6 @@ public class ImportResultInPostGIS {
 			String query = "COPY " + schema + "." + tableName + " FROM '" + fTemp.getAbsolutePath() + "/" + fileName
 					+ "'  DELIMITER ';' CSV";
 			s.execute(query);
-
-			if (createGeom) {
-
-				query = "SELECT AddGeometryColumn ('" + schema + "','" + tableName + "','geom'," + SRID
-						+ ",'POINT',2);";
-				s.execute(query);
-
-				query = "UPDATE " + tableName + " SET geom=ST_SetSRID(ST_Point(X, Y)," + SRID + ")";
-
-				s.execute(query);
-			}
 
 			s.close();
 			conn.close();
