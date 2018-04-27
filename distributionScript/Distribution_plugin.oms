@@ -39,7 +39,7 @@ val ProfileTask = ScalaTask("""
   
 )
 
-val copyHook =  CopyFileHook(resultFolder, workDirectory/"out3/${dirName}/")
+val copyHook =  CopyFileHook(resultFolder, workDirectory/"out/${dirName}/")
 
 val env = LocalEnvironment(4)
 //val env = DesktopGridEnvironment(10001)

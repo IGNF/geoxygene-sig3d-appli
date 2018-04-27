@@ -125,8 +125,8 @@ public class ProfileTask {
 		System.out.println("Writing output");
 		// Writing point profile
 
-		String fileName = folderOut + "/outprofile.shp";
-		profile.exportPoints(fileName);
+		
+		//profile.exportPoints(folderOut + "/outprofile.shp");
 
 		writePointOut(profile.getPproj(), folderOut, dirName, "outpointsProfile.csv");
 
