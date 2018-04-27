@@ -212,8 +212,7 @@ public class ProfileTask {
 
 		BufferedWriter writerPattern = new BufferedWriter(new FileWriter(new File(folderOut, "patternOut.csv"), true));
 
-		HashMap<Integer, List<Pattern>> patternListUp = pPD.patternDetector(profile, s, correlationThreshold,
-				numberOfMinimalRepeat, maxPatternLength, maxRepeat);
+		HashMap<Integer, List<Pattern>> patternListUp = pPD.patternDetector(profile, s, correlationThreshold, numberOfMinimalRepeat, maxPatternLength, maxRepeat);
 
 		if (!patternListUp.isEmpty()) {
 
