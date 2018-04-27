@@ -10,16 +10,20 @@ val maxDist = Val[Double] //Maximal distance to consider buildings
 val heightAttribute = Val[String] //Height attribute value to extrude buildings
 val correlationThreshold = Val[Double] //Threshold value to keep a correlation
 val minimalPeriod = Val[Int] //Minimal period to consider (distance = stepXY *  minimalPeriod)
-
+val  numberOfMinimalRepeat=Val[Int] //Number of minimal repeat to consider a pattern (1 is the minimal)
+val  maxPatternLength=Val[Int] //Maximal length of a pattern (in the discretized space)
+val  maxRepeat=Val[Int] //Maximal of repeat to consider
 
 val explo = ExplorationTask(				
   (folderIn in (workDirectory / "data") withName dirName)
 )
 
-		
+//runDefault(File folderOut, File folderIn, double stepXY, double stepZ, double maxDist, double correlationThreshold, int minimalPeriod, String heightAttribute, String dirName)
+			
+			
 val ProfileTask = ScalaTask("""
   | import openmole._
-  | val resultFolder=ProfileScalaTask(newDir(), folderIn, stepXY, stepZ, maxDist, correlationThreshold, minimalPeriod,  heightAttribute, dirName)""".stripMargin) set (
+  | val resultFolder=ProfileScalaTask(newDir(), folderIn, stepXY, stepZ, maxDist, correlationThreshold, minimalPeriod,  heightAttribute, dirName, numberOfMinimalRepeat, maxPatternLength, maxRepeat)""".stripMargin) set (
   plugins += pluginsOf(openmole.ProfileScalaTask),
   stepXY := 1,
   stepZ := 1,
@@ -27,15 +31,18 @@ val ProfileTask = ScalaTask("""
   heightAttribute := "HAUTEUR",
   minimalPeriod := 20,
   correlationThreshold := 0.8,
+  numberOfMinimalRepeat:=1, 
+  maxPatternLength:=200, 
+  maxRepeat:=10,
   inputs += ( folderIn, dirName, stepXY, stepZ, maxDist, heightAttribute, correlationThreshold,minimalPeriod ),
   outputs += (dirName, resultFolder)
   
 )
 
-val copyHook =  CopyFileHook(resultFolder, workDirectory/"out2/${dirName}/")
+val copyHook =  CopyFileHook(resultFolder, workDirectory/"out3/${dirName}/")
 
-val env = EGIEnvironment("vo.complex-systems.eu")
-//val env = LocalEnvironment(4)
-
+val env = LocalEnvironment(4)
+//val env = DesktopGridEnvironment(10001)
 
 explo -< (ProfileTask on env hook (copyHook))
+
