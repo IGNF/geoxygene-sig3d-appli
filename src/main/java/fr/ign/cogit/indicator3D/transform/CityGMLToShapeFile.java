@@ -68,7 +68,7 @@ public class CityGMLToShapeFile {
 		ShapefileWriter.write(featCOut, fileout);
 
 	}
-	
+
 	public static IFeatureCollection<IFeature> convertToFeatureCollection(VectorLayer vl, boolean separateBuilding){
 
 		IFeatureCollection<IFeature> featCOut = new FT_FeatureCollection<>();
