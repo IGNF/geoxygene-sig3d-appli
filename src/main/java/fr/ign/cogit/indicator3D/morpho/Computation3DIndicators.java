@@ -113,7 +113,9 @@ public class Computation3DIndicators {
       featTileCollection.initSpatialIndex(Tiling.class, false);
    
       //Cut collection
-      String cutFile= "/media/paulchapron/Data/DATA-Bati_3D/Paris/cutcutcodec.shp" ; 
+  	  //String cutFile = "/home/mbrasebin/Documents/Donnees/Paris/cut.shp";
+      String cutFile= "/media/paulchapron/Data/DATA-Bati_3D/Paris/cutcutcodec.shp" ;
+      
       IFeatureCollection<IFeature> cutCollection = ShapefileReader.read(cutFile);
       
       //We select the tiles that intersects the cut
