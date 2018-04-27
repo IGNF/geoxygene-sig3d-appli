@@ -33,7 +33,7 @@ public class Compacity {
 		ArrayList<CG_BuildingPart> lBatiParts = (ArrayList<CG_BuildingPart>) absBati.getConsistsOfBuildingPart();
 
 		for (CG_AbstractBuilding partie : lBatiParts) {
-			System.out.println("partie " + (lBatiParts.indexOf(partie) + 1) + " / " + lBatiParts.size() + "\n");
+			System.out.println("partie " + (lBatiParts.indexOf(partie) + 1) + " / " + lBatiParts.size() );
 			List<CG_AbstractBoundarySurface> boundaries = partie.getBoundedBySurfaces();
 			//System.out.println(boundaries.size() + " boundaries Surfaces");
 
@@ -86,9 +86,9 @@ public class Compacity {
 		Double totalWallSurf = 0.0;
 		Double totalRoofSurf = 0.0;
 		for (CG_AbstractBuilding partie : lBatiPart) {
-			System.out.println("partie " + (lBatiPart.indexOf(partie) + 1) + " / " + lBatiPart.size() + "\n");
+			//System.out.println("partie " + (lBatiPart.indexOf(partie) + 1) + " / " + lBatiPart.size() );
 			List<CG_AbstractBoundarySurface> boundaries = partie.getBoundedBySurfaces();
-			System.out.println(boundaries.size() + " boundaries Surfaces");
+			//System.out.println(boundaries.size() + " boundaries Surfaces");
 
 			for (CG_AbstractBoundarySurface aBS : boundaries) {
 				if (aBS instanceof CG_WallSurface) {
@@ -107,9 +107,9 @@ public class Compacity {
 				}
 
 			}
-			System.out.println("surface de murs " + totalWallSurf);
-			System.out.println("surface de toit " + totalRoofSurf);
-			System.out.println("surface erxterne " + totalWallSurf + totalRoofSurf);
+			//System.out.println("surface de murs " + totalWallSurf);
+			//System.out.println("surface de toit " + totalRoofSurf);
+			//System.out.println("surface externe " + totalWallSurf + totalRoofSurf);
 
 		}
 		return (totalRoofSurf + totalWallSurf);
