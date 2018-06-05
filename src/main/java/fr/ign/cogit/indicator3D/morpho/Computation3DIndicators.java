@@ -197,34 +197,40 @@ public class Computation3DIndicators {
       System.out.println(nbbatis + " bâtiments dans la scène");
       
         
-      
+      System.out.println("tutu");
       
    //   Creating main window
       MainWindow win = new MainWindow();
-       
+      System.out.println("tutu");
+         
       //Getting 3D map
      Map3D carte = win.getInterfaceMap3D().getCurrent3DMap();
 
-     
+     System.out.println("fenetre créee");
      
      
      computeCompacities(batis);
      
      //System.out.println(batis.get(276).getAttribute("normalizedCompacity"));
      
+     
+     System.out.println("coloration buildings");
      colorBuilding(Color.red, Color.green, batis);
+     
      
      
      FT_FeatureCollection<IFeature> batisColor = new FT_FeatureCollection<IFeature>();
        batisColor.addAll(batis);
      
-       
-
+  
      VectorLayer coucheColoree = new VectorLayer(batisColor,// la collection qui
      // constituera la
      // couche
      "Compacity");
  
+     System.out.println("couche créée");
+
+     
    
      carte.addLayer(coucheColoree);
      
