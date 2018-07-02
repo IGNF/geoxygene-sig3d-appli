@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.xml.bind.JAXBException;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.citygml4j.geometry.Geometry;
 import org.citygml4j.model.citygml.building.RoofSurface;
 import org.citygml4j.xml.io.reader.CityGMLReadException;
 import org.postgis.LineString;
@@ -68,6 +72,15 @@ public class Computation3DIndicators {
 
   public static void main(String[] args) throws CityGMLReadException, JAXBException {
 
+    
+    List<Logger> loggers = Collections.<Logger>list(LogManager.getCurrentLoggers());
+    loggers.add(LogManager.getRootLogger());
+    for ( Logger logger : loggers ) {
+        logger.setLevel(Level.WARN);
+    }
+    
+    
+    
     // TODO Auto-generated method stub
  try {
      
@@ -138,12 +151,21 @@ public class Computation3DIndicators {
               continue;
           }
           
-          VectorLayer vltemp = LoaderCityGML.read(new File(cityGMLFile), null, collTileSelectd.toString(), true);
-          IFeatureCollection<IFeature> currentFeatureCollection= CityGMLToShapeFile.convertToFeatureCollection(vltemp, separateBuilding);
-          System.out.println(currentFeatureCollection.get(0).getClass());
-          if(currentFeatureCollection != null){
-              
-              
+          VectorLayer vlTile = LoaderCityGML.read(new File(cityGMLFile), null, collTileSelectd.toString(), true);
+       
+          IFeatureCollection<IFeature> currentFeatureCollection= CityGMLToShapeFile.convertToFeatureCollection(vlTile, separateBuilding);
+          
+          for (IFeature ft : vlTile ) {
+            if(ft instanceof CG_Building) {
+              ft.setGeom(geomExtraction((CG_Building)ft));
+              currentFeatureCollection.add((CG_Building)ft); 
+            }
+            else {
+              System.out.println("autre type: " + ft.getClass());
+            }
+          }
+          
+          if(currentFeatureCollection!= null){
               featCollOut.addAll(SpatialFilter3D.selectIntersected(currentFeatureCollection, cutCollection));
           }
           
@@ -155,9 +177,9 @@ public class Computation3DIndicators {
       //Loading CityGML version fichier de dalle 
      //VectorLayer vl = LoaderCityGML.read(new File(path), folderImage, "Layer", true);
     
-      
-      VectorLayer vl = new VectorLayer(featCollOut, "cutcut");
-     System.out.println( vl.size() + "  objets dans la scène \n");
+      System.out.println(featCollOut.size()+ "features dans le cut ");
+  //    VectorLayer vl = new VectorLayer(featCollOut, "cutcut" );
+   //  System.out.println( vl.size() + "  objets dans la scène \n");
  
       ArrayList<CG_Building> batis = new ArrayList<>() ;
       
@@ -175,34 +197,40 @@ public class Computation3DIndicators {
       System.out.println(nbbatis + " bâtiments dans la scène");
       
         
-      
+      System.out.println("tutu");
       
    //   Creating main window
       MainWindow win = new MainWindow();
-       
+      System.out.println("tutu");
+         
       //Getting 3D map
      Map3D carte = win.getInterfaceMap3D().getCurrent3DMap();
 
-     
+     System.out.println("fenetre créee");
      
      
      computeCompacities(batis);
      
      //System.out.println(batis.get(276).getAttribute("normalizedCompacity"));
      
+     
+     System.out.println("coloration buildings");
      colorBuilding(Color.red, Color.green, batis);
+     
      
      
      FT_FeatureCollection<IFeature> batisColor = new FT_FeatureCollection<IFeature>();
        batisColor.addAll(batis);
      
-       
-
+  
      VectorLayer coucheColoree = new VectorLayer(batisColor,// la collection qui
      // constituera la
      // couche
      "Compacity");
  
+     System.out.println("couche créée");
+
+     
    
      carte.addLayer(coucheColoree);
      
