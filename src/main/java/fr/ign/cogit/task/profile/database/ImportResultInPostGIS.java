@@ -266,7 +266,6 @@ public class ImportResultInPostGIS {
 			if (featC.isEmpty()) {
 				System.out.println("File empty : " + pathToFile);
 				return;
-
 			}
 
 			for (IFeature feat : featC) {
