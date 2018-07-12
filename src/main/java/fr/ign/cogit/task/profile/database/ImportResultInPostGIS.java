@@ -18,7 +18,7 @@ import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
  *
  */
 public class ImportResultInPostGIS {
-
+   
 	public static String TABLE_NAME_RAY = "debug_ray";
 	public static String TABLE_EXTRA_ROADS_INFO = "info_road";
 	public static String TABLE_OUT_POINT = "out_points";
