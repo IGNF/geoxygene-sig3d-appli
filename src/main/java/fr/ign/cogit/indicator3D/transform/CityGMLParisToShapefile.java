@@ -25,20 +25,20 @@ public class CityGMLParisToShapefile {
 	public static void main(String[] args) throws CityGMLReadException, JAXBException{
 		
 		//Root folder where the tiles are contained
-		String tileFolder = "/media/paulchapron/Data/DATA-Bati_3D/Paris/";
-		//String tileFolder = "/home/mbrasebin/Documents/Donnees/Paris/";
+		//String tileFolder = "/media/paulchapron/Data/DATA-Bati_3D/Paris/";
+		String tileFolder = "/home/mbrasebin/Documents/Donnees/Paris/";
         
 		//TileFile
 		String tileFile = tileFolder + "dalles.shp";
 		String nameAttFile = "NomFich";
 		String fileCityGMLName = "ZoneAExporter.gml";
 		//Zone to keep (First feature used)
-		String cutFile = "/home/mbrasebin/Documents/Donnees/Paris/cut.shp";
-	//	String cutFile = "/home/mbrasebin/Documents/Donnees/Paris/cut.shp";
+		String cutFile = "/home/mbrasebin/Documents/Donnees/Exp/Eugene_Million/zone_contexte.shp";
+
         
 		
 		//ShapefileOut
-		String outShapeFile = "/tmp/out.shp";
+		String outShapeFile = "/tmp/tmp/out.shp";
 		
 		//////Parametering CityGMLReader
 		LoaderCityGML.CLEAN_GEOX_GEOM = false;
@@ -46,7 +46,7 @@ public class CityGMLParisToShapefile {
 		Context.LOD_REP = 2;
 		
 		//Converter parameter
-		boolean separateBuilding = true;
+		boolean separateBuilding = false;
 		
 		//Feature collection out
 		IFeatureCollection<IFeature> featCollOut = new FT_FeatureCollection<>();

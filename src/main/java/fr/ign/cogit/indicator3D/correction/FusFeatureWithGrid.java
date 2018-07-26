@@ -40,9 +40,9 @@ public class FusFeatureWithGrid {
 
 	public static void main(String[] args) {
 
-		String shapeFileWithCutGeometry = "/home/mbrasebin/tmp/out.shp";
+		String shapeFileWithCutGeometry = "/tmp/tmp/out.shp";
 		String tilingFile = "/home/mbrasebin/Documents/Donnees/Paris/dalles.shp";
-		String shapeFileOut = "/home/mbrasebin/tmp/merge.shp";
+		String shapeFileOut = "/tmp/tmp/merge.shp";
 
 		IFeatureCollection<IFeature> collectionOfCutGeometries = ShapefileReader.read(shapeFileWithCutGeometry);
 		IFeatureCollection<IFeature> tilingFeature = ShapefileReader.read(tilingFile);
