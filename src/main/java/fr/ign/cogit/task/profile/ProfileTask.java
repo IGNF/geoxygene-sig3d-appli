@@ -27,7 +27,7 @@ public class ProfileTask {
 	public static void main(String[] args) throws Exception {
 		File folderOut = new File("/home/mbrasebin/tmp/test/");
 		
-		String[] dirNames = { "75661"};
+		String[] dirNames = { "84284"};
 		
 		double stepXY = 1;
 		double stepZ = 1;

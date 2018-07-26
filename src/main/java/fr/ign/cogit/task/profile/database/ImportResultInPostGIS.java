@@ -226,6 +226,14 @@ public class ImportResultInPostGIS {
 
 	private static void importCSV(File fTemp, String host, String port, String database, String user, String pw,
 			String schema, String fileName, String tableName) throws Exception {
+		
+		String filePath = fTemp.getAbsolutePath() + "/" + fileName;
+		File f = new File(filePath);
+		
+		if(! f.exists()) {
+			System.out.println("Empty folder : " + filePath);
+			return;
+		}
 
 		java.sql.Connection conn;
 
@@ -241,7 +249,7 @@ public class ImportResultInPostGIS {
 			// De géométrie PostGIS
 			Statement s = conn.createStatement();
 
-			String query = "COPY " + schema + "." + tableName + " FROM '" + fTemp.getAbsolutePath() + "/" + fileName
+			String query = "COPY " + schema + "." + tableName + " FROM '" + filePath
 					+ "'  DELIMITER ';' CSV";
 			s.execute(query);
 
