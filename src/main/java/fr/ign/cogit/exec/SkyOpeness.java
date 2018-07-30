@@ -312,7 +312,7 @@ public class SkyOpeness {
 			LOGGER.info("Preparing results");
 
 			// Getting statistics around current feature
-			IFeature featOut = prepareRayCastingRecords(rC, currentFeat);
+			IFeature featOut = rC.prepareRayCastingRecords(currentFeat);
 
 			if (featOut != null) {
 				featCOut.add(featOut);
@@ -384,33 +384,5 @@ public class SkyOpeness {
 
 	}
 
-	private static IFeature prepareRayCastingRecords(RayCasting rC, IFeature currentFeature) {
-
-		IFeature feat = null;
-		try {
-			feat = currentFeature.cloneGeom();
-		} catch (CloneNotSupportedException e) {
-
-			e.printStackTrace();
-		}
-
-		IndicatorVisu Iv = new IndicatorVisu(rC);
-
-		AttributeManager.addAttribute(feat, "miniRadDis", Iv.getMinimalRadialDistance(), "Double");
-		AttributeManager.addAttribute(feat, "maxRadDis", Iv.getMaximalRadialDistance(), "Double");
-		AttributeManager.addAttribute(feat, "avgRadDis", Iv.getMoyRadialDistance(), "Double");
-		AttributeManager.addAttribute(feat, "varRadDis", Iv.getVarianceRadialDistance(), "Double");
-		AttributeManager.addAttribute(feat, "mnRDis2D", Iv.getMaximalRadialDistance2D(), "Double");
-		AttributeManager.addAttribute(feat, "avgRDis2D", Iv.getMoyRadialDistance2D(), "Double");
-		AttributeManager.addAttribute(feat, "openess", Iv.getOpeness(), "Double");
-		AttributeManager.addAttribute(feat, "ratioSph", Iv.getRatioSphere(), "Double");
-		AttributeManager.addAttribute(feat, "visSkySurf", Iv.getVisibleSkySurface(), "Double");
-		AttributeManager.addAttribute(feat, "visVol", Iv.getVisibleVolume(), "Double");
-		AttributeManager.addAttribute(feat, "visVolRa", Iv.getVisibleVolumeRatio(), "Double");
-		AttributeManager.addAttribute(feat, "solPeri", Iv.getSolidPerimeter(), "Double");
-
-		return feat;
-
-	}
 
 }
