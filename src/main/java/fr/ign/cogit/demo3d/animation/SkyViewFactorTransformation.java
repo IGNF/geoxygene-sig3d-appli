@@ -29,7 +29,10 @@ import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 
 /**
  * A code to generate the transformation of the visible sky with a sphere along
- * a linear geometry
+ * a linear geometry. A serie of jpeg images are produced and can be used
+ * together to produce a gif with for example imagemagick and the command
+ * convert -delay 20 -loop 0 *.jpg myimage.gif
+ * 
  * 
  * @author mbrasebin
  *
@@ -50,25 +53,23 @@ public class SkyViewFactorTransformation {
 		// Sampling step in m along the roads
 		int step = 25;
 
-		//Number of points for the sky Openess
+		// Number of points for the sky Openess
 		int angularStep = 180;
 
-		
-		//The raidus of the sky openess
+		// The raidus of the sky openess
 		double radius = 50;
-		
-		//The position of the camera
-		IDirectPosition camPos = new DirectPosition(648218.905233, 6860151.300013, 120.0);
-		
-		//The position of the point pointed by the camera
-		IDirectPosition  aimPos= new DirectPosition(648084.9, 6859850.2, 39.0);
-		
 
-		//Building and roads color)
+		// The position of the camera
+		IDirectPosition camPos = new DirectPosition(648218.905233, 6860151.300013, 120.0);
+
+		// The position of the point pointed by the camera
+		IDirectPosition aimPos = new DirectPosition(648084.9, 6859850.2, 39.0);
+
+		// Building and roads color)
 		Color colorBuildings = new Color(64, 0, 0);
 		Color colorRoad = new Color(0, 0, 0);
-		
-		//The sphere can be generated too
+
+		// The sphere can be generated too
 		boolean exportAsShape = false;
 
 		// Reading of the road shapefile
@@ -77,39 +78,35 @@ public class SkyViewFactorTransformation {
 		// The sampling of the points where the sky openess will be calculated
 		IDirectPositionList points = preparePoints(featColl, step);
 
-		//Importing building as a 3D geometric shapefile
+		// Importing building as a 3D geometric shapefile
 		IFeatureCollection<IFeature> buildings = ShapefileReader.read(buildingFile);
 
-		//Initializing the visualisation
-		InterfaceMap3D iMmap = initVisu(buildings, featColl, aimPos, camPos,colorBuildings, colorRoad);
+		// Initializing the visualisation
+		InterfaceMap3D iMmap = initVisu(buildings, featColl, aimPos, camPos, colorBuildings, colorRoad);
 
 		Map3D m = iMmap.getCurrent3DMap();
-		
+
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-		
-		
-		//Counter of the points
+
+		// Counter of the points
 		int count = 0;
-
-		
-
-		
 
 		int nbPoints = points.size();
 
-		//The idea is to ensure that there will be enough caractere in the file name in order to allow a simple alphbetic ordering
+		// The idea is to ensure that there will be enough caractere in the file name in
+		// order to allow a simple alphbetic ordering
 		int nbCaract = (int) (Math.floor(Math.log10(nbPoints))) + 1;
 
-		//Loop on the sampled points
+		// Loop on the sampled points
 		for (int i = 0; i < nbPoints; i++) {
 
 			IDirectPosition dp = points.get(i);
 
-			//We calculate the sphre
+			// We calculate the sphre
 			IFeature feat = generateSphere(dp, buildings, angularStep, radius);
 
 			if (exportAsShape) {
-				//We store the sphere in a collection if we want to store it as a shapefile
+				// We store the sphere in a collection if we want to store it as a shapefile
 				featC.add(feat);
 
 			}
@@ -117,27 +114,27 @@ public class SkyViewFactorTransformation {
 			IFeatureCollection<IFeature> featCtemp = new FT_FeatureCollection<>();
 			featCtemp.add(feat);
 
-			//The representatino of the sphere is in white with black edges
+			// The representatino of the sphere is in white with black edges
 			feat.setRepresentation(new ObjectCartoon(feat, Color.WHITE));
 
-			//We create a layer with the sphere and add it to the 3DMap
+			// We create a layer with the sphere and add it to the 3DMap
 			String layerName = "Layer_" + count;
 			VectorLayer vl = new VectorLayer(featCtemp, layerName);
 			m.addLayer(vl);
 
 			System.out.println("Points : " + (count++) + "  on " + points.size());
-			//We make a pause to ensure that the rendering is done
+			// We make a pause to ensure that the rendering is done
 			try {
 				TimeUnit.SECONDS.sleep(1);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//We store the image with a formatted name
+			// We store the image with a formatted name
 			iMmap.screenCapture(folderOut, "img_" + String.format("%0" + nbCaract + "d", count) + ".jpg");
-			//We remove the layer
+			// We remove the layer
 			m.removeLayer(layerName);
-			//The pause is to ensure that the layer is properly removed from the 3D scene
+			// The pause is to ensure that the layer is properly removed from the 3D scene
 			try {
 				TimeUnit.SECONDS.sleep(1);
 			} catch (InterruptedException e) {
@@ -146,7 +143,7 @@ public class SkyViewFactorTransformation {
 			}
 
 		}
-		//We write the shapefile if needed
+		// We write the shapefile if needed
 		if (exportAsShape) {
 			ShapefileWriter.write(featC, folderOut + "out.shp");
 		}
@@ -159,22 +156,22 @@ public class SkyViewFactorTransformation {
 	}
 
 	private static InterfaceMap3D initVisu(IFeatureCollection<IFeature> buildings,
-			IFeatureCollection<IFeature> featColl, IDirectPosition aimPos, IDirectPosition camPos, Color colorBuildings, Color colorRoad) {
+			IFeatureCollection<IFeature> featColl, IDirectPosition aimPos, IDirectPosition camPos, Color colorBuildings,
+			Color colorRoad) {
 
-		//Creating of a 3D windows
+		// Creating of a 3D windows
 		MainWindow mw = new MainWindow();
-
 
 		Map3D map = mw.getInterfaceMap3D().getCurrent3DMap();
 
-		//We add the layers
+		// We add the layers
 		VectorLayer vL = new VectorLayer(buildings, "Buildings", colorBuildings);
 		VectorLayer vL2 = new VectorLayer(featColl, "Roads", colorRoad);
 
 		map.addLayer(vL);
 		map.addLayer(vL2);
 
-		//The sleep is where to ensure that the rendered is done before continuing
+		// The sleep is where to ensure that the rendered is done before continuing
 		try {
 			TimeUnit.SECONDS.sleep(1);
 		} catch (InterruptedException e) {
@@ -189,7 +186,7 @@ public class SkyViewFactorTransformation {
 
 	public static IFeature generateSphere(IDirectPosition dp, IFeatureCollection<IFeature> buildings, int step,
 			double rayon) {
-		//Classical configuration
+		// Classical configuration
 		RayCasting.EPSILON = 0.01;
 		int resultType = RayCasting.TYPE_FIRST_POINT_AND_SPHERE;
 
@@ -225,7 +222,7 @@ public class SkyViewFactorTransformation {
 		ILineString street = Operateurs.union(routeunique);
 
 		// Sampling and getting the points
-		IGeometry geom = Operateurs.echantillone(street, step);
+		IGeometry geom = Operateurs.echantilloneSansPreservation(street, step);
 		IDirectPositionList dpl = geom.coord();
 
 		return dpl;
