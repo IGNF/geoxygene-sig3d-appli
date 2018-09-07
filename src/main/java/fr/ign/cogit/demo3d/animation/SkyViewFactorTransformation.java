@@ -51,7 +51,7 @@ public class SkyViewFactorTransformation {
 		String folderOut = "/tmp/tmp/";
 
 		// Sampling step in m along the roads
-		int step = 25;
+		int step = 1;
 
 		// Number of points for the sky Openess
 		int angularStep = 180;
