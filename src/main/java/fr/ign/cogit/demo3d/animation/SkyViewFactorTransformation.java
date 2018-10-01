@@ -1,6 +1,7 @@
 package fr.ign.cogit.demo3d.animation;
 
 import java.awt.Color;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +50,9 @@ public class SkyViewFactorTransformation {
 		String roadFile = folderName + "route.shp";
 
 		String folderOut = "/tmp/tmp/";
+		
+		//We create the folderOut
+		(new File(folderOut)).mkdirs();
 
 		// Sampling step in m along the roads
 		int step = 1;
