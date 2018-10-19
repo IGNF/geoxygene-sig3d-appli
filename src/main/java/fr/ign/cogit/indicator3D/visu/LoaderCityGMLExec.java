@@ -2,7 +2,6 @@ package fr.ign.cogit.indicator3D.visu;
 
 import java.io.File;
 
-import javax.media.j3d.Sound;
 import javax.xml.bind.JAXBException;
 
 import org.citygml4j.xml.io.reader.CityGMLReadException;

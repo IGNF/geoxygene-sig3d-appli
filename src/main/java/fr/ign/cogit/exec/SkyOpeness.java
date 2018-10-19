@@ -18,7 +18,6 @@ import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.sig3d.calculation.raycasting.IndicatorVisu;
 import fr.ign.cogit.geoxygene.sig3d.calculation.raycasting.RayCasting;
 import fr.ign.cogit.geoxygene.sig3d.calculation.raycasting.Visibility;
 import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;

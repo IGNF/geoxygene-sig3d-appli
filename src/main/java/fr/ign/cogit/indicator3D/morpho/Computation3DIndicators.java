@@ -8,46 +8,31 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.citygml4j.geometry.Geometry;
-import org.citygml4j.model.citygml.building.RoofSurface;
 import org.citygml4j.xml.io.reader.CityGMLReadException;
-import org.postgis.LineString;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ITriangle;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.contrib.cartetopo.CarteTopo;
-import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.feature.SchemaDefaultFeature;
-import fr.ign.cogit.geoxygene.schema.schemaConceptuelISOJeu.AttributeType;
-import fr.ign.cogit.geoxygene.schema.schemaConceptuelISOJeu.FeatureType;
-import fr.ign.cogit.geoxygene.sig3d.calculation.Util;
 import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
 import fr.ign.cogit.geoxygene.sig3d.io.xml.citygmlv2.Context;
 import fr.ign.cogit.geoxygene.sig3d.io.xml.citygmlv2.LoaderCityGML;
-import fr.ign.cogit.geoxygene.sig3d.model.citygml.building.CG_Building;
 import fr.ign.cogit.geoxygene.sig3d.model.citygml.building.CG_AbstractBoundarySurface;
 import fr.ign.cogit.geoxygene.sig3d.model.citygml.building.CG_AbstractBuilding;
 import fr.ign.cogit.geoxygene.sig3d.model.citygml.building.CG_Building;
 import fr.ign.cogit.geoxygene.sig3d.model.citygml.building.CG_RoofSurface;
-import fr.ign.cogit.geoxygene.sig3d.model.citygml.building.CG_WallSurface;
-import fr.ign.cogit.geoxygene.sig3d.representation.citygml.CG_VectorLayer;
 import fr.ign.cogit.geoxygene.sig3d.representation.citygml.representation.CG_StyleGenerator;
 import fr.ign.cogit.geoxygene.sig3d.representation.sample.ObjectCartoon;
 import fr.ign.cogit.geoxygene.sig3d.semantic.Map3D;

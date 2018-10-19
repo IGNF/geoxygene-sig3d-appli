@@ -8,7 +8,6 @@ import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.io.xml.citygmlv2.Context;
 import fr.ign.cogit.geoxygene.sig3d.io.xml.citygmlv2.LoaderCityGML;
 import fr.ign.cogit.geoxygene.sig3d.representation.citygml.representation.CG_StyleGenerator;
-import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 
